@@ -1,0 +1,47 @@
+--- tools/Makefile.am-old	2010-07-26 02:21:54.354907029 +0100
++++ tools/Makefile.am	2010-07-26 02:32:59.503493828 +0100
+@@ -12,11 +12,6 @@
+ ipod_read_sysinfo_extended_CFLAGS+=$(LIBIMOBILEDEVICE_CFLAGS)
+ ipod_read_sysinfo_extended_LDADD+=$(LIBIMOBILEDEVICE_LIBS)
+ endif
+-if HAVE_LIBUSB
+-ipod_read_sysinfo_extended_SOURCES+=ipod-usb.c
+-ipod_read_sysinfo_extended_CFLAGS+=$(LIBUSB_CFLAGS)
+-ipod_read_sysinfo_extended_LDADD+=$(LIBUSB_LIBS)
+-endif
+ 
+ COMMON_SOURCES = 						\
+ 	generic-callout.c					\
+@@ -32,12 +27,6 @@
+ COMMON_LIBS    += $(SGUTILS_LIBS)
+ endif
+ 
+-if HAVE_LIBUSB
+-COMMON_SOURCES +=ipod-usb.c
+-COMMON_CFLAGS  +=$(LIBUSB_CFLAGS)
+-COMMON_LIBS    +=$(LIBUSB_LIBS)
+-endif
+-
+ noinst_HEADERS = backends.h
+ 
+ if HAVE_HAL
+--- configure.ac-old	2010-07-26 02:33:42.899474157 +0100
++++ configure.ac	2010-07-26 02:33:47.199109812 +0100
+@@ -100,17 +100,6 @@
+ AM_CONDITIONAL(HAVE_SGUTILS, test x"$have_sgutils" = xyes)
+ 
+ dnl **************************************************
+-dnl * libusb is necessary to get the xml device file
+-dnl * from newer ipods (nano5g)
+-dnl **************************************************
+-PKG_CHECK_MODULES(LIBUSB, libusb-1.0, have_libusb=yes, have_libusb=no)
+-if test x"$have_libusb" = xyes; then
+-   AH_TEMPLATE([HAVE_LIBUSB], [Whether libusb is installed])
+-   AC_DEFINE_UNQUOTED(HAVE_LIBUSB, 1)
+-fi
+-AM_CONDITIONAL(HAVE_LIBUSB, test x"$have_libusb" = xyes)
+-
+-dnl **************************************************
+ dnl * zlib is neeeded for handling compressed iTunesCDB files
+ dnl **************************************************
+ AC_CHECK_LIB(z, inflate,

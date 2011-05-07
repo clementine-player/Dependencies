@@ -1,0 +1,11 @@
+--- frontend/main.c	2010-07-25 20:21:39.795268709 +0100
++++ frontend/main.c-new	2010-07-25 20:21:36.775255826 +0100
+@@ -31,7 +31,7 @@
+ #ifdef _WIN32
+ #define WIN32_LEAN_AND_MEAN
+ #include <windows.h>
+-#define off_t __int64
++//#define off_t __int64
+ #else
+ #include <time.h>
+ #endif

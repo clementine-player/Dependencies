@@ -1,0 +1,33 @@
+--- configure.in.old	2011-03-12 14:42:26.311284200 +0000
++++ configure.in	2011-03-12 14:42:47.081283884 +0000
+@@ -304,11 +304,8 @@
+     plugins/speex/Makefile
+     plugins/tta/Makefile
+     plugins/wv/Makefile
+-    examples/Makefile
+     include/Makefile
+     include/tunepimp-0.5/Makefile
+-    perl/tunepimp-perl/Makefile.PL
+-    python/tunepimp/__init__.py
+     tunepimp.doxy, 
+     echo timestamp > stamp-h)
+ 
+--- Makefile.am.old	2011-03-12 14:42:37.091311708 +0000
++++ Makefile.am	2011-03-12 14:53:06.311289470 +0000
+@@ -23,7 +23,7 @@
+ #
+ AUTOMAKE_OPTIONS = foreign
+ 
+-SUBDIRS = libltdl include lib plugins examples 
++SUBDIRS = libltdl include lib plugins
+ 
+ FEATHERS = $(mbndex_SOURCES) $(DOCS) $(OTHERFILES)
+ 
+@@ -54,7 +54,6 @@
+ 
+ install-data-local:
+ 	mkdir -p $(DESTDIR)$(libdir)/tunepimp/plugins
+-	$(INSTALL) -m 0655 examples/plugins/*.tpp $(DESTDIR)$(libdir)/tunepimp/plugins
+ 
+ uninstall-local:
+ 	rm -rf $(libdir)/tunepimp/plugins $(libdir)/tunepimp

@@ -1,0 +1,68 @@
+--- src/mms.c-old	2010-07-25 21:30:44.044547380 +0100
++++ src/mms.c	2010-07-25 21:30:56.683960949 +0100
+@@ -68,7 +68,7 @@
+ #ifdef DEBUG
+ # define lprintf g_print
+ #else
+-# define lprintf(x) 
++# define lprintf printf
+ #endif
+ 
+ #define __MMS_C__
+@@ -182,14 +182,14 @@
+ };
+ 
+ /* required for MSVC 6.0 */
+-static gdouble
++/*static gdouble
+ guint64_to_gdouble (guint64 value)
+ {
+   if (value & G_GINT64_CONSTANT (0x8000000000000000))
+     return (gdouble) ((gint64) value) + (gdouble) 18446744073709551616.;
+   else
+     return (gdouble) ((gint64) value);
+-}
++}*/
+ 
+ static int fallback_io_select(void *data, int socket, int state, int timeout_msec)
+ {
+ # noinst_HEADERS = 
+--- src/mmsh.c-old	2010-07-25 21:32:16.415997490 +0100
++++ src/mmsh.c	2010-07-25 21:31:13.635962654 +0100
+@@ -64,7 +64,7 @@
+ #ifdef DEBUG
+ # define lprintf g_print
+ #else
+-# define lprintf(x)
++# define lprintf printf
+ #endif
+ 
+ /* cheat a bit and call ourselves mms.c to keep the code in mmsio.h clean */
+ 
+--- src/Makefile.in-old	2010-07-25 22:04:16.100502280 +0100
++++ src/Makefile.in	2010-07-25 22:04:45.646740004 +0100
+@@ -73,7 +73,7 @@
+ LTLIBRARIES = $(lib_LTLIBRARIES)
+ am__DEPENDENCIES_1 =
+ libmms_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+-am_libmms_la_OBJECTS = mms.lo mmsh.lo mmsx.lo uri.lo
++am_libmms_la_OBJECTS = mms.lo mmsh.lo mmsx.lo uri.lo utils.lo
+ libmms_la_OBJECTS = $(am_libmms_la_OBJECTS)
+ libmms_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+ 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+@@ -228,12 +228,13 @@
+ 	uri.c			\
+ 	uri.h			\
+ 	asfheader.h		\
+-	mmsh.h
++	mmsh.h \
++  utils.c
+ 
+ 
+ # noinst_HEADERS = 
+ libmms_la_LDFLAGS = -version-info 0:2:0 -no-undefined -export-dynamic
+-libmms_la_LIBADD = $(GLIB_LIBS)
++libmms_la_LIBADD = $(GLIB_LIBS) -lws2_32
+ libmmsincdir = $(includedir)/libmms
+ libmmsinc_HEADERS = \
+ 	mms.h		\

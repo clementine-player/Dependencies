@@ -1,0 +1,8 @@
+--- src/mms_config.h.in-old	2010-07-25 21:54:07.986698116 +0100
++++ src/mms_config.h.in	2010-07-25 21:54:17.206761629 +0100
+@@ -1,4 +1,4 @@
+ /* libmms public autoconf settings header file */
+ 
+ /* Define to 1 if libmms is compiled with 64 bit file offsets */
+-#undef LIBMMS_HAVE_64BIT_OFF_T
++#define LIBMMS_HAVE_64BIT_OFF_T 1

@@ -1,0 +1,79 @@
+diff -u frontend/Makefile.in ../faac-1.28-new/frontend/Makefile.in
+--- frontend/Makefile.in	2009-02-10 08:37:00.000000000 +0000
++++ frontend/Makefile.in	2010-07-25 21:15:53.054839199 +0100
+@@ -250,7 +250,7 @@
+ 	done
+ faac$(EXEEXT): $(faac_OBJECTS) $(faac_DEPENDENCIES) 
+ 	@rm -f faac$(EXEEXT)
+-	$(LINK) $(faac_LDFLAGS) $(faac_OBJECTS) $(faac_LDADD) $(LIBS)
++	$(LINK) $(faac_LDFLAGS) $(faac_OBJECTS) $(faac_LDADD) $(LIBS) -lws2_32
+ 
+ mostlyclean-compile:
+ 	-rm -f *.$(OBJEXT)
+diff -u common/mp4v2/mp4atom.cpp ../faac-1.28-new/common/mp4v2/mp4atom.cpp
+--- common/mp4v2/mp4atom.cpp	2009-01-25 01:14:34.000000000 +0000
++++ common/mp4v2/mp4atom.cpp	2010-07-25 21:15:53.075248224 +0100
+@@ -34,6 +34,8 @@
+ #include "mp4common.h"
+ #include "atoms.h"
+ 
++#include <cctype>
++
+ MP4AtomInfo::MP4AtomInfo(const char* name, bool mandatory, bool onlyOne) 
+ {
+ 	m_name = name;
+diff -u common/mp4v2/mp4.cpp ../faac-1.28-new/common/mp4v2/mp4.cpp
+--- common/mp4v2/mp4.cpp	2009-01-25 01:14:34.000000000 +0000
++++ common/mp4v2/mp4.cpp	2010-07-25 21:15:53.102887220 +0100
+@@ -1896,7 +1896,7 @@
+ 
+ 		  MP4Track *pTrack = pFile->GetTrack(trackId);
+ 		  uint64_t bytes = pTrack->GetTotalOfSampleSizes();
+-		  bytes *= TO_U64(8 * 1000);
++		  bytes *= uint64_t(8) * uint64_t(1000);
+ 		  bytes /= msDuration;
+ 		  return (uint32_t)bytes;
+ 		}
+diff -u common/mp4v2/mp4util.cpp ../faac-1.28-new/common/mp4v2/mp4util.cpp
+--- common/mp4v2/mp4util.cpp	2009-01-25 01:14:34.000000000 +0000
++++ common/mp4v2/mp4util.cpp	2010-07-25 21:15:53.075248224 +0100
+@@ -22,6 +22,8 @@
+ 
+ #include "mp4common.h"
+ 
++#include <cctype>
++
+ static lib_message_func_t libfunc = NULL;
+ extern "C"   void MP4SetLibFunc(lib_message_func_t libf)
+ {
+diff -u common/mp4v2/mpeg4ip_win32.h ../faac-1.28-new/common/mp4v2/mpeg4ip_win32.h
+--- common/mp4v2/mpeg4ip_win32.h	2009-01-25 01:14:34.000000000 +0000
++++ common/mp4v2/mpeg4ip_win32.h	2010-07-25 21:15:53.071527638 +0100
+@@ -60,9 +60,9 @@
+ typedef signed __int8  int8_t;
+ typedef unsigned short in_port_t;
+ typedef int socklen_t;
+-typedef int ssize_t;
++//typedef int ssize_t;
+ typedef unsigned int uint;
+-static inline int snprintf(char *buffer, size_t count,
++/*static inline int snprintf(char *buffer, size_t count,
+ 			  const char *format, ...) {
+   va_list ap;
+   int ret;
+@@ -74,12 +74,12 @@
+     return (int)count;
+   }
+   return ret;
+-}
++}*/
+ #define strncasecmp _strnicmp
+ #define strcasecmp _stricmp
+ #define localtime_r(a,b) localtime_s(b,a)
+-#define printf printf_s
+-#define fprintf fprintf_s
++//#define printf printf_s
++//#define fprintf fprintf_s
+ 
+ #include <io.h>
+ #include <fcntl.h>

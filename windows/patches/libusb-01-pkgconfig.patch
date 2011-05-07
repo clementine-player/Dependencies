@@ -1,0 +1,15 @@
+--- /dev/null	2010-07-25 12:12:52.975427762 +0100
++++ lib/pkgconfig/libusb-1.0.pc	2010-07-25 23:39:39.111228495 +0100
+@@ -0,0 +1,12 @@
++prefix=/target
++exec_prefix=${prefix}
++libdir=${exec_prefix}/bin
++includedir=${prefix}/include
++
++Name: libusb
++Description: libusb
++Version: 1.2.0.0
++Requires:
++Conflicts:
++Libs: -L${libdir} -lusb0
++Cflags: -I${includedir}

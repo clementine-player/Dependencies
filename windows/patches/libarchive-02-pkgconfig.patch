@@ -1,0 +1,14 @@
+--- CMakeLists.txt.old	2011-04-22 19:16:34.589976666 +0000
++++ CMakeLists.txt	2011-04-22 19:15:58.109535816 +0000
+@@ -848,3 +848,11 @@
+ add_subdirectory(libarchive)
+ add_subdirectory(tar)
+ add_subdirectory(cpio)
++
++set(prefix ${CMAKE_INSTALL_PREFIX})
++set(exec_prefix ${prefix})
++set(libdir ${prefix}/lib)
++set(includedir ${prefix}/include)
++configure_file(${CMAKE_SOURCE_DIR}/build/pkgconfig/libarchive.pc.in
++               ${CMAKE_BINARY_DIR}/libarchive.pc @ONLY)
++install(FILES ${CMAKE_BINARY_DIR}/libarchive.pc DESTINATION lib/pkgconfig/)

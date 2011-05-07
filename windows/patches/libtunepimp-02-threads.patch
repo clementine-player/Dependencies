@@ -1,0 +1,69 @@
+--- configure.in.old	2011-03-12 14:25:51.561284124 +0000
++++ configure.in	2011-03-12 14:26:01.712592798 +0000
+@@ -288,7 +288,7 @@
+     Makefile
+     lib/Makefile
+     lib/threads/Makefile
+-    lib/threads/posix/Makefile
++    lib/threads/win32/Makefile
+     lib/utf8/Makefile
+     plugins/Makefile
+     plugins/common/Makefile
+--- lib/threads/Makefile.am.old	2011-03-12 14:26:55.771913606 +0000
++++ lib/threads/Makefile.am	2011-03-12 14:24:52.811288922 +0000
+@@ -23,4 +23,4 @@
+ #
+ AUTOMAKE_OPTIONS = foreign
+ 
+-SUBDIRS = posix
++SUBDIRS = win32
+--- /dev/null	2010-11-03 20:06:54.005635969 +0000
++++ lib/threads/win32/Makefile.am	2011-03-12 14:25:09.891262239 +0000
+@@ -0,0 +1,27 @@
++#  TunePimp -- The MusicBrainz tagging client interface:
++#
++#              "Let a thousand taggers bloom!"
++#
++#  Copyright (C) 2003 Robert Kaye
++#  
++#  This library is free software; you can redistribute it and/or
++#  modify it under the terms of the GNU Lesser General Public
++#  License as published by the Free Software Foundation; either
++#  version 2.1 of the License, or (at your option) any later version.
++#  
++#  This library is distributed in the hope that it will be useful,
++#  but WITHOUT ANY WARRANTY; without even the implied warranty of
++#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++#  Lesser General Public License for more details.
++#  
++#  You should have received a copy of the GNU Lesser General Public
++#  License along with this library; if not, write to the Free Software
++#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++#
++#    $Id: Makefile.am 7508 2006-05-10 18:12:13Z luks $
++#
++
++INCLUDES = -I$(top_srcdir)/include/tunepimp-0.5
++
++noinst_LTLIBRARIES = libtpthread.la
++libtpthread_la_SOURCES = mutex.cpp mutex.h thread.cpp thread.h semaphore.cpp semaphore.h
+--- lib/Makefile.am.old	2011-03-12 14:37:12.951506409 +0000
++++ lib/Makefile.am	2011-03-12 14:37:25.751908930 +0000
+@@ -24,7 +24,7 @@
+ 
+ SUBDIRS = utf8 threads
+ 
+-INCLUDES = -I$(top_srcdir)/include/tunepimp-0.5 -Ithreads/posix
++INCLUDES = -I$(top_srcdir)/include/tunepimp-0.5 -Ithreads/win32
+ lib_LTLIBRARIES = libtunepimp.la
+ 
+ libtunepimp_la_SOURCES = tunepimp.cpp filecache.cpp analyzer.cpp dirsearch.cpp metadata.cpp astrcmp.c track.cpp write.cpp c_wrapper.cpp watchdog.cpp plugins.cpp readmeta.cpp fileio.cpp protocol.cpp
+@@ -57,7 +57,7 @@
+ #  5:0:0 - TunePimp implementation for version 0.5.0
+ #  5:1:0 - TunePimp implementation for version 0.5.1
+ libtunepimp_la_LDFLAGS = -version-info 5:3:0
+-libtunepimp_la_LIBADD = threads/posix/libtpthread.la utf8/libutf8.la $(LIBLTDL) -lm
++libtunepimp_la_LIBADD = threads/win32/libtpthread.la utf8/libutf8.la $(LIBLTDL) -lm
+ 
+ noinst_LTLIBRARIES = libpluginsupport.la
+ libpluginsupport_la_SOURCES = metadata.cpp fileio.cpp

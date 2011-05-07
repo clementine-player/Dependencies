@@ -1,0 +1,10 @@
+--- src/userpref.h.old	2011-03-19 18:48:12.000331676 +0000
++++ src/userpref.h	2011-03-19 18:48:22.129602693 +0000
+@@ -24,6 +24,7 @@
+ 
+ #include <gnutls/gnutls.h>
+ #include <glib.h>
++#include <stdint.h>
+ 
+ #define USERPREF_E_SUCCESS             0
+ #define USERPREF_E_INVALID_ARG        -1

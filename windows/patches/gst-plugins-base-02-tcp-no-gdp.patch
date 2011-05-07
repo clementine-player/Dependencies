@@ -1,0 +1,736 @@
+diff -ur gst-plugins-base-0.10.30-new/gst/tcp/Makefile.am gst-plugins-base-0.10.30/gst/tcp/Makefile.am
+--- gst-plugins-base-0.10.30-new/gst/tcp/Makefile.am	2011-04-30 15:17:18.361030835 +0000
++++ gst-plugins-base-0.10.30/gst/tcp/Makefile.am	2011-04-30 15:26:35.592446743 +0000
+@@ -32,9 +32,9 @@
+ 	$(built_sources)
+ 
+ # remove ENABLE_NEW when dataprotocol is stable
+-libgsttcp_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_GDP_CFLAGS) $(GST_CFLAGS) -DGST_ENABLE_NEW
++libgsttcp_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
+ libgsttcp_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
+-libgsttcp_la_LIBADD = $(GST_BASE_LIBS) $(GST_GDP_LIBS) $(GST_LIBS) $(WIN32_LIBS)
++libgsttcp_la_LIBADD = $(GST_BASE_LIBS) $(GST_LIBS) $(WIN32_LIBS)
+ libgsttcp_la_LIBTOOLFLAGS = --tag=disable-static
+ 
+ noinst_HEADERS = \
+diff -ur gst-plugins-base-0.10.30-new/gst/tcp/gstmultifdsink.c gst-plugins-base-0.10.30/gst/tcp/gstmultifdsink.c
+--- gst-plugins-base-0.10.30-new/gst/tcp/gstmultifdsink.c	2011-04-30 15:17:18.361030835 +0000
++++ gst-plugins-base-0.10.30/gst/tcp/gstmultifdsink.c	2011-04-30 15:28:35.880454224 +0000
+@@ -1302,36 +1302,6 @@
+   return TRUE;
+ }
+ 
+-/* GDP-encode given caps and queue them for sending */
+-static gboolean
+-gst_multi_fd_sink_client_queue_caps (GstMultiFdSink * sink,
+-    GstTCPClient * client, const GstCaps * caps)
+-{
+-  guint8 *header;
+-  guint8 *payload;
+-  guint length;
+-  gchar *string;
+-
+-  g_return_val_if_fail (caps != NULL, FALSE);
+-
+-  string = gst_caps_to_string (caps);
+-  GST_DEBUG_OBJECT (sink, "[fd %5d] Queueing caps %s through GDP",
+-      client->fd.fd, string);
+-  g_free (string);
+-
+-  if (!gst_dp_packet_from_caps (caps, sink->header_flags, &length, &header,
+-          &payload)) {
+-    GST_DEBUG_OBJECT (sink, "Could not create GDP packet from caps");
+-    return FALSE;
+-  }
+-  gst_multi_fd_sink_client_queue_data (sink, client, (gchar *) header, length);
+-
+-  length = gst_dp_header_payload_length (header);
+-  gst_multi_fd_sink_client_queue_data (sink, client, (gchar *) payload, length);
+-
+-  return TRUE;
+-}
+-
+ static gboolean
+ is_sync_frame (GstMultiFdSink * sink, GstBuffer * buffer)
+ {
+@@ -1344,150 +1314,6 @@
+   return FALSE;
+ }
+ 
+-/* queue the given buffer for the given client, possibly adding the GDP
+- * header if GDP is being used */
+-static gboolean
+-gst_multi_fd_sink_client_queue_buffer (GstMultiFdSink * sink,
+-    GstTCPClient * client, GstBuffer * buffer)
+-{
+-  GstCaps *caps;
+-
+-  /* TRUE: send them if the new caps have them */
+-  gboolean send_streamheader = FALSE;
+-  GstStructure *s;
+-
+-  /* before we queue the buffer, we check if we need to queue streamheader
+-   * buffers (because it's a new client, or because they changed) */
+-  caps = gst_buffer_get_caps (buffer);  /* cleaned up after streamheader */
+-  if (!client->caps) {
+-    GST_DEBUG_OBJECT (sink,
+-        "[fd %5d] no previous caps for this client, send streamheader",
+-        client->fd.fd);
+-    send_streamheader = TRUE;
+-    client->caps = gst_caps_ref (caps);
+-  } else {
+-    /* there were previous caps recorded, so compare */
+-    if (!gst_caps_is_equal (caps, client->caps)) {
+-      const GValue *sh1, *sh2;
+-
+-      /* caps are not equal, but could still have the same streamheader */
+-      s = gst_caps_get_structure (caps, 0);
+-      if (!gst_structure_has_field (s, "streamheader")) {
+-        /* no new streamheader, so nothing new to send */
+-        GST_DEBUG_OBJECT (sink,
+-            "[fd %5d] new caps do not have streamheader, not sending",
+-            client->fd.fd);
+-      } else {
+-        /* there is a new streamheader */
+-        s = gst_caps_get_structure (client->caps, 0);
+-        if (!gst_structure_has_field (s, "streamheader")) {
+-          /* no previous streamheader, so send the new one */
+-          GST_DEBUG_OBJECT (sink,
+-              "[fd %5d] previous caps did not have streamheader, sending",
+-              client->fd.fd);
+-          send_streamheader = TRUE;
+-        } else {
+-          /* both old and new caps have streamheader set */
+-          if (!sink->resend_streamheader) {
+-            GST_DEBUG_OBJECT (sink,
+-                "[fd %5d] asked to not resend the streamheader, not sending",
+-                client->fd.fd);
+-            send_streamheader = FALSE;
+-          } else {
+-            sh1 = gst_structure_get_value (s, "streamheader");
+-            s = gst_caps_get_structure (caps, 0);
+-            sh2 = gst_structure_get_value (s, "streamheader");
+-            if (gst_value_compare (sh1, sh2) != GST_VALUE_EQUAL) {
+-              GST_DEBUG_OBJECT (sink,
+-                  "[fd %5d] new streamheader different from old, sending",
+-                  client->fd.fd);
+-              send_streamheader = TRUE;
+-            }
+-          }
+-        }
+-      }
+-    }
+-    /* Replace the old caps */
+-    gst_caps_unref (client->caps);
+-    client->caps = gst_caps_ref (caps);
+-  }
+-
+-  if (G_UNLIKELY (send_streamheader)) {
+-    const GValue *sh;
+-    GArray *buffers;
+-    int i;
+-
+-    GST_LOG_OBJECT (sink,
+-        "[fd %5d] sending streamheader from caps %" GST_PTR_FORMAT,
+-        client->fd.fd, caps);
+-    s = gst_caps_get_structure (caps, 0);
+-    if (!gst_structure_has_field (s, "streamheader")) {
+-      GST_DEBUG_OBJECT (sink,
+-          "[fd %5d] no new streamheader, so nothing to send", client->fd.fd);
+-    } else {
+-      GST_LOG_OBJECT (sink,
+-          "[fd %5d] sending streamheader from caps %" GST_PTR_FORMAT,
+-          client->fd.fd, caps);
+-      sh = gst_structure_get_value (s, "streamheader");
+-      g_assert (G_VALUE_TYPE (sh) == GST_TYPE_ARRAY);
+-      buffers = g_value_peek_pointer (sh);
+-      GST_DEBUG_OBJECT (sink, "%d streamheader buffers", buffers->len);
+-      for (i = 0; i < buffers->len; ++i) {
+-        GValue *bufval;
+-        GstBuffer *buffer;
+-
+-        bufval = &g_array_index (buffers, GValue, i);
+-        g_assert (G_VALUE_TYPE (bufval) == GST_TYPE_BUFFER);
+-        buffer = g_value_peek_pointer (bufval);
+-        GST_DEBUG_OBJECT (sink,
+-            "[fd %5d] queueing streamheader buffer of length %d",
+-            client->fd.fd, GST_BUFFER_SIZE (buffer));
+-        gst_buffer_ref (buffer);
+-
+-        if (sink->protocol == GST_TCP_PROTOCOL_GDP) {
+-          guint8 *header;
+-          guint len;
+-
+-          if (!gst_dp_header_from_buffer (buffer, sink->header_flags, &len,
+-                  &header)) {
+-            GST_DEBUG_OBJECT (sink,
+-                "[fd %5d] could not create header, removing client",
+-                client->fd.fd);
+-            return FALSE;
+-          }
+-          gst_multi_fd_sink_client_queue_data (sink, client, (gchar *) header,
+-              len);
+-        }
+-
+-        client->sending = g_slist_append (client->sending, buffer);
+-      }
+-    }
+-  }
+-
+-  gst_caps_unref (caps);
+-  caps = NULL;
+-  /* now we can send the buffer, possibly sending a GDP header first */
+-  if (sink->protocol == GST_TCP_PROTOCOL_GDP) {
+-    guint8 *header;
+-    guint len;
+-
+-    if (!gst_dp_header_from_buffer (buffer, sink->header_flags, &len, &header)) {
+-      GST_DEBUG_OBJECT (sink,
+-          "[fd %5d] could not create header, removing client", client->fd.fd);
+-      return FALSE;
+-    }
+-    gst_multi_fd_sink_client_queue_data (sink, client, (gchar *) header, len);
+-  }
+-
+-  GST_LOG_OBJECT (sink, "[fd %5d] queueing buffer of length %d",
+-      client->fd.fd, GST_BUFFER_SIZE (buffer));
+-
+-  gst_buffer_ref (buffer);
+-  client->sending = g_slist_append (client->sending, buffer);
+-
+-  return TRUE;
+-}
+-
+ /* find the keyframe in the list of buffers starting the
+  * search from @idx. @direction as -1 will search backwards, 
+  * 1 will search forwards.
+@@ -1988,39 +1814,6 @@
+ 
+   flushing = client->status == GST_CLIENT_STATUS_FLUSHING;
+ 
+-  /* when using GDP, first check if we have queued caps yet */
+-  if (sink->protocol == GST_TCP_PROTOCOL_GDP) {
+-    /* don't need to do anything when the client is flushing */
+-    if (!client->caps_sent && !flushing) {
+-      GstPad *peer;
+-      GstCaps *caps;
+-
+-      peer = gst_pad_get_peer (GST_BASE_SINK_PAD (sink));
+-      if (!peer) {
+-        GST_WARNING_OBJECT (sink, "pad has no peer");
+-        return FALSE;
+-      }
+-      gst_object_unref (peer);
+-
+-      caps = gst_pad_get_negotiated_caps (GST_BASE_SINK_PAD (sink));
+-      if (!caps) {
+-        GST_WARNING_OBJECT (sink, "pad caps not yet negotiated");
+-        return FALSE;
+-      }
+-
+-      /* queue caps for sending */
+-      res = gst_multi_fd_sink_client_queue_caps (sink, client, caps);
+-
+-      gst_caps_unref (caps);
+-
+-      if (!res) {
+-        GST_DEBUG_OBJECT (sink, "Failed queueing caps, removing client");
+-        return FALSE;
+-      }
+-      client->caps_sent = TRUE;
+-    }
+-  }
+-
+   more = TRUE;
+   do {
+     gint maxsize;
+diff -ur gst-plugins-base-0.10.30-new/gst/tcp/gsttcp.c gst-plugins-base-0.10.30/gst/tcp/gsttcp.c
+--- gst-plugins-base-0.10.30-new/gst/tcp/gsttcp.c	2011-04-30 15:17:18.361030835 +0000
++++ gst-plugins-base-0.10.30/gst/tcp/gsttcp.c	2011-04-30 15:28:36.671256481 +0000
+@@ -350,266 +350,3 @@
+     return GST_FLOW_ERROR;
+   }
+ }
+-
+-/* read a buffer from the given socket
+- * returns:
+- * - a GstBuffer in which data should be read
+- * - NULL, indicating a connection close or an error, to be handled with
+- *         EOS
+- */
+-GstFlowReturn
+-gst_tcp_gdp_read_buffer (GstElement * this, int socket, GstPoll * fdset,
+-    GstBuffer ** buf)
+-{
+-  GstFlowReturn ret;
+-  guint8 *header = NULL;
+-
+-  GST_LOG_OBJECT (this, "Reading %d bytes for buffer packet header",
+-      GST_DP_HEADER_LENGTH);
+-
+-  *buf = NULL;
+-  header = g_malloc (GST_DP_HEADER_LENGTH);
+-
+-  ret = gst_tcp_socket_read (this, socket, header, GST_DP_HEADER_LENGTH, fdset);
+-
+-  if (ret != GST_FLOW_OK)
+-    goto header_read_error;
+-
+-  if (!gst_dp_validate_header (GST_DP_HEADER_LENGTH, header))
+-    goto validate_error;
+-
+-  if (gst_dp_header_payload_type (header) != GST_DP_PAYLOAD_BUFFER)
+-    goto is_not_buffer;
+-
+-  GST_LOG_OBJECT (this, "validated buffer packet header");
+-
+-  *buf = gst_dp_buffer_from_header (GST_DP_HEADER_LENGTH, header);
+-
+-  g_free (header);
+-
+-  ret = gst_tcp_socket_read (this, socket, GST_BUFFER_DATA (*buf),
+-      GST_BUFFER_SIZE (*buf), fdset);
+-
+-  if (ret != GST_FLOW_OK)
+-    goto data_read_error;
+-
+-  return GST_FLOW_OK;
+-
+-  /* ERRORS */
+-header_read_error:
+-  {
+-    g_free (header);
+-    return ret;
+-  }
+-validate_error:
+-  {
+-    GST_ELEMENT_ERROR (this, RESOURCE, READ, (NULL),
+-        ("GDP buffer packet header does not validate"));
+-    g_free (header);
+-    return GST_FLOW_ERROR;
+-  }
+-is_not_buffer:
+-  {
+-    GST_ELEMENT_ERROR (this, RESOURCE, READ, (NULL),
+-        ("GDP packet contains something that is not a buffer (type %d)",
+-            gst_dp_header_payload_type (header)));
+-    g_free (header);
+-    return GST_FLOW_ERROR;
+-  }
+-data_read_error:
+-  {
+-    gst_buffer_unref (*buf);
+-    *buf = NULL;
+-    return ret;
+-  }
+-}
+-
+-GstFlowReturn
+-gst_tcp_gdp_read_caps (GstElement * this, int socket, GstPoll * fdset,
+-    GstCaps ** caps)
+-{
+-  GstFlowReturn ret;
+-  guint8 *header = NULL;
+-  guint8 *payload = NULL;
+-  size_t payload_length;
+-
+-  GST_LOG_OBJECT (this, "Reading %d bytes for caps packet header",
+-      GST_DP_HEADER_LENGTH);
+-
+-  *caps = NULL;
+-  header = g_malloc (GST_DP_HEADER_LENGTH);
+-
+-  ret = gst_tcp_socket_read (this, socket, header, GST_DP_HEADER_LENGTH, fdset);
+-
+-  if (ret != GST_FLOW_OK)
+-    goto header_read_error;
+-
+-  if (!gst_dp_validate_header (GST_DP_HEADER_LENGTH, header))
+-    goto header_validate_error;
+-
+-  if (gst_dp_header_payload_type (header) != GST_DP_PAYLOAD_CAPS)
+-    goto is_not_caps;
+-
+-  GST_LOG_OBJECT (this, "validated caps packet header");
+-
+-  payload_length = gst_dp_header_payload_length (header);
+-  payload = g_malloc (payload_length);
+-
+-  GST_LOG_OBJECT (this,
+-      "Reading %" G_GSIZE_FORMAT " bytes for caps packet payload",
+-      payload_length);
+-
+-  ret = gst_tcp_socket_read (this, socket, payload, payload_length, fdset);
+-
+-  if (ret != GST_FLOW_OK)
+-    goto payload_read_error;
+-
+-  if (!gst_dp_validate_payload (GST_DP_HEADER_LENGTH, header, payload))
+-    goto payload_validate_error;
+-
+-  *caps = gst_dp_caps_from_packet (GST_DP_HEADER_LENGTH, header, payload);
+-
+-  GST_DEBUG_OBJECT (this, "Got caps over GDP: %" GST_PTR_FORMAT, *caps);
+-
+-  g_free (header);
+-  g_free (payload);
+-
+-  return GST_FLOW_OK;
+-
+-  /* ERRORS */
+-header_read_error:
+-  {
+-    g_free (header);
+-    return ret;
+-  }
+-header_validate_error:
+-  {
+-    GST_ELEMENT_ERROR (this, RESOURCE, READ, (NULL),
+-        ("GDP caps packet header does not validate"));
+-    g_free (header);
+-    return GST_FLOW_ERROR;
+-  }
+-is_not_caps:
+-  {
+-    GST_ELEMENT_ERROR (this, RESOURCE, READ, (NULL),
+-        ("GDP packet contains something that is not a caps (type %d)",
+-            gst_dp_header_payload_type (header)));
+-    g_free (header);
+-    return GST_FLOW_ERROR;
+-  }
+-payload_read_error:
+-  {
+-    g_free (header);
+-    g_free (payload);
+-    return ret;
+-  }
+-payload_validate_error:
+-  {
+-    GST_ELEMENT_ERROR (this, RESOURCE, READ, (NULL),
+-        ("GDP caps packet payload does not validate"));
+-    g_free (header);
+-    g_free (payload);
+-    return GST_FLOW_ERROR;
+-  }
+-}
+-
+-/* write a GDP header to the socket.  Return false if fails. */
+-gboolean
+-gst_tcp_gdp_write_buffer (GstElement * this, int socket, GstBuffer * buffer,
+-    gboolean fatal, const gchar * host, int port)
+-{
+-  guint length;
+-  guint8 *header;
+-  size_t wrote;
+-
+-  if (!gst_dp_header_from_buffer (buffer, 0, &length, &header))
+-    goto create_error;
+-
+-  GST_LOG_OBJECT (this, "writing %d bytes for GDP buffer header", length);
+-  wrote = gst_tcp_socket_write (socket, header, length);
+-  g_free (header);
+-
+-  if (wrote != length)
+-    goto write_error;
+-
+-  return TRUE;
+-
+-  /* ERRORS */
+-create_error:
+-  {
+-    if (fatal)
+-      GST_ELEMENT_ERROR (this, CORE, TOO_LAZY, (NULL),
+-          ("Could not create GDP header from buffer"));
+-    return FALSE;
+-  }
+-write_error:
+-  {
+-    if (fatal)
+-      GST_ELEMENT_ERROR (this, RESOURCE, WRITE,
+-          (_("Error while sending data to \"%s:%d\"."), host, port),
+-          ("Only %" G_GSIZE_FORMAT " of %u bytes written: %s",
+-              wrote, GST_BUFFER_SIZE (buffer), g_strerror (errno)));
+-    return FALSE;
+-  }
+-}
+-
+-/* write GDP header and payload to the given socket for the given caps.
+- * Return false if fails. */
+-gboolean
+-gst_tcp_gdp_write_caps (GstElement * this, int socket, const GstCaps * caps,
+-    gboolean fatal, const char *host, int port)
+-{
+-  guint length;
+-  guint8 *header;
+-  guint8 *payload;
+-  size_t wrote;
+-
+-  if (!gst_dp_packet_from_caps (caps, 0, &length, &header, &payload))
+-    goto create_error;
+-
+-  GST_LOG_OBJECT (this, "writing %d bytes for GDP caps header", length);
+-  wrote = gst_tcp_socket_write (socket, header, length);
+-  if (wrote != length)
+-    goto write_header_error;
+-
+-  length = gst_dp_header_payload_length (header);
+-  g_free (header);
+-
+-  GST_LOG_OBJECT (this, "writing %d bytes for GDP caps payload", length);
+-  wrote = gst_tcp_socket_write (socket, payload, length);
+-  g_free (payload);
+-
+-  if (wrote != length)
+-    goto write_payload_error;
+-
+-  return TRUE;
+-
+-  /* ERRORS */
+-create_error:
+-  {
+-    if (fatal)
+-      GST_ELEMENT_ERROR (this, CORE, TOO_LAZY, (NULL),
+-          ("Could not create GDP packet from caps"));
+-    return FALSE;
+-  }
+-write_header_error:
+-  {
+-    g_free (header);
+-    g_free (payload);
+-    if (fatal)
+-      GST_ELEMENT_ERROR (this, RESOURCE, WRITE,
+-          (_("Error while sending gdp header data to \"%s:%d\"."), host, port),
+-          ("Only %" G_GSIZE_FORMAT " of %u bytes written: %s",
+-              wrote, length, g_strerror (errno)));
+-    return FALSE;
+-  }
+-write_payload_error:
+-  {
+-    if (fatal)
+-      GST_ELEMENT_ERROR (this, RESOURCE, WRITE,
+-          (_("Error while sending gdp payload data to \"%s:%d\"."), host, port),
+-          ("Only %" G_GSIZE_FORMAT " of %u bytes written: %s",
+-              wrote, length, g_strerror (errno)));
+-    return FALSE;
+-  }
+-}
+diff -ur gst-plugins-base-0.10.30-new/gst/tcp/gsttcp.h gst-plugins-base-0.10.30/gst/tcp/gsttcp.h
+--- gst-plugins-base-0.10.30-new/gst/tcp/gsttcp.h	2011-04-30 15:17:18.361030835 +0000
++++ gst-plugins-base-0.10.30/gst/tcp/gsttcp.h	2011-04-30 15:28:36.671256481 +0000
+@@ -37,21 +37,13 @@
+ /**
+  * GstTCPProtocol:
+  * @GST_TCP_PROTOCOL_NONE: Raw data transmission
+- * @GST_TCP_PROTOCOL_GDP: #GstBuffers are wrapped and sent/received using the
+- *      GDP protocol.
+  *
+  * This enum is provided by the tcp/multifd elements to configure the format of
+  * data transmission/reception.
+- *
+- * The GDP protocol wraps data buffers in a header that also carries format
+- * information and timestamps. The None value indicates the data is
+- * sent/received as-is. In that case, format information and timestamping
+- * must be transmitted separately, or implicit in the bytestream itself.
+  */
+ typedef enum
+ {
+-  GST_TCP_PROTOCOL_NONE,
+-  GST_TCP_PROTOCOL_GDP
++  GST_TCP_PROTOCOL_NONE
+ } GstTCPProtocol;
+ 
+ gchar * gst_tcp_host_to_ip (GstElement *element, const gchar *host);
+@@ -62,15 +54,6 @@
+ 
+ GstFlowReturn gst_tcp_read_buffer (GstElement * this, int socket, GstPoll * fdset, GstBuffer **buf);
+ 
+-GstFlowReturn gst_tcp_gdp_read_buffer (GstElement * this, int socket, GstPoll * fdset, GstBuffer **buf);
+-GstFlowReturn gst_tcp_gdp_read_caps (GstElement * this, int socket, GstPoll * fdset, GstCaps **caps);
+-
+-GstEvent * gst_tcp_gdp_read_event (GstElement *elem, int socket, GstPoll * fdset);
+-
+-gboolean gst_tcp_gdp_write_buffer (GstElement *elem, int socket, GstBuffer *buffer, gboolean fatal, const gchar *host, int port);
+-gboolean gst_tcp_gdp_write_event (GstElement *elem, int socket, GstEvent *event, gboolean fatal, const gchar *host, int port);
+-gboolean gst_tcp_gdp_write_caps (GstElement *elem, int socket, const GstCaps *caps, gboolean fatal, const gchar *host, int port);
+-
+ G_END_DECLS
+ 
+ #endif /* __GST_TCP_HELP_H__ */
+diff -ur gst-plugins-base-0.10.30-new/gst/tcp/gsttcpclientsink.c gst-plugins-base-0.10.30/gst/tcp/gsttcpclientsink.c
+--- gst-plugins-base-0.10.30-new/gst/tcp/gsttcpclientsink.c	2011-04-30 15:17:18.361030835 +0000
++++ gst-plugins-base-0.10.30/gst/tcp/gsttcpclientsink.c	2011-04-30 15:27:39.891196245 +0000
+@@ -206,36 +206,12 @@
+     case GST_TCP_PROTOCOL_NONE:
+       break;
+ 
+-    case GST_TCP_PROTOCOL_GDP:
+-      /* if we haven't send caps yet, send them first */
+-      if (!sink->caps_sent) {
+-        const GstCaps *caps;
+-        gchar *string;
+-
+-        caps = GST_PAD_CAPS (GST_PAD_PEER (GST_BASE_SINK_PAD (bsink)));
+-        string = gst_caps_to_string (caps);
+-        GST_DEBUG_OBJECT (sink, "Sending caps %s through GDP", string);
+-        g_free (string);
+-
+-        if (!gst_tcp_gdp_write_caps (GST_ELEMENT (sink), sink->sock_fd.fd,
+-                caps, TRUE, sink->host, sink->port))
+-          goto gdp_write_error;
+-
+-        sink->caps_sent = TRUE;
+-      }
+-      break;
+     default:
+       g_warning ("Unhandled protocol type");
+       break;
+   }
+ 
+   return TRUE;
+-
+-  /* ERRORS */
+-gdp_write_error:
+-  {
+-    return FALSE;
+-  }
+ }
+ 
+ static GstFlowReturn
+@@ -258,12 +234,6 @@
+   switch (sink->protocol) {
+     case GST_TCP_PROTOCOL_NONE:
+       break;
+-    case GST_TCP_PROTOCOL_GDP:
+-      GST_LOG_OBJECT (sink, "Sending buffer header through GDP");
+-      if (!gst_tcp_gdp_write_buffer (GST_ELEMENT (sink), sink->sock_fd.fd, buf,
+-              TRUE, sink->host, sink->port))
+-        goto gdp_write_error;
+-      break;
+     default:
+       break;
+   }
+@@ -279,10 +249,6 @@
+   return GST_FLOW_OK;
+ 
+   /* ERRORS */
+-gdp_write_error:
+-  {
+-    return FALSE;
+-  }
+ write_error:
+   {
+     GST_ELEMENT_ERROR (sink, RESOURCE, WRITE,
+diff -ur gst-plugins-base-0.10.30-new/gst/tcp/gsttcpclientsrc.c gst-plugins-base-0.10.30/gst/tcp/gsttcpclientsrc.c
+--- gst-plugins-base-0.10.30-new/gst/tcp/gsttcpclientsrc.c	2011-04-30 15:17:18.361030835 +0000
++++ gst-plugins-base-0.10.30/gst/tcp/gsttcpclientsrc.c	2011-04-30 15:27:51.550360058 +0000
+@@ -210,25 +210,6 @@
+           src->fdset, outbuf);
+       break;
+ 
+-    case GST_TCP_PROTOCOL_GDP:
+-      /* get the caps if we're using GDP */
+-      if (!src->caps_received) {
+-        GstCaps *caps;
+-
+-        GST_DEBUG_OBJECT (src, "getting caps through GDP");
+-        ret = gst_tcp_gdp_read_caps (GST_ELEMENT (src), src->sock_fd.fd,
+-            src->fdset, &caps);
+-
+-        if (ret != GST_FLOW_OK)
+-          goto no_caps;
+-
+-        src->caps_received = TRUE;
+-        src->caps = caps;
+-      }
+-
+-      ret = gst_tcp_gdp_read_buffer (GST_ELEMENT (src), src->sock_fd.fd,
+-          src->fdset, outbuf);
+-      break;
+     default:
+       /* need to assert as buf == NULL */
+       g_assert ("Unhandled protocol type");
+@@ -255,12 +236,6 @@
+     GST_DEBUG_OBJECT (src, "connection to closed, cannot read data");
+     return GST_FLOW_WRONG_STATE;
+   }
+-no_caps:
+-  {
+-    GST_ELEMENT_ERROR (src, RESOURCE, READ, (NULL),
+-        ("Could not read caps through GDP"));
+-    return ret;
+-  }
+ }
+ 
+ static void
+diff -ur gst-plugins-base-0.10.30-new/gst/tcp/gsttcpserversrc.c gst-plugins-base-0.10.30/gst/tcp/gsttcpserversrc.c
+--- gst-plugins-base-0.10.30-new/gst/tcp/gsttcpserversrc.c	2011-04-30 15:17:18.361030835 +0000
++++ gst-plugins-base-0.10.30/gst/tcp/gsttcpserversrc.c	2011-04-30 15:26:11.230375712 +0000
+@@ -214,36 +214,6 @@
+           src->fdset, outbuf);
+       break;
+ 
+-    case GST_TCP_PROTOCOL_GDP:
+-      if (!src->caps_received) {
+-        GstCaps *caps;
+-        gchar *string;
+-
+-        ret = gst_tcp_gdp_read_caps (GST_ELEMENT (src), src->client_sock_fd.fd,
+-            src->fdset, &caps);
+-
+-        if (ret == GST_FLOW_WRONG_STATE)
+-          goto gdp_cancelled;
+-
+-        if (ret != GST_FLOW_OK)
+-          goto gdp_caps_read_error;
+-
+-        src->caps_received = TRUE;
+-        string = gst_caps_to_string (caps);
+-        GST_DEBUG_OBJECT (src, "Received caps through GDP: %s", string);
+-        g_free (string);
+-
+-        gst_pad_set_caps (GST_BASE_SRC_PAD (psrc), caps);
+-      }
+-
+-      ret = gst_tcp_gdp_read_buffer (GST_ELEMENT (src), src->client_sock_fd.fd,
+-          src->fdset, outbuf);
+-
+-      if (ret == GST_FLOW_OK)
+-        gst_buffer_set_caps (*outbuf, GST_PAD_CAPS (GST_BASE_SRC_PAD (src)));
+-
+-      break;
+-
+     default:
+       /* need to assert as buf == NULL */
+       g_assert ("Unhandled protocol type");
+@@ -285,20 +255,6 @@
+         ("Could not accept client on server socket: %s", g_strerror (errno)));
+     return GST_FLOW_ERROR;
+   }
+-gdp_cancelled:
+-  {
+-    GST_DEBUG_OBJECT (src, "reading gdp canceled");
+-    return GST_FLOW_WRONG_STATE;
+-  }
+-gdp_caps_read_error:
+-  {
+-    /* if we did not get canceled, report an error */
+-    if (ret != GST_FLOW_WRONG_STATE) {
+-      GST_ELEMENT_ERROR (src, RESOURCE, READ, (NULL),
+-          ("Could not read caps through GDP"));
+-    }
+-    return ret;
+-  }
+ }
+ 
+ static void
+--- gst-plugins-base-0.10.30/gst/tcp/gsttcpplugin-old.c	2011-04-30 15:39:02.630352043 +0000
++++ gst-plugins-base-0.10.30/gst/tcp/gsttcpplugin.c	2011-04-30 15:39:04.340960898 +0000
+@@ -33,8 +33,6 @@
+ static gboolean
+ plugin_init (GstPlugin * plugin)
+ {
+-  gst_dp_init ();
+-
+   if (!gst_element_register (plugin, "tcpclientsink", GST_RANK_NONE,
+           GST_TYPE_TCP_CLIENT_SINK))
+     return FALSE;

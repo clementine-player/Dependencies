@@ -1,0 +1,159 @@
+--- lib/comsocket.cpp.old	2011-03-12 13:04:26.502039252 +0000
++++ lib/comsocket.cpp	2011-03-12 13:17:56.581266252 +0000
+@@ -56,7 +56,7 @@
+ #define SOL_TCP IPPROTO_TCP
+ #endif
+ 
+-#if defined(__QNX__) || defined (__BEOS__) || defined (__APPLE__)
++#if defined(__QNX__) || defined (__BEOS__) || defined (__APPLE__) || defined(__WIN32__)
+ struct pollfd
+ {
+    int            fd;
+@@ -152,7 +152,7 @@
+ 	pServer = gethostbyname(pIP);
+ 	if (pServer == NULL)
+ 	{
+-		close(m_nSocket);
++		closesocket(m_nSocket);
+ 		m_nSocket = -1;
+ 		return -1;
+ 	}
+@@ -164,19 +164,19 @@
+ 	int nflag = 1;
+ 	if (nType == SOCK_STREAM)
+ 	{
+-		nErr = setsockopt(m_nSocket, SOL_TCP, TCP_NODELAY, &nflag, sizeof(int));
++		nErr = setsockopt(m_nSocket, SOL_TCP, TCP_NODELAY, reinterpret_cast<char*>(&nflag), sizeof(int));
+ 	}
+ 	if (bBroadcast)
+ 	{
+ 		nErr = setsockopt(m_nSocket, SOL_SOCKET, SO_BROADCAST,
+-			&nflag, sizeof(int));
++			reinterpret_cast<char*>(&nflag), sizeof(int));
+ 	}
+ 	
+ 	nErr = connect(m_nSocket, (sockaddr*)&addr, sizeof(sockaddr_in));
+ 	if (nErr != 0)
+ 	{
+ 		
+-		close(m_nSocket);
++		closesocket(m_nSocket);
+ 		m_nSocket = -1;
+ 		return -1;
+ 	}
+@@ -195,7 +195,7 @@
+ 		nErr = shutdown(m_nSocket, SHUT_RDWR);
+ 	}
+ 	
+-	nErr = close(m_nSocket);
++	nErr = closesocket(m_nSocket);
+ 	m_nSocket = -1;
+ 	m_bConnected = false;
+ 	return (nErr != -1);
+@@ -212,7 +212,7 @@
+ {
+ 	if (!IsConnected()) return -1;	// no connection
+ 	ssize_t nErr = 0;
+-	nErr = recv(m_nSocket, (void*)pBuffer, nLen, 0);
++	nErr = recv(m_nSocket, (char*)pBuffer, nLen, 0);
+ 	if ((nErr >= 0) && (nBytesWritten != NULL))
+ 	{
+ 		*nBytesWritten = (size_t) nErr;
+@@ -228,7 +228,7 @@
+ 	bool bRepeat = true;
+ 	while (bRepeat)
+ 	{
+-		nErr = send(m_nSocket, (void*)pBuffer, nLen, 0);
++		nErr = send(m_nSocket, (char*)pBuffer, nLen, 0);
+ 		bRepeat = false;
+ 		if ((nErr == -1) && (errno == EINTR))
+ 		{
+@@ -248,7 +248,7 @@
+ 	int nErr = 0;
+ 	if (m_nSockType == SOCK_STREAM)
+ 	{
+-		nErr = setsockopt(m_nSocket, SOL_TCP, TCP_NODELAY, &nFlag, sizeof(int));
++		nErr = setsockopt(m_nSocket, SOL_TCP, TCP_NODELAY, reinterpret_cast<char*>(&nFlag), sizeof(int));
+ 	}
+   return nErr;
+ }
+@@ -275,19 +275,8 @@
+ 
+ int MBCOMSocket::SetNonBlocking(bool bType)
+ {
+-	int nRes = 0;
+-	int flags = 0;
+-	flags = fcntl(m_nSocket, F_GETFL, 0);
+-	if (bType)
+-	{
+-		nRes = fcntl(m_nSocket, F_SETFL, flags | O_NONBLOCK);
+-	}
+-	else
+-	{
+-		flags &= ~O_NONBLOCK;
+-		nRes = fcntl(m_nSocket, F_SETFL, flags);
+-	}
+-	return nRes;
++	unsigned long arg = bType ? 1 : 0;
++  return ioctlsocket(m_nSocket, FIONBIO, &arg);
+ }
+ 
+ int MBCOMSocket::NBConnect(const char* pIP, int nPort, int nType, int nTimeout)
+@@ -304,7 +293,7 @@
+ 	pServer = gethostbyname(pIP);
+ 	if (pServer == NULL)
+ 	{
+-		close(m_nSocket);
++		closesocket(m_nSocket);
+ 		m_nSocket = -1;
+ 		return -1;
+ 	}
+@@ -316,7 +305,7 @@
+ 	int nflag = 1;
+ 	if (nType == SOCK_STREAM)
+ 	{
+-		nErr = setsockopt(m_nSocket, SOL_TCP, TCP_NODELAY, &nflag, sizeof(int));
++		nErr = setsockopt(m_nSocket, SOL_TCP, TCP_NODELAY, reinterpret_cast<char*>(&nflag), sizeof(int));
+ 	}
+ 	nErr = this->SetNonBlocking(true);
+ 
+@@ -330,9 +319,10 @@
+ 	}
+ 	else
+ 	{
+-		if (errno != EINPROGRESS)
++    int err = WSAGetLastError();
++		if (err != WSAEWOULDBLOCK)
+ 		{
+-			close(m_nSocket);
++			closesocket(m_nSocket);
+ 			m_nSocket = -1;
+ 			return -1;
+ 		}
+@@ -347,8 +337,7 @@
+ 		if (( nErr = select(m_nSocket + 1, &rset, &wset, NULL,
+ 			nTimeout ? &tval : NULL) ) == 0) 
+ 		{
+-			errno = ETIMEDOUT;
+-			close(m_nSocket);
++			closesocket(m_nSocket);
+ 			m_nSocket = -1;
+ 			return -1;
+ 		}
+@@ -356,13 +345,12 @@
+ &wset))
+ 		{
+ 			int error = 0;
+-                        mb_socklen_t len = sizeof(error);
++      int len = sizeof(error);
+ 
+-		if (getsockopt(m_nSocket, SOL_SOCKET, SO_ERROR, &error,
++		if (getsockopt(m_nSocket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&error),
+ &len) < 0)
+ 		{	
+-		errno = ETIMEDOUT;
+-			close(m_nSocket);
++			closesocket(m_nSocket);
+ 			m_nSocket = -1;
+ 			return -1;
+ 		}

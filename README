@@ -1,0 +1,7 @@
+Setup:
+  Fresh Ubuntu 10.04 32-bit minimal install
+  Checkout into /src
+  ln -s /usr/i586-mingw32msvc /target
+  sudo apt-get install \
+    mingw32 cmake build-essential flex bison libglib2.0-dev unzip stow \
+    pkg-config libtool intltool wine libqt4-dev qt4-dev-tools

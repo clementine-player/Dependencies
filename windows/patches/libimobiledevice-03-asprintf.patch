@@ -1,0 +1,18 @@
+--- src/debug.c-old	2010-07-26 02:09:37.734979180 +0100
++++ src/debug.c	2010-07-26 02:10:00.786695254 +0100
+@@ -54,7 +54,6 @@
+ 	strftime(str_time, 254, "%H:%M:%S", localtime (&the_time));
+ 
+ 	/* generate header text */
+-	(void)asprintf(&header, "%s %s:%d %s()", str_time, file, line, func);
+ 	free (str_time);
+ 
+ 	/* trim ending newlines */
+@@ -82,7 +81,6 @@
+ 
+ 	/* run the real fprintf */
+ 	va_start(args, format);
+-	(void)vasprintf(&buffer, format, args);
+ 	va_end(args);
+ 
+ 	debug_print_line(func, file, line, buffer);

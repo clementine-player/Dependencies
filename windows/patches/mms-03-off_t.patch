@@ -1,0 +1,11 @@
+--- src/mmsio.h-old	2010-08-11 11:47:41.000000000 +0000
++++ src/mmsio.h	2010-08-11 11:47:21.000000000 +0000
+@@ -3,6 +3,8 @@
+ 
+ #include "mms_config.h"
+ 
++#include <sys/types.h>
++
+ /* On 64 bit file offset capable systems, libmms' configure script adds
+    -D_FILE_OFFSET_BITS=64 to the CFLAGS. This causes off_t to be 64 bit,
+    When an app which includes this header file gets compiled without

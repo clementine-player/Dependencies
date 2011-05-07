@@ -1,0 +1,11 @@
+--- Modules/FindUSB.cmake-old	2010-07-26 00:07:46.272134474 +0100
++++ Modules/FindUSB.cmake	2010-07-26 00:07:50.586898029 +0100
+@@ -20,7 +20,7 @@
+ 
+ # Finally the library itself
+ find_library(USB_LIBRARY
+-  NAMES usb-1.0
++  NAMES usb-1.0 usb
+   PATHS ${USB_PKGCONF_LIBRARY_DIRS}
+ )
+ 
