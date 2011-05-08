@@ -71,7 +71,6 @@ clementine_dlls=QtCore4.dll \
                 libplist.dll \
                 libpng14-14.dll \
                 libprotobuf-lite-7.dll \
-                libpython2.7.dll \
                 libsoup-2.4-1.dll \
                 libspeex-1.dll \
                 libspotify.dll \
@@ -82,6 +81,7 @@ clementine_dlls=QtCore4.dll \
                 libvorbisenc-2.dll \
                 libxml2-2.dll \
                 pthreadGC2.dll \
+                python27.dll \
                 zlib1.dll
 clementine_gst_plugins=libgstapetag.dll \
                        libgstasf.dll \
@@ -105,6 +105,7 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstmad.dll \
                        libgstmms.dll \
                        libgstmpegaudioparse.dll \
+                       libgstmusepack.dll \
                        libgstofa.dll \
                        libgstogg.dll \
                        libgstqtdemux.dll \
@@ -118,10 +119,11 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstudp.dll \
                        libgstvolume.dll \
                        libgstvorbis.dll \
+                       libgstwavpack.dll \
                        libgstwavparse.dll
 clementine_imageformats=qgif4.dll \
                         qjpeg4.dll
-dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll
+dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll -not -name python27.dll
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
@@ -162,14 +164,13 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	for f in $(clementine_imageformats); do \
 		cp -v $(prefix)/plugins/imageformats/$$f clementine-deps/imageformats || exit 1; \
 	done
-	cp -vr $(src)/mingwm10.dll $(src)/nsisplugins $(pythonzip) clementine-deps/
+	cp -vr $(src)/mingwm10.dll $(src)/nsisplugins clementine-deps/
 	cp -vr /usr/lib/gcc/$(host)/*/libgcc_sjlj_1.dll clementine-deps/
 	for f in `find clementine-deps/ -name '*.dll' $(dont_strip)`; do \
 		i586-mingw32msvc-strip -v $$f; \
 	done
-	cp -vrL $(prefix)/pyd/* clementine-deps/
-	cp -vrL $(prefix)/share/python2.7/dist-packages/PyQt4/*.py clementine-deps/PyQt4/
-	cp -vrL $(prefix)/share/python2.7/dist-packages/PyQt4/uic clementine-deps/PyQt4/
+	cp -vrL $(prefix)/DLLs clementine-deps/
+	cp -vrL $(prefix)/Python27.zip clementine-deps/
 
 
 # The actual commands for compiling each package follow
@@ -245,13 +246,39 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-vorbis: .done-ogg
 	$(call extractandbuild,$(vorbistgz),$(vorbis))
 
-.done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-libsoup .done-directx
+.done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-libsoup .done-directx .done-wavpack
 	$(call extractpkg,$(gstgoodtgz))
 	cd $(gstgood) && patch -p0 < ../patches/gst-plugins-good-01-directsound.patch
 	cd $(gstgood) && $(configure) --disable-shout2 --disable-examples --disable-x 
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstgood)/libtool
 	cd $(gstgood) && $(make)
 	$(call installpkg,$(gstgood))
+
+.done-libmpcdec:
+	$(call extractpkg,$(mpcdectgz))
+	cd $(mpcdec) && \
+		CFLAGS="-fno-common" \
+		CXXFLAGS="-fno-common" \
+		LDFLAGS="-Wl,-no-undefined" \
+			$(configure) ac_cv_func_memcmp_working=yes
+	cd $(mpcdec) && $(make)
+	rm -rf $(stow)/$(mpcdec)
+	cd $(mpcdec) && make install DESTDIR=$(stow)/$(mpcdec)
+	mv -fv $(stow)/$(mpcdec)$(prefix)/* $(stow)/$(mpcdec)/
+	cp $(mpcdec)/include/mpcdec/config_win32.h $(stow)/$(mpcdec)/include/mpcdec/
+	cd $(stow) && stow -R $(mpcdec)
+	touch $(work)/$@
+
+.done-wavpack:
+	$(call extractpkg,$(wavpacktgz))
+	cd $(wavpack) && \
+		CPPFLAGS="-D__MSVCRT_VERSION__=0x0601" \
+		CFLAGS="-fno-common" \
+		CXXFLAGS="-fno-common" \
+		LDFLAGS="-Wl,-no-undefined" \
+			$(configure)
+	cd $(wavpack) && $(make)
+	$(call installpkg,$(wavpack))
 
 .done-flac:
 	$(call extractpkg,$(flactgz))
@@ -346,10 +373,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-lame:
 	$(call extractandbuild,$(lametgz),$(lame))
 
-.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-ofa
+.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-ofa .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && patch -p0 < ../patches/gst-plugins-bad-01-librfb-winsock.patch
-	cd $(gstbad) && LDFLAGS="-L$(prefix)/bin" $(configure) --disable-acm --disable-examples --disable-x 
+	cd $(gstbad) && LDFLAGS="-L$(prefix)/bin" $(configure) --disable-acm --disable-examples --disable-x
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstbad)/libtool
 	cd $(gstbad) && $(make)
 	$(call installpkg,$(gstbad))
@@ -537,155 +564,61 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(stow) && stow -R $(qtsparkle)
 	touch $@
 
-.done-python: .done-dlfcn .done-gtk
-	$(call extractpkg,$(pythontgz))
-	$(call extractpkg,$(pythoncmaketgz))
-	cp -rfv $(pythoncmake)/* $(python)/
-	-mkdir $(python)/cmake-target $(python)/cmake-host
+.done-python:
+	-rm -rf $(pythonwin32)
+	unzip -o $(pythonwin32zip)
 
-	# Do the host build first
-	cd $(python)/cmake-host && cmake .. \
-		-DCMAKE_BUILD_TYPE=Release \
-		-DCMAKE_INSTALL_PREFIX=$(src)/$(python)/cmake-host-root
-	cd $(python)/cmake-host && $(make)
-	cd $(python)/cmake-host && make install
+	# Compile python libraries
+	mv $(pythonwin32)/Lib/site-packages/* $(pythonwin32)/Lib/
+	cd $(pythonwin32) && wine python.exe -m compileall -f Lib || true
 
-	# Now do the target build
-	cd $(python) && patch -p0 < cmake/patches-win32/01-dynload_win.patch
-	cd $(python) && patch -p0 < cmake/patches-win32/02-signalmodule.patch
-	cd $(python) && patch -p0 < cmake/patches-win32/03-mingw32.patch
-	cd $(python) && patch -p0 < cmake/patches-win32/04-uninitialised-flags.patch
-	cd $(python) && patch -p1 < cmake/patches-win32/05-libffi-latest.patch
-	cd $(python)/cmake-target && $(cmake) \
-		-DCMAKE_BUILD_TYPE=Release \
-		-DBUILTIN_ZLIB=ON \
-		-DENABLE_AUDIOOP=OFF -DENABLE_CRYPT=OFF \
-		-DENABLE_CTYPES_TEST=OFF -DENABLE_TESTCAPI=OFF \
-		-DENABLE_SQLITE3=OFF -DENABLE_CODECS_JP=OFF -DENABLE_CPICKLE=OFF \
-		-DENABLE_CODECS_HK=OFF -DENABLE_CODECS_CN=OFF -DENABLE_PARSER=OFF \
-		-DENABLE_CODECS_KR=OFF -DENABLE_CODECS_TW=OFF -DENABLE_MMAP=OFF \
-		-DENABLE_MULTIPROCESSING=OFF -DENABLE_HOTSHOT=OFF \
-		-DENABLE_LSPROF=OFF \
-		-DENABLE_STATIC=OFF -DENABLE_SHARED=ON
-	cd $(python)/cmake-target && $(make)
-	rm -rf $(stow)/$(python)
-	cd $(python)/cmake-target && make install DESTDIR=$(stow)/$(python)
-	cd $(python)/cmake-target && mv -fv $(stow)/$(python)$(prefix)/* $(stow)/$(python)
+	# Move sip and pyqt out of site-packages
+	mkdir $(pythonwin32)/DLLs/PyQt4
+	mv $(pythonwin32)/Lib/PyQt4/*.pyc $(pythonwin32)/DLLs/PyQt4/
+	mv $(pythonwin32)/Lib/PyQt4/*.pyd $(pythonwin32)/DLLs/PyQt4/
+	mv $(pythonwin32)/Lib/PyQt4/uic   $(pythonwin32)/DLLs/PyQt4/
+	find $(pythonwin32)/DLLs -name '*.py' -delete
+	mv $(pythonwin32)/Lib/sip.pyd $(pythonwin32)/DLLs/
+	mkdir -p $(pythonwin32)/share/sip
+	mv $(pythonwin32)/sip/PyQt4 $(pythonwin32)/share/sip/
 
-	# Compile all the python source
-	$(src)/$(python)/cmake-host-root/bin/python \
-		$(src)/$(python)/cmake-host-root/lib/python2.7/compileall.py \
-		$(stow)/$(python)/lib/python2.7 || true 
-
-	# Add the compiled python to a .zip
-	-rm $(pythonzip)
-	cd $(stow)/$(python)/lib/python2.7 && \
+	# Make a zip with all the pyc files
+	cd $(pythonwin32)/Lib && \
 		find -name test -prune \
 		 -or -name distutils -prune \
 		 -or -name idlelib -prune \
 		 -or -name lib2to3 -prune \
 		 -or -name lib-tk -prune \
 		 -or -name pydoc_data -prune \
+		 -or -name PyQt4 -prune \
 		 -or -not -name '*.py' \
 		     -not -name pydoc.pyc \
-		     -not -name doctest.pyc | zip $(pythonzip) -@
+		     -not -name doctest.pyc | zip ../Python27.zip -@
+	cd $(pythonwin32)/Lib && zip ../Python27.zip os.py
 
-	# Add os.py as well because python looks for it explicitly
-	cd $(stow)/$(python)/lib/python2.7 && \
-		zip $(pythonzip) os.py
+	# Rearrange directory structure to be more unixey
+	mkdir $(pythonwin32)/bin
+	mkdir $(pythonwin32)/lib
+	mv $(pythonwin32)/python27.dll $(pythonwin32)/bin/
+	mv $(pythonwin32)/libs/* $(pythonwin32)/lib/
+	rmdir $(pythonwin32)/libs
+	rm $(pythonwin32)/*.exe
+	rm $(pythonwin32)/*.txt
+	rm -rf $(pythonwin32)/Lib
 
-	cd $(stow) && stow -R $(python)
-	
+	-rm -rf $(stow)/$(pythonwin32)
+	cp -r $(pythonwin32) $(stow)
+	cd $(stow) && stow $(pythonwin32)
 	touch $@
 
 .done-sip: .done-python
 	$(call extractpkg,$(siptgz))
-	cd $(sip) && python configure.py --platform win32-g++ \
-		CFLAGS+=-DPy_NO_ENABLE_SHARED CXXFLAGS+=-DPy_NO_ENABLE_SHARED \
-		LFLAGS+=/target/bin/libpython2.7.dll
-	sed -i 's/^AR = ar/AR = $(host)-ar/' $(sip)/siplib/Makefile
-	sed -i 's/^CC = gcc/CC = $(host)-gcc/' $(sip)/siplib/Makefile
-	sed -i 's/^CXX = g++/CXX = $(host)-g++/' $(sip)/siplib/Makefile
-	sed -i 's/^LINK = g++/LINK = $(host)-g++/' $(sip)/siplib/Makefile
-	sed -i 's/-I\/usr\/include\/python[^ ]*/-I\/target\/include\/python2.7/' $(sip)/siplib/Makefile
-	sed -i 's/del /rm -f /' $(sip)/siplib/Makefile
-	sed -i 's/^TARGET = sip\.so/TARGET = sip\.dll/' $(sip)/siplib/Makefile
-	cd $(sip)/siplib && $(make)
-	rm -rf $(stow)/$(sip)
-	mkdir -p $(stow)/$(sip)/pyd
-	mkdir -p $(stow)/$(sip)/include
-	cp $(sip)/siplib/sip.dll $(stow)/$(sip)/pyd/sip.pyd
-	cp $(sip)/siplib/sip.h $(stow)/$(sip)/include/
-
 	cd $(sip) && python configure.py --bindir /bin \
 		LFLAGS+=-m32 CFLAGS+=-m32 CXXFLAGS+=-m32
 	cd $(sip)/sipgen && $(make)
+	rm -rf $(stow)/$(sip)
 	cd $(sip)/sipgen && make install DESTDIR=$(stow)/$(sip)
-
-	cd $(sip) && python configure.py \
-		--bindir $(prefix)/bin \
-		--destdir $(prefix)/share/python2.7/dist-packages \
-		--incdir $(prefix)/include \
-		--sipdir $(prefix)/share/sip
-	rm $(sip)/sipconfig.pyc
-
 	cd $(stow) && stow -R $(sip)
-	touch $@
-
-.done-pyqt: .done-sip
-	$(call extractpkg,$(pyqttgz))
-	sed -i 's/WS_X11/WS_WIN/g' $(pyqt)/configure.py
-	sed -i 's/out << QT_VERSION/out << 0x040701/' $(pyqt)/configure.py
-	sed -i 's/check_module("QtGui.*/pyqt_modules.append("QtGui")/' $(pyqt)/configure.py
-	
-	cd $(pyqt) && PYTHONPATH=../$(sip) python configure.py -w \
-		--no-docstrings --confirm-license --no-designer-plugin \
-		--enable=QtCore --enable=QtGui --enable=QtNetwork \
-		--destdir /share/python2.7/dist-packages \
-		--bindir /bin \
-		--sipdir /share/sip \
-		LFLAGS+=-m32 CFLAGS+="-m32 -DPy_NO_ENABLE_SHARED" \
-		             CXXFLAGS+="-m32 -DPy_NO_ENABLE_SHARED"
-
-	# Bodge bodge bodge
-	for f in qpy QtCore QtGui QtNetwork Qt pyuic qpy/QtCore qpy/QtGui; do \
-		sed -i 's/^AR *= ar/AR = $(host)-ar/' $(pyqt)/$$f/Makefile; \
-		sed -i 's/^CC *= gcc/CC = $(host)-gcc/' $(pyqt)/$$f/Makefile; \
-		sed -i 's/^CXX *= g++/CXX = $(host)-g++/' $(pyqt)/$$f/Makefile; \
-		sed -i 's/^LINK *= g++/LINK = $(host)-g++/' $(pyqt)/$$f/Makefile; \
-		sed -i 's/-I\/usr\/include\/python[^ ]*/-I\/target\/include\/python2.7/' $(pyqt)/$$f/Makefile; \
-		sed -i 's/-I\/usr\/mkspecs\/linux-g..//' $(pyqt)/$$f/Makefile; \
-		sed -i 's/-I\/usr\/include\/qt4/-I\/target\/include/g' $(pyqt)/$$f/Makefile; \
-		sed -i 's/\/usr\/lib/-I\/target\/lib/g' $(pyqt)/$$f/Makefile; \
-		sed -i 's/^TARGET = Qt\(.*\)\.so$$/TARGET = Qt\1.dll/' $(pyqt)/$$f/Makefile; \
-	done
-
-	# Shared library bodging
-	sed -i 's/-lQtCore -lpthread/-lQtCore4 \/target\/bin\/libpython2.7.dll/g' $(pyqt)/QtCore/Makefile
-	sed -i 's/-lQtGui -lQtCore -lXext -lX11 -lm -lpthread/-lQtGui4 -lQtCore4 -lm \/target\/bin\/libpython2.7.dll/g' $(pyqt)/QtGui/Makefile
-	sed -i 's/-lQtNetwork -lQtCore -lpthread/-lQtNetwork4 -lQtCore4 \/target\/bin\/libpython2.7.dll/g' $(pyqt)/QtNetwork/Makefile
-	sed -i 's/^LIBS =/LIBS = \/target\/bin\/libpython2.7.dll/' $(pyqt)/Qt/Makefile
-
-	for f in QtCore QtGui; do \
-		sed -i 's/^CFLAGS *=/CFLAGS = -m32 -DPy_NO_ENABLE_SHARED /' $(pyqt)/qpy/$$f/Makefile; \
-		sed -i 's/^CXXFLAGS *=/CXXFLAGS = -m32 -DPy_NO_ENABLE_SHARED /' $(pyqt)/qpy/$$f/Makefile; \
-		sed -i 's/^QMAKE *=.*/QMAKE = echo /' $(pyqt)/qpy/$$f/Makefile; \
-	done
-
-	# FFFFFFFUUUUUUUUUUUU
-	sed -i 's/^CXXFLAGS *=/CXXFLAGS = -fno-strict-aliasing /' $(pyqt)/qpy/QtGui/Makefile;
-
-	cd $(pyqt) && $(make)
-	cd $(pyqt) && make install DESTDIR=$(stow)/$(pyqt)
-
-	# Add the python to the .zip
-	-mkdir -p $(stow)/$(pyqt)/pyd/PyQt4
-	for f in $(stow)/$(pyqt)/share/python2.7/dist-packages/PyQt4/*.dll; do \
-		b=`basename $$f .dll`; \
-		mv $$f $(stow)/$(pyqt)/pyd/PyQt4/$$b.pyd; \
-	done
-	
-	cd $(stow) && stow -R $(pyqt)
 	touch $@
 
 .done-ofa: .done-curl .done-fftw
