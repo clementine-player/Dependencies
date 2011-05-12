@@ -9,6 +9,8 @@ stow=$(prefix)/stow
 
 include ../makefile.common
 
+pyqt=PyQt-mac-gpl-4.8.4
+
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(prefix)/lib/pkgconfig
@@ -207,7 +209,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-pyqt: .done-sip
 	$(call extractpkg,$(pyqttgz))
-	cd $(pyqt) && $(configurepy) LFLAGS+=-m32 CFLAGS+=-m32 CXXFLAGS+=-m32 \
+	cd $(pyqt) && PYTHONPATH=$(prefix)/lib/python2.6/site-packages $(configurepy) LFLAGS+=-m32 CFLAGS+=-m32 CXXFLAGS+=-m32 \
 		--confirm-license \
 		--use-arch i386 \
 		--no-designer-plugin
