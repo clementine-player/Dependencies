@@ -15,7 +15,7 @@ pyqt=PyQt-mac-gpl-4.8.4
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(prefix)/lib/pkgconfig
 cflags=-m32 -I$(prefix)/include
-ldflags=-m32 -L$(prefix)/lib -headerpad_max_install_names
+ldflags=-m32 -L$(prefix)/lib -Wl,-headerpad_max_install_names
 flagsm32=CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
 path=PATH=$(prefix)/bin:$$PATH
 configure=$(pkgconfig) $(flagsm32) $(path) ./configure --prefix=$(prefix)
