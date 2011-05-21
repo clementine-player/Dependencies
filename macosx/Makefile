@@ -9,8 +9,6 @@ stow=$(prefix)/stow
 
 include ../makefile.common
 
-pyqt=PyQt-mac-gpl-4.8.4
-
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(prefix)/lib/pkgconfig
@@ -19,10 +17,6 @@ ldflags=-m32 -L$(prefix)/lib -Wl,-headerpad_max_install_names
 flagsm32=CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
 path=PATH=$(prefix)/bin:$$PATH
 configure=$(pkgconfig) $(flagsm32) $(path) ./configure --prefix=$(prefix)
-configurepy=python configure.py \
-	--bindir $(prefix)/bin \
-	--destdir $(prefix)/lib/python2.6/site-packages \
-	--sipdir $(prefix)/share/sip
 cmake=$(pkgconfig) cmake .. \
 	-DCMAKE_OSX_ARCHITECTURES=i386 \
 	-DCMAKE_INSTALL_PREFIX=$(prefix) \
@@ -53,7 +47,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 # Top-level targets
 clementine-build-deps: boost liblastfm taglib libimobiledevice libmtp \
-                       libgpod pyqt gstreamer glew \
+                       libgpod gstreamer glew \
                        libarchive protobuf spotify
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
@@ -200,21 +194,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-python:
 	$(call extractandbuild,$(pythontgz),$(python))
-
-.done-sip:
-	$(call extractpkg,$(siptgz))
-	cd $(sip) && $(configurepy) --arch i386 --incdir $(prefix)/include
-	cd $(sip) && $(make)
-	$(call installpkg,$(sip))
-
-.done-pyqt: .done-sip
-	$(call extractpkg,$(pyqttgz))
-	cd $(pyqt) && PYTHONPATH=$(prefix)/lib/python2.6/site-packages $(configurepy) LFLAGS+=-m32 CFLAGS+=-m32 CXXFLAGS+=-m32 \
-		--confirm-license \
-		--use-arch i386 \
-		--no-designer-plugin
-	cd $(pyqt) && $(make)
-	$(call installpkg,$(pyqt))
 
 .done-ofa: .done-curl .done-fftw
 	$(call extractpkg,$(ofatgz))

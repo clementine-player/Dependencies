@@ -145,7 +145,7 @@ extractandbuild=$(call extractpkg,$(1)) && $(call buildpkg,$(2)) && $(call insta
 
 # Top-level targets
 clementine-build-deps: dlfcn boost liblastfm qt taglib libimobiledevice gtk \
-                       libgpod pyqt glew gstreamer win7sdk wmdm qtsparkle \
+                       libgpod glew gstreamer win7sdk wmdm qtsparkle \
                        libarchive protobuf spotify
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
@@ -572,16 +572,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	mv $(pythonwin32)/Lib/site-packages/* $(pythonwin32)/Lib/
 	cd $(pythonwin32) && wine python.exe -m compileall -f Lib || true
 
-	# Move sip and pyqt out of site-packages
-	mkdir $(pythonwin32)/DLLs/PyQt4
-	mv $(pythonwin32)/Lib/PyQt4/*.pyc $(pythonwin32)/DLLs/PyQt4/
-	mv $(pythonwin32)/Lib/PyQt4/*.pyd $(pythonwin32)/DLLs/PyQt4/
-	mv $(pythonwin32)/Lib/PyQt4/uic   $(pythonwin32)/DLLs/PyQt4/
-	find $(pythonwin32)/DLLs -name '*.py' -delete
-	mv $(pythonwin32)/Lib/sip.pyd $(pythonwin32)/DLLs/
-	mkdir -p $(pythonwin32)/share/sip
-	mv $(pythonwin32)/sip/PyQt4 $(pythonwin32)/share/sip/
-
 	# Make a zip with all the pyc files
 	cd $(pythonwin32)/Lib && \
 		find -name test -prune \
@@ -590,7 +580,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		 -or -name lib2to3 -prune \
 		 -or -name lib-tk -prune \
 		 -or -name pydoc_data -prune \
-		 -or -name PyQt4 -prune \
 		 -or -not -name '*.py' \
 		     -not -name pydoc.pyc \
 		     -not -name doctest.pyc | zip ../Python27.zip -@
@@ -609,16 +598,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	-rm -rf $(stow)/$(pythonwin32)
 	cp -r $(pythonwin32) $(stow)
 	cd $(stow) && stow $(pythonwin32)
-	touch $@
-
-.done-sip: .done-python
-	$(call extractpkg,$(siptgz))
-	cd $(sip) && python configure.py --bindir /bin \
-		LFLAGS+=-m32 CFLAGS+=-m32 CXXFLAGS+=-m32
-	cd $(sip)/sipgen && $(make)
-	rm -rf $(stow)/$(sip)
-	cd $(sip)/sipgen && make install DESTDIR=$(stow)/$(sip)
-	cd $(stow) && stow -R $(sip)
 	touch $@
 
 .done-ofa: .done-curl .done-fftw

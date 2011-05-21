@@ -1,7 +1,6 @@
-Setup:
-  Fresh Ubuntu 10.04 32-bit minimal install
-  Checkout into /src
-  ln -s /usr/i586-mingw32msvc /target
-  sudo apt-get install \
-    mingw32 cmake build-essential flex bison libglib2.0-dev unzip stow \
-    pkg-config libtool intltool wine libqt4-dev qt4-dev-tools
+This directory contains all of Clementine's dependencies as well as Makefiles
+to build them from source for Windows and Mac OS X.
+
+Instructions are on Clementine's wiki:
+  http://code.google.com/p/clementine-player/wiki/CompilingFromSourceMac
+  http://code.google.com/p/clementine-player/wiki/CompilingFromSourceWindows
