@@ -37,6 +37,7 @@ installpkgcmake=rm -rf $(stow)/$(1) && \
 	cd $(1)/build && \
 	make install DESTDIR=$(stow)/$(1) && \
 	mv -fv $(stow)/$(1)$(prefix)/* $(stow)/$(1)/ && \
+	rm -fv $(stow)/$(1)/share/info/dir ; \
 	cd $(stow) && \
 	stow -R $(1) && \
 	touch $(work)/$@
