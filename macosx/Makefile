@@ -199,7 +199,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(ofatgz))
 	cd $(ofa) && patch -p0 < ../patches/libofa-01-framework-accelerate.patch
 	cd $(ofa) && autoreconf
-	$(call buildpkg,$(ofa))
+	cd $(ofa) && $(configure)
+	perl -i -pe 's/(^ECHO.*)/$$1\necho=\$$ECHO/' $(ofa)/libtool
+	cd $(ofa) && $(make)
 	$(call installpkg,$(ofa))
 
 .done-curl:
