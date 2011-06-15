@@ -28,6 +28,7 @@ clementine_dlls=QtCore4.dll \
                 glew32.dll \
                 intl.dll \
                 libarchive.dll \
+                libcdio-12.dll \
                 libexpat-1.dll \
                 libfaac.dll \
                 libfaad.dll \
@@ -44,6 +45,7 @@ clementine_dlls=QtCore4.dll \
                 libgpg-error-0.dll \
                 libgstaudio-0.10-0.dll \
                 libgstbase-0.10-0.dll \
+                libgstcdda-0.10-0.dll \
                 libgstcontroller-0.10-0.dll \
                 libgstfft-0.10-0.dll \
                 libgstinterfaces-0.10-0.dll \
@@ -90,6 +92,7 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstaudioresample.dll \
                        libgstaudiotestsrc.dll \
                        libgstautodetect.dll \
+                       libgstcdio.dll \
                        libgstcoreelements.dll \
                        libgstdecodebin2.dll \
                        libgstdirectsoundsink.dll \
@@ -320,7 +323,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(stow) && stow -R $(directx)
 	touch $@
 
-.done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame
+.done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
 	$(call extractpkg,$(gstuglytgz))
 	cd $(gstugly) && LDFLAGS="-L$(prefix)/bin" \
 	                 $(configure) --disable-examples --disable-x 
@@ -688,7 +691,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(cdio) && patch -p1 < ../patches/libcdio-01-issock-islnk.patch
 	cd $(cdio) && autoreconf
 	cd $(cdio) && $(configure) --disable-joliet \
-		--without-cd-drive --without-cd-info --without-cd-paranoia \
+		--without-cd-drive --without-cd-info \
 		--without-cdda-player --without-cd-read --without-iso-info \
 		--without-iso-read
 	cd $(cdio) && $(make)
