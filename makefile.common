@@ -1,6 +1,7 @@
 # Package version numbers
 archive=libarchive-2.8.4
 boost=boost-1.40
+cdio=libcdio-0.82
 curl=curl-7.21.4
 dlfcn=dlfcn-r19
 faac=faac-1.28
@@ -76,11 +77,12 @@ allpackages=$(boost) $(directx) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod)
             $(python) $(sip) $(pyqt) $(ofa) $(curl) $(fftw) $(archive) \
             $(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
             $(gcrypt) $(spotifymac) $(gstffmpeg) $(mtp) $(usblegacy) $(mpcdec) \
-            $(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(pythonwin32)
+            $(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(pythonwin32) $(cdio)
 
 # Package filenames
 archivetgz=$(src)/$(archive).tar.gz
 boosttgz=$(src)/$(boost).tar.bz2
+cdiotgz=$(src)/$(cdio).tar.gz
 curltgz=$(src)/$(curl).tar.gz
 directxtgz=$(src)/$(directx).tar.gz
 dlfcntgz=$(src)/dlfcn-win32-static-r19.tar.bz2
@@ -158,6 +160,7 @@ clean:
 	-rm $(pythonzip)
 
 boost: .done-boost
+cdio: .done-cdio
 curl: .done-curl
 directx: .done-directx
 dlfcn: .done-dlfcn

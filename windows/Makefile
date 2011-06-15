@@ -682,3 +682,19 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cp $(src)/libspotify.pc $(stow)/$(spotifywin32)/lib/pkgconfig
 	cd $(stow) && stow $(spotifywin32)
 	touch $@
+
+.done-cdio:
+	$(call extractpkg,$(cdiotgz))
+	cd $(cdio) && patch -p1 < ../patches/libcdio-01-issock-islnk.patch
+	cd $(cdio) && autoreconf
+	cd $(cdio) && $(configure) --disable-joliet \
+		--without-cd-drive --without-cd-info --without-cd-paranoia \
+		--without-cdda-player --without-cd-read --without-iso-info \
+		--without-iso-read
+	cd $(cdio) && $(make)
+	rm -rf $(stow)/$(cdio)
+	cd $(cdio) && make install DESTDIR=$(stow)/$(cdio)
+	mv -fv $(stow)/$(cdio)$(prefix)/* $(stow)/$(cdio)/
+	rm -rf $(stow)/$(cdio)/share/info
+	cd $(stow) && stow $(cdio)
+	touch $@
