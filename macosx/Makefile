@@ -115,7 +115,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-speex: .done-ogg
 	$(call extractandbuild,$(speextgz),$(speex))
 
-.done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame
+.done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
 	$(call extractpkg,$(gstuglytgz))
 	cd $(gstugly) && $(configure) --disable-examples --disable-x
 	cd $(gstugly) && $(make)
@@ -285,3 +285,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(glew) && make install GLEW_DEST=$(stow)/$(glew)
 	cd $(stow) && stow -R $(glew)
 	touch $(work)/$@
+
+.done-cdio:
+	$(call extractandbuild,$(cdiotgz),$(cdio))
