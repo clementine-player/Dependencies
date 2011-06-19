@@ -507,7 +507,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(stow) && stow $(tls)
 	touch $@
 
-.done-taglib:
+.done-taglib: .done-gtk
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
 	patch -d $(taglib) -p0 < patches/taglib-01-pkgconfig.patch
