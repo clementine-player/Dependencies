@@ -6,7 +6,7 @@ headers="aligned_storage archive array assert bind call_traits checked_delete
         circular_buffer config cstdint current_function detail exception functional
         get_pointer implicit_cast integer is_placeholder iterator limits mem_fn
         memory_order mpl multi_index next_prior noncopyable numeric operators
-        preprocessor ref scoped_ptr serialization shared_ptr smart_ptr
+        preprocessor ref scoped_ptr scope_exit serialization shared_ptr smart_ptr
         static_assert swap throw_exception tuple type type_traits utility version
         visit_each enable_shared_from_this scoped_array function"
 
