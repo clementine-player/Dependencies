@@ -207,9 +207,11 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-ofa: .done-curl .done-fftw
 	$(call extractpkg,$(ofatgz))
 	cd $(ofa) && patch -p0 < ../patches/libofa-01-framework-accelerate.patch
+	cd $(ofa) && patch -p0 < ../patches/libofa-02-ambiguous.patch
 	cd $(ofa) && autoreconf
 	cd $(ofa) && $(configure)
 	perl -i -pe 's/(^ECHO.*)/$$1\necho=\$$ECHO/' $(ofa)/libtool
+	perl -i -pe 's/(^echo.*)/$$1\nfunc_echo_all() {\n \$$ECHO "\$$*"\n }/' $(ofa)/libtool
 	cd $(ofa) && $(make)
 	$(call installpkg,$(ofa))
 
