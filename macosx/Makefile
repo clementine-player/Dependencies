@@ -166,7 +166,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkg,$(quicktime))
 
 .done-usbmuxd: .done-libplist .done-usb
-	$(call extractandbuildcmake,$(usbmuxdtgz),$(usbmuxd))
+	$(call extractpkg,$(usbmuxdtgz))
+	echo 'set(VERSION_TAG "1.0.6")' >> $(usbmuxd)/Modules/VersionTag.cmake
+	$(call buildpkgcmake,$(usbmuxd))
+	$(call installpkgcmake,$(usbmuxd))
 
 .done-usb:
 	$(call extractandbuild,$(usbtgz),$(usb))
