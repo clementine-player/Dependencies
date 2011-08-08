@@ -29,6 +29,7 @@ plist=libplist-1.3
 protobuf=protobuf-2.4.0a
 pyqt=PyQt-x11-gpl-4.8.3
 python=Python-2.7.1
+qjson=qjson-0.7.1
 qtsparkle=davidsansome-qtsparkle-e0fbcf7
 quicktime=libquicktime-1.1.5
 sip=sip-4.12.2
@@ -72,7 +73,7 @@ usblegacy=libusb-0.1.12
 allpackages=$(boost) $(directx) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
             $(gstbad) $(gstbase) $(gstgood) $(gst) $(gstugly) $(gtk) $(id3tag) \
             $(imob) $(lame) $(lastfm) $(mad) $(mmswin32) $(ogg) $(oil) $(orc) $(plist) \
-            $(pthreads) $(qt) $(quicktime) $(soup) $(speex) $(sqlite) $(taglib) \
+            $(pthreads) $(qjson) $(qt) $(quicktime) $(soup) $(speex) $(sqlite) $(taglib) \
             $(tls) $(usb) $(usbmuxd) $(vorbis) $(wpd) $(xml) $(qtsparkle) \
             $(python) $(sip) $(pyqt) $(ofa) $(curl) $(fftw) $(archive) \
             $(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
@@ -124,6 +125,7 @@ protobuftgz=$(src)/$(protobuf).tar.bz2
 pyqttgz=$(src)/$(pyqt).tar.gz
 pythontgz=$(src)/$(python).tar.bz2
 pythonwin32zip=$(src)/$(pythonwin32).zip
+qjsontgz=$(src)/$(qjson).tar.bz2
 qttgz=$(src)/$(qt).tar.bz2
 qtsparkletgz=$(src)/$(qtsparkle).tar.gz
 quicktimetgz=$(src)/$(quicktime).tar.gz
@@ -206,6 +208,7 @@ pthreads: .done-pthreads
 pyqt: .done-pyqt
 python: .done-python
 pythonwin32: .done-pythonwin32
+qjson: .done-qjson
 qt: .done-qt
 qtsparkle: .done-qtsparkle
 sip: .done-sip

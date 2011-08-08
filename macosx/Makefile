@@ -49,13 +49,16 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 # Top-level targets
 clementine-build-deps: boost liblastfm taglib libimobiledevice libmtp \
-                       libgpod gstreamer glew \
+                       libgpod gstreamer glew qjson \
                        libarchive protobuf spotify
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
 clementine-deps: clementine-build-deps clementine-gst-plugins
 
 # The actual commands for compiling each package follow
+
+.done-qjson:
+	$(call extractandbuildcmake,$(qjsontgz),$(qjson))
 
 .done-sqlite:
 	$(call extractandbuild,$(sqlitetgz),$(sqlite))
