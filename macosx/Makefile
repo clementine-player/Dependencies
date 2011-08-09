@@ -304,3 +304,4 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(cdio) && patch -p0 < ../patches/libcdio-02-headers.patch
 	cd $(cdio) && autoconf
 	$(call buildpkg,$(cdio))
+	$(call installpkg,$(cdio))
