@@ -299,4 +299,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	touch $(work)/$@
 
 .done-cdio:
-	$(call extractandbuild,$(cdiotgz),$(cdio))
+	$(call extractpkg,$(cdiotgz))
+	cd $(cdio) && patch -p0 < ../patches/libcdio-01-lion.patch
+	cd $(cdio) && patch -p0 < ../patches/libcdio-02-headers.patch
+	cd $(cdio) && autoconf
+	$(call buildpkg,$(cdio))

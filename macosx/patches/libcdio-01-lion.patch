@@ -1,0 +1,11 @@
+--- configure.ac	2011-08-09 19:55:09.000000000 +0200
++++ configure.ac.orig	2011-08-09 19:56:25.000000000 +0200
+@@ -350,7 +350,7 @@
+        ## AC_DEFINE([HAVE_AIX_CDROM], [1],
+        ##     [Define 1 if you have AIX CD-ROM support])
+        ;;
+-     darwin6*|darwin7*|darwin8*|darwin9*)
++     darwin6*|darwin7*|darwin8*|darwin9*|darwin10*|darwin11*)
+        AC_CHECK_HEADERS(IOKit/IOKitLib.h CoreFoundation/CFBase.h, 
+                         [have_iokit_h="yes"])
+        if test "x$have_iokit_h" = "xyes" ; then 

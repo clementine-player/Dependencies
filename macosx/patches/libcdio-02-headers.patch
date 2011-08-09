@@ -1,0 +1,20 @@
+--- lib/driver/osx.c.orig	2011-08-09 20:00:42.000000000 +0200
++++ lib/driver/osx.c	2011-08-09 20:02:17.000000000 +0200
+@@ -56,7 +56,7 @@
+ 
+ #include <mach/mach.h>
+ #include <Carbon/Carbon.h>
+-#include <IOKit/scsi-commands/SCSITaskLib.h>
++#include <IOKit/scsi/SCSITaskLib.h>
+ #include <IOKit/IOCFPlugIn.h>
+ #include <mach/mach_error.h>
+ 
+@@ -75,7 +75,7 @@
+ #include <CoreFoundation/CoreFoundation.h>
+ #include <IOKit/IOKitLib.h>
+ #include <IOKit/IOBSD.h>
+-#include <IOKit/scsi-commands/IOSCSIMultimediaCommandsDevice.h>
++#include <IOKit/scsi/IOSCSIMultimediaCommandsDevice.h>
+ #include <IOKit/storage/IOCDTypes.h>
+ #include <IOKit/storage/IODVDTypes.h>
+ #include <IOKit/storage/IOMedia.h>
