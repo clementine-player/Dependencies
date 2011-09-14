@@ -469,6 +469,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	patch -d $(usbmuxd) -p0 < patches/usbmuxd-02-errno.patch
 	patch -d $(usbmuxd) -p0 < patches/usbmuxd-03-pthreads.patch
 	patch -d $(usbmuxd) -p0 < patches/usbmuxd-04-notools.patch
+	echo 'set(VERSION_TAG "1.0.4")' >> $(usbmuxd)/Modules/VersionTag.cmake
 	cd $(usbmuxd)/build && $(cmake)
 	cd $(usbmuxd)/build && $(make)
 	rm -rf $(stow)/$(usbmuxd)
