@@ -184,7 +184,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		-DQT_HEADERS_DIR=$(prefix)/include/ \
 		-DQT_LIBRARY_DIR=$(prefix)/bin
 	cd $(qjson)/build && $(make)
-	sed -e 's/QtCore//' -i "" $(qjson)/build/QJson.pc
+	sed -e 's/QtCore//' -i $(qjson)/build/QJson.pc
 	rm -rf $(stow)/$(qjson)
 	cd $(qjson)/build && make install DESTDIR=$(stow)/$(qjson)
 	cd $(qjson)/build && mv -fv $(stow)/$(qjson)$(prefix)/* $(stow)/$(qjson)
