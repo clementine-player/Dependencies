@@ -73,6 +73,7 @@ clementine_dlls=QtCore4.dll \
                 libplist.dll \
                 libpng14-14.dll \
                 libprotobuf-lite-7.dll \
+                libqjson.dll \
                 libsoup-2.4-1.dll \
                 libspeex-1.dll \
                 libspotify.dll \
@@ -83,7 +84,6 @@ clementine_dlls=QtCore4.dll \
                 libvorbisenc-2.dll \
                 libxml2-2.dll \
                 pthreadGC2.dll \
-                python27.dll \
                 zlib1.dll
 clementine_gst_plugins=libgstapetag.dll \
                        libgstasf.dll \
