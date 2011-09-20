@@ -58,7 +58,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 # The actual commands for compiling each package follow
 
 .done-qjson:
-	$(call extractandbuildcmake,$(qjsontgz),$(qjson))
+	$(call extractpkg,$(qjsontgz))
+	$(call buildpkgcmake,$(qjson))
+	sed -e 's/QtCore//' -i "" $(qjson)/build/QJson.pc
+	$(call installpkgcmake,$(qjson))
 
 .done-sqlite:
 	$(call extractandbuild,$(sqlitetgz),$(sqlite))
