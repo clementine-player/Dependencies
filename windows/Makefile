@@ -172,7 +172,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	for f in `find clementine-deps/ -name '*.dll' $(dont_strip)`; do \
 		i586-mingw32msvc-strip -v $$f; \
 	done
-	cp -vrL $(prefix)/DLLs clementine-deps/
 
 
 # The actual commands for compiling each package follow
