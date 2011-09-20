@@ -179,7 +179,17 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 # The actual commands for compiling each package follow
 
 .done-qjson: .done-qt
-	$(call extractandbuild,$(qjsontgz),$(qjson))
+	$(call extractpkg,$(qjsontgz))
+	mkdir $(qjson)/build
+	cd $(qjson)/build && $(cmake) \
+		-DQT_HEADERS_DIR=$(prefix)/include/ \
+		-DQT_LIBRARY_DIR=$(prefix)/bin
+	cd $(qjson)/build && $(make)
+	rm -rf $(stow)/$(qjson)
+	cd $(qjson)/build && make install DESTDIR=$(stow)/$(qjson)
+	cd $(qjson)/build && mv -fv $(stow)/$(qjson)$(prefix)/* $(stow)/$(qjson)
+	cd $(stow) && stow -R $(qjson)
+	touch $@
 
 .done-gtk:
 	unzip -o -d $(stow)/$(gtk) $(gtkzip)
