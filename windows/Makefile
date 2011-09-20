@@ -126,7 +126,7 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstwavparse.dll
 clementine_imageformats=qgif4.dll \
                         qjpeg4.dll
-dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll -not -name python27.dll
+dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll -not -name
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
@@ -173,7 +173,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		i586-mingw32msvc-strip -v $$f; \
 	done
 	cp -vrL $(prefix)/DLLs clementine-deps/
-	cp -vrL $(prefix)/Python27.zip clementine-deps/
 
 
 # The actual commands for compiling each package follow
@@ -579,42 +578,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(qtsparkle)/build && make install DESTDIR=$(stow)/$(qtsparkle)
 	cd $(qtsparkle)/build && mv -fv $(stow)/$(qtsparkle)$(prefix)/* $(stow)/$(qtsparkle)
 	cd $(stow) && stow -R $(qtsparkle)
-	touch $@
-
-.done-python:
-	-rm -rf $(pythonwin32)
-	unzip -o $(pythonwin32zip)
-
-	# Compile python libraries
-	mv $(pythonwin32)/Lib/site-packages/* $(pythonwin32)/Lib/
-	cd $(pythonwin32) && wine python.exe -m compileall -f Lib || true
-
-	# Make a zip with all the pyc files
-	cd $(pythonwin32)/Lib && \
-		find -name test -prune \
-		 -or -name distutils -prune \
-		 -or -name idlelib -prune \
-		 -or -name lib2to3 -prune \
-		 -or -name lib-tk -prune \
-		 -or -name pydoc_data -prune \
-		 -or -not -name '*.py' \
-		     -not -name pydoc.pyc \
-		     -not -name doctest.pyc | zip ../Python27.zip -@
-	cd $(pythonwin32)/Lib && zip ../Python27.zip os.py
-
-	# Rearrange directory structure to be more unixey
-	mkdir $(pythonwin32)/bin
-	mkdir $(pythonwin32)/lib
-	mv $(pythonwin32)/python27.dll $(pythonwin32)/bin/
-	mv $(pythonwin32)/libs/* $(pythonwin32)/lib/
-	rmdir $(pythonwin32)/libs
-	rm $(pythonwin32)/*.exe
-	rm $(pythonwin32)/*.txt
-	rm -rf $(pythonwin32)/Lib
-
-	-rm -rf $(stow)/$(pythonwin32)
-	cp -r $(pythonwin32) $(stow)
-	cd $(stow) && stow $(pythonwin32)
 	touch $@
 
 .done-ofa: .done-curl .done-fftw
