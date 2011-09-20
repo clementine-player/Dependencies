@@ -1,0 +1,21 @@
+--- CMakeLists.txt.orig	2011-09-20 14:51:43.000000000 +0200
++++ CMakeLists.txt	2011-09-20 14:51:51.000000000 +0200
+@@ -51,13 +51,11 @@
+ set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib${LIB_SUFFIX}" )
+ 
+ # pkg-config
+-IF (NOT WIN32)
+-  CONFIGURE_FILE (${CMAKE_CURRENT_SOURCE_DIR}/QJson.pc.in
+-                  ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
+-                  @ONLY)
+-  INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
+-           DESTINATION lib${LIB_SUFFIX}/pkgconfig)
+-ENDIF (NOT WIN32)
++CONFIGURE_FILE (${CMAKE_CURRENT_SOURCE_DIR}/QJson.pc.in
++                ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
++                @ONLY)
++INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
++         DESTINATION lib${LIB_SUFFIX}/pkgconfig)
+ 
+ # Include the cmake file needed to use qt4
+ INCLUDE( ${QT_USE_FILE} )

@@ -178,6 +178,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-qjson: .done-qt
 	$(call extractpkg,$(qjsontgz))
+	cd $(qjson) && patch -p0 < ../patches/qjson-01-pkgconfig.patch
 	mkdir $(qjson)/build
 	cd $(qjson)/build && $(cmake) \
 		-DQT_HEADERS_DIR=$(prefix)/include/ \
