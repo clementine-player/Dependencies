@@ -48,6 +48,7 @@ directx=directx-headers-0.03
 glew=glew-1.5.5
 gtk=gtk+-bundle_2.20.0
 mmswin32=libmms-win32
+opensslwin32=openssl-win32-1.0.0e
 pthreads=pthreads-win32-2.8.0
 pythonwin32=Python27
 # When changing the Qt version remember to change the sed line in .done-pyqt
@@ -78,7 +79,8 @@ allpackages=$(boost) $(directx) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod)
             $(python) $(sip) $(pyqt) $(ofa) $(curl) $(fftw) $(archive) \
             $(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
             $(gcrypt) $(spotifymac) $(gstffmpeg) $(mtp) $(usblegacy) $(mpcdec) \
-            $(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(pythonwin32) $(cdio)
+            $(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(pythonwin32) $(cdio) \
+            $(opensslwin32)
 
 # Package filenames
 archivetgz=$(src)/$(archive).tar.gz
@@ -118,6 +120,7 @@ mtptgz=$(src)/$(mtp).tar.gz
 ofatgz=$(src)/$(ofa).tar.gz
 oggtgz=$(src)/$(ogg).tar.gz
 oiltgz=$(src)/$(oil).tar.gz
+opensslwin32zip=$(src)/$(opensslwin32).zip
 orctgz=$(src)/$(orc).tar.gz
 plisttgz=$(src)/$(plist).tar.gz
 pthreadstgz=$(src)/$(pthreads).tar.gz
@@ -202,6 +205,7 @@ libmtp: .done-libmtp
 ofa: .done-ofa
 ogg: .done-ogg
 oil: .done-oil
+openssl: .done-openssl
 orc: .done-orc
 protobuf: .done-protobuf
 pthreads: .done-pthreads

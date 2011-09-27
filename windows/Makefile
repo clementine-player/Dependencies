@@ -30,6 +30,7 @@ clementine_dlls=QtCore4.dll \
                 intl.dll \
                 libarchive.dll \
                 libcdio-12.dll \
+                libeay32.dll \
                 libexpat-1.dll \
                 libfaac.dll \
                 libfaad.dll \
@@ -84,6 +85,7 @@ clementine_dlls=QtCore4.dll \
                 libvorbis-0.dll \
                 libvorbisenc-2.dll \
                 libxml2-2.dll \
+                ssleay32.dll \
                 pthreadGC2.dll \
                 zlib1.dll
 clementine_gst_plugins=libgstapetag.dll \
@@ -154,7 +156,7 @@ clementine-build-deps: dlfcn boost liblastfm qt taglib libimobiledevice gtk \
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
 
-clementine-deps: clementine-build-deps clementine-gst-plugins
+clementine-deps: clementine-build-deps clementine-gst-plugins openssl
 	-rm -rf clementine-deps
 	mkdir -p clementine-deps/gstreamer-plugins
 	mkdir -p clementine-deps/imageformats
@@ -679,4 +681,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	mv -fv $(stow)/$(cdio)$(prefix)/* $(stow)/$(cdio)/
 	rm -rf $(stow)/$(cdio)/share/info
 	cd $(stow) && stow $(cdio)
+	touch $@
+
+.done-openssl:
+	-mkdir -p $(stow)/$(opensslwin32)/bin
+	unzip -o -d $(stow)/$(opensslwin32)/bin $(opensslwin32zip)
+	cd $(stow) && stow $(opensslwin32)
 	touch $@
