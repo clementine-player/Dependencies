@@ -21,6 +21,7 @@ clementine_dlls=QtCore4.dll \
                 QtNetwork4.dll \
                 QtOpenGL4.dll \
                 QtSql4.dll \
+                QtSvg4.dll \
                 QtXml4.dll \
                 avcodec-52.dll \
                 avformat-52.dll \
