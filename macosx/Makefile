@@ -243,7 +243,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractandbuild,$(protobuftgz),$(protobuf))
 
 .done-spotify:
-	$(call extractpkg,$(spotifymactgz))
+	tar -xvf $(spotifymactgz) -C $(stow)
 	rm -rf $(stow)/$(spotifymac)/doc
 	rm -rf $(stow)/$(spotifymac)/ChangeLog
 	rm -rf $(stow)/$(spotifymac)/LICENSE
