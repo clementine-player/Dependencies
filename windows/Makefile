@@ -78,7 +78,7 @@ clementine_dlls=QtCore4.dll \
                 libqjson.dll \
                 libsoup-2.4-1.dll \
                 libspeex-1.dll \
-                libspotify.dll \
+                spotify.dll \
                 libtag.dll \
                 libtasn1-3.dll \
                 libusbmuxd.dll \
@@ -129,7 +129,7 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstwavparse.dll
 clementine_imageformats=qgif4.dll \
                         qjpeg4.dll
-dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll
+dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name spotify.dll
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
@@ -655,14 +655,14 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl
 	$(call extractandbuild,$(protobuftgz),$(protobuf))
 
 .done-spotify:
-	unzip -o -d $(stow)/$(spotifywin32) $(spotifywin32zip)
+	unzip -o -d $(stow) $(spotifywin32zip)
 	rm -rf $(stow)/$(spotifywin32)/*.txt
 	rm -rf $(stow)/$(spotifywin32)/*.xhtml
 	rm -rf $(stow)/$(spotifywin32)/images
 	rm -rf $(stow)/$(spotifywin32)/examples
 	-mkdir $(stow)/$(spotifywin32)/bin
 	-mkdir -p $(stow)/$(spotifywin32)/lib/pkgconfig
-	mv -v $(stow)/$(spotifywin32)/lib/libspotify.dll $(stow)/$(spotifywin32)/bin/
+	mv -v $(stow)/$(spotifywin32)/lib/spotify.dll $(stow)/$(spotifywin32)/bin/
 	cp $(src)/libspotify.pc $(stow)/$(spotifywin32)/lib/pkgconfig
 	cd $(stow) && stow $(spotifywin32)
 	touch $@
