@@ -12,13 +12,13 @@ include ../makefile.common
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(prefix)/lib/pkgconfig
-cflags=-m32 -I$(prefix)/include
-ldflags=-m32 -L$(prefix)/lib -Wl,-headerpad_max_install_names
-flagsm32=CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
+cflags=-m64 -I$(prefix)/include
+ldflags=-m64 -L$(prefix)/lib -Wl,-headerpad_max_install_names
+flagsm64=CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
 path=PATH=$(prefix)/bin:$$PATH
-configure=$(pkgconfig) $(flagsm32) $(path) ./configure --prefix=$(prefix)
+configure=$(pkgconfig) $(flagsm64) $(path) ./configure --prefix=$(prefix) --build=x86_64-apple-darwin10.6.0
 cmake=$(pkgconfig) cmake .. \
-	-DCMAKE_OSX_ARCHITECTURES=i386 \
+	-DCMAKE_OSX_ARCHITECTURES=x86_64 \
 	-DCMAKE_INSTALL_PREFIX=$(prefix) \
 	-DQT_HEADERS_DIR=$(prefix)/include/ \
 	-DQT_LIBRARY_DIR=$(prefix)/bin
@@ -31,6 +31,7 @@ installpkg=rm -rf $(stow)/$(1) && \
 	make install DESTDIR=$(stow)/$(1) && \
 	mv -fv $(stow)/$(1)$(prefix)/* $(stow)/$(1)/ && \
 	rm -fv $(stow)/$(1)/share/info/dir ; \
+	rm -fv $(stow)/$(1)/lib/charset.alias ; \
 	cd $(stow) && \
 	stow -R $(1) && \
 	touch $(work)/$@
@@ -73,8 +74,15 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
-.done-glib: .done-gettext
-	$(call extractandbuild,$(glibtgz),$(glib))
+.done-libiconv:
+	$(call extractandbuild,$(libiconvtgz),$(libiconv))
+
+.done-glib: .done-gettext .done-libiconv
+	$(call extractpkg,$(glibtgz))
+	cd $(glib) && $(configure) --with-libiconv=gnu
+	cd $(glib) && $(make)
+	rm -fv
+	$(call installpkg,$(glib))
 
 .done-libplist: .done-glib
 	$(call extractpkg,$(plisttgz))
@@ -112,7 +120,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-wavpack .done-libsoup
 	$(call extractpkg,$(gstgoodtgz))
-	cd $(gstgood) && SOUP_CFLAGS=-I/target/include/libsoup-2.4 $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace
+	cd $(gstgood) && SOUP_CFLAGS=-I/target/include/libsoup-2.4 $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace --disable-osx_video --disable-aalib --disable-libdv --disable-libpng
 	cd $(gstgood) && $(make)
 	$(call installpkg,$(gstgood))
 
@@ -127,7 +135,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
 	$(call extractpkg,$(gstuglytgz))
-	cd $(gstugly) && $(configure) --disable-examples --disable-x
+	cd $(gstugly) && $(configure) --disable-examples --disable-x --disable-amrnb --disable-amrwb --enable-mad
 	cd $(gstugly) && $(make)
 	$(call installpkg,$(gstugly))
 
@@ -145,7 +153,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-ofa .done-libquicktime .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
-	cd $(gstbad) && $(configure) --disable-acm --disable-examples --disable-x
+	cd $(gstbad) && $(configure) --disable-acm --disable-examples --disable-x --disable-dirac --disable-jack --disable-cog --disable-modplug --disable-zbar
 	cd $(gstbad) && $(make)
 	$(call installpkg,$(gstbad))
 
@@ -188,7 +196,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gcrypt: .done-libgpgerror
 	$(call extractpkg,$(gcrypttgz))
-	cd $(gcrypt) && $(configure) --with-gpg-error-prefix=$(prefix)
+	cd $(gcrypt) && $(configure) --with-gpg-error-prefix=$(prefix) --disable-asm
 	cd $(gcrypt) && $(make)
 	$(call installpkg,$(gcrypt))
 
@@ -214,6 +222,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(ofatgz))
 	cd $(ofa) && patch -p0 < ../patches/libofa-01-framework-accelerate.patch
 	cd $(ofa) && patch -p0 < ../patches/libofa-02-ambiguous.patch
+	cd $(ofa) && patch -p0 < ../patches/libofa-03-vDSP.patch
 	cd $(ofa) && autoreconf
 	cd $(ofa) && $(configure)
 	perl -i -pe 's/(^ECHO.*)/$$1\necho=\$$ECHO/' $(ofa)/libtool
@@ -243,7 +252,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractandbuild,$(protobuftgz),$(protobuf))
 
 .done-spotify:
-	unzip -o $(spotifymactgz) -d $(stow)
+	unzip $(spotifymactgz) -d $(stow)
 	rm -rf $(stow)/$(spotifymac)/doc
 	rm -rf $(stow)/$(spotifymac)/ChangeLog
 	rm -rf $(stow)/$(spotifymac)/LICENSE
@@ -296,7 +305,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-glew:
 	$(call extractpkg,$(glewtgz))
-	cd $(glew) && $(make) CFLAGS.EXTRA=-m32 LDFLAGS.EXTRA=-m32 GLEW_DEST=$(stow)/$(glew)
+	cd $(glew) && $(make) CFLAGS.EXTRA=-m64 LDFLAGS.EXTRA=-m64 GLEW_DEST=$(stow)/$(glew)
 	cd $(glew) && make install GLEW_DEST=$(stow)/$(glew)
 	cd $(stow) && stow -R $(glew)
 	touch $(work)/$@
