@@ -51,7 +51,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 # Top-level targets
 clementine-build-deps: boost liblastfm taglib libimobiledevice libmtp \
                        libgpod gstreamer glew qjson \
-                       libarchive protobuf spotify
+                       protobuf spotify
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
 clementine-deps: clementine-build-deps clementine-gst-plugins
@@ -236,23 +236,11 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-fftw:
 	$(call extractandbuild,$(fftwtgz),$(fftw))
 
-.done-libarchive:
-	$(call extractpkg,$(archivetgz))
-	-mkdir $(archive)/build
-	cd $(archive)/build && $(cmake) \
-		-DENABLE_OPENSSL=OFF \
-		-DENABLE_TAR=OFF \
-		-DENABLE_CPIO=OFF \
-		-DENABLE_XATTR=OFF \
-		-DENABLE_ACL=OFF \
-		-DENABLE_TEST=OFF
-	$(call installpkgcmake,$(archive))
-
 .done-protobuf:
 	$(call extractandbuild,$(protobuftgz),$(protobuf))
 
 .done-spotify:
-	unzip $(spotifymactgz) -d $(stow)
+	unzip -o $(spotifymactgz) -d $(stow)
 	rm -rf $(stow)/$(spotifymac)/doc
 	rm -rf $(stow)/$(spotifymac)/ChangeLog
 	rm -rf $(stow)/$(spotifymac)/LICENSE
