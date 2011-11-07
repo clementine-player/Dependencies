@@ -105,7 +105,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis
 	$(call extractpkg,$(gstbasetgz))
-	cd $(gstbase) && $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm
+	cd $(gstbase) && $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm --disable-theora
 	cd $(gstbase) && $(make)
 	$(call installpkg,$(gstbase))
 
@@ -120,7 +120,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-wavpack .done-libsoup
 	$(call extractpkg,$(gstgoodtgz))
-	cd $(gstgood) && SOUP_CFLAGS=-I/target/include/libsoup-2.4 $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace --disable-osx_video --disable-aalib --disable-libdv --disable-libpng
+	cd $(gstgood) && SOUP_CFLAGS=-I/target/include/libsoup-2.4 $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace --disable-osx_video --disable-aalib --disable-libdv --disable-libpng --disable-cairo --disable-esd --disable-libcaca
 	cd $(gstgood) && $(make)
 	$(call installpkg,$(gstgood))
 
@@ -135,7 +135,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
 	$(call extractpkg,$(gstuglytgz))
-	cd $(gstugly) && $(configure) --disable-examples --disable-x --disable-amrnb --disable-amrwb --enable-mad
+	cd $(gstugly) && $(configure) --disable-examples --disable-x --disable-amrnb --disable-amrwb --enable-mad --disable-mpeg2dec
 	cd $(gstugly) && $(make)
 	$(call installpkg,$(gstugly))
 
