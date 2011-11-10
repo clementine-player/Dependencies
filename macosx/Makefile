@@ -67,7 +67,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-sqlite:
 	$(call extractandbuild,$(sqlitetgz),$(sqlite))
 
-.done-gettext:
+.done-gettext: .done-libiconv
 	$(call extractpkg,$(gettexttgz))
 	cd $(gettext) && patch -p0 < ../patches/gettext-01-stpncpy.patch
 	cd $(gettext) && patch -p0 < ../patches/gettext-02-examples.patch
