@@ -75,7 +75,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkg,$(gettext))
 
 .done-libiconv: .done-gettext
-	$(call extractandbuild,$(libiconvtgz),$(libiconv))
+	$(call extractpkg,$(libiconvtgz))
+	cd $(libiconv) && patch -p1 < ../patches/libiconv-01-libtool.patch
+	$(call buildpkg,$(libiconv))
+	$(call installpkg,$(libiconv))
 
 .done-glib: .done-gettext .done-libiconv
 	$(call extractpkg,$(glibtgz))
