@@ -104,6 +104,7 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstfaad.dll \
                        libgstffmpeg.dll \
                        libgstflac.dll \
+                       libgstgdp.dll \
                        libgstgio.dll \
                        libgsticydemux.dll \
                        libgstid3demux.dll \
