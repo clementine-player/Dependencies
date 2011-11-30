@@ -46,6 +46,7 @@ clementine_dlls=QtCore4.dll \
                 libgobject-2.0-0.dll \
                 libgpg-error-0.dll \
                 libgstaudio-0.10-0.dll \
+                libgstapp-0.10-0.dll \
                 libgstbase-0.10-0.dll \
                 libgstcdda-0.10-0.dll \
                 libgstcontroller-0.10-0.dll \
@@ -89,6 +90,7 @@ clementine_dlls=QtCore4.dll \
                 pthreadGC2.dll \
                 zlib1.dll
 clementine_gst_plugins=libgstapetag.dll \
+                       libgstapp.dll \
                        libgstasf.dll \
                        libgstaudioconvert.dll \
                        libgstaudiofx.dll \
