@@ -50,6 +50,7 @@ clementine_dlls=QtCore4.dll \
                 libgstbase-0.10-0.dll \
                 libgstcdda-0.10-0.dll \
                 libgstcontroller-0.10-0.dll \
+                libgstdataprotocol-0.10-0.dll \
                 libgstfft-0.10-0.dll \
                 libgstinterfaces-0.10-0.dll \
                 libgstnet-0.10-0.dll \
