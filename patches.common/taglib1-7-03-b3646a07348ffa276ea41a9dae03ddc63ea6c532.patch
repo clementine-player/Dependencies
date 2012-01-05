@@ -1,0 +1,51 @@
+From b3646a07348ffa276ea41a9dae03ddc63ea6c532 Mon Sep 17 00:00:00 2001
+From: Frank Lai <frank.franklai@gmail.com>
+Date: Thu, 9 Jun 2011 18:44:54 +0200
+Subject: [PATCH] Be more careful when parsing Vorbis Comments
+
+---
+ taglib/ogg/xiphcomment.cpp |   16 +++++++++++++---
+ 1 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/taglib/ogg/xiphcomment.cpp b/taglib/ogg/xiphcomment.cpp
+index 344d9cf..e7e8fa9 100644
+--- a/taglib/ogg/xiphcomment.cpp
++++ b/taglib/ogg/xiphcomment.cpp
+@@ -295,21 +295,31 @@ void Ogg::XiphComment::parse(const ByteVector &data)
+ 
+   // Next the number of fields in the comment vector.
+ 
+-  int commentFields = data.mid(pos, 4).toUInt(false);
++  uint commentFields = data.mid(pos, 4).toUInt(false);
+   pos += 4;
+ 
+-  for(int i = 0; i < commentFields; i++) {
++  if(commentFields > (data.size() - 8) / 4) {
++    return;
++  }
++
++  for(uint i = 0; i < commentFields; i++) {
+ 
+     // Each comment field is in the format "KEY=value" in a UTF8 string and has
+     // 4 bytes before the text starts that gives the length.
+ 
+-    int commentLength = data.mid(pos, 4).toUInt(false);
++    uint commentLength = data.mid(pos, 4).toUInt(false);
+     pos += 4;
+ 
+     String comment = String(data.mid(pos, commentLength), String::UTF8);
+     pos += commentLength;
++    if(pos > data.size()) {
++      break;
++    }
+ 
+     int commentSeparatorPosition = comment.find("=");
++    if(commentSeparatorPosition == -1) {
++      break;
++    }
+ 
+     String key = comment.substr(0, commentSeparatorPosition);
+     String value = comment.substr(commentSeparatorPosition + 1);
+-- 
+1.7.5.4
+
