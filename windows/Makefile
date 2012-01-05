@@ -533,6 +533,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
 	patch -d $(taglib) -p0 < patches/taglib-01-pkgconfig.patch
+	patch -d $(taglib) -p0 < patches/taglib-02-nominmax.patch
 	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON
 	cd $(taglib)/build && $(make)
 	rm -rf $(stow)/$(taglib)
