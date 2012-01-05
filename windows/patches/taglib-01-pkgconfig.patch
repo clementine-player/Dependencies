@@ -1,13 +1,21 @@
---- CMakeLists.txt-old	2011-11-27 19:12:23.290177834 +0000
-+++ CMakeLists.txt	2011-11-27 19:12:53.778744064 +0000
-@@ -69,10 +69,8 @@
+--- CMakeLists.txt-old	2010-08-07 19:20:50.063900575 +0100
++++ CMakeLists.txt	2010-08-07 19:21:01.084826412 +0100
+@@ -49,9 +49,7 @@
+ 
  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/taglib-config.cmake ${CMAKE_CURRENT_BINARY_DIR}/taglib-config )
- install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/taglib-config DESTINATION ${BIN_INSTALL_DIR})
  
--if(NOT WIN32 AND NOT BUILD_FRAMEWORK)
+-if(NOT WIN32)
    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/taglib.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/taglib.pc )
-   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/taglib.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
--endif()
- 
+-endif(NOT WIN32)
  include_directories(${CMAKE_CURRENT_BINARY_DIR})
- configure_file(config-taglib.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+ configure_file(config-taglib.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
+ 
+@@ -70,8 +68,6 @@
+ ADD_SUBDIRECTORY(examples)
+ 
+ ADD_SUBDIRECTORY(bindings)
+-if(NOT WIN32)
+   install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/taglib.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig )
+-endif(NOT WIN32)
+ 
+ INSTALL( PROGRAMS  ${CMAKE_CURRENT_BINARY_DIR}/taglib-config DESTINATION ${BIN_INSTALL_DIR})
