@@ -154,7 +154,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-lame:
 	$(call extractandbuild,$(lametgz),$(lame))
 
-.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-ofa .done-libquicktime .done-libmpcdec
+.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libquicktime .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && $(configure) --disable-acm --disable-examples --disable-x --disable-dirac --disable-jack --disable-cog --disable-modplug --disable-zbar
 	cd $(gstbad) && $(make)
@@ -225,18 +225,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-python:
 	$(call extractandbuild,$(pythontgz),$(python))
-
-.done-ofa: .done-curl .done-fftw
-	$(call extractpkg,$(ofatgz))
-	cd $(ofa) && patch -p0 < ../patches/libofa-01-framework-accelerate.patch
-	cd $(ofa) && patch -p0 < ../patches/libofa-02-ambiguous.patch
-	cd $(ofa) && patch -p0 < ../patches/libofa-03-vDSP.patch
-	cd $(ofa) && autoreconf
-	cd $(ofa) && $(configure)
-	perl -i -pe 's/(^ECHO.*)/$$1\necho=\$$ECHO/' $(ofa)/libtool
-	perl -i -pe 's/(^echo.*)/$$1\nfunc_echo_all() {\n \$$ECHO "\$$*"\n }/' $(ofa)/libtool
-	cd $(ofa) && $(make)
-	$(call installpkg,$(ofa))
 
 .done-curl:
 	$(call extractandbuild,$(curltgz),$(curl))

@@ -69,7 +69,6 @@ clementine_dlls=QtCore4.dll \
                 libmad.dll \
                 libmms-0.dll \
                 libmp3lame-0.dll \
-                libofa.dll \
                 libogg-0.dll \
                 liboil-0.3-0.dll \
                 liborc-0.4-0.dll \
@@ -116,7 +115,6 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstmms.dll \
                        libgstmpegaudioparse.dll \
                        libgstmusepack.dll \
-                       libgstofa.dll \
                        libgstogg.dll \
                        libgstqtdemux.dll \
                        libgstreplaygain.dll \
@@ -397,7 +395,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl
 .done-lame:
 	$(call extractandbuild,$(lametgz),$(lame))
 
-.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-ofa .done-libmpcdec
+.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && patch -p0 < ../patches/gst-plugins-bad-01-librfb-winsock.patch
 	cd $(gstbad) && LDFLAGS="-L$(prefix)/bin" $(configure) --disable-acm --disable-examples --disable-x
@@ -593,29 +591,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl
 	cd $(qtsparkle)/build && make install DESTDIR=$(stow)/$(qtsparkle)
 	cd $(qtsparkle)/build && mv -fv $(stow)/$(qtsparkle)$(prefix)/* $(stow)/$(qtsparkle)
 	cd $(stow) && stow -R $(qtsparkle)
-	touch $@
-
-.done-ofa: .done-curl .done-fftw
-	$(call extractpkg,$(ofatgz))
-	cd $(ofa) && patch -p0 < ../patches/libofa-01-math-utils.patch
-	cd $(ofa) && $(configure)
-	cd $(ofa) && cp config.h config_win32.h
-	cd $(ofa) && $(make)
-
-	# libtool is retarded and doesn't link this dll properly
-	cd $(ofa)/lib && /bin/bash ../libtool --mode=link i586-mingw32msvc-g++  \
-		-g -O2 -Wall -o libofa.dll --shared  fftlibw3_op.lo fft_op.lo \
-		frametracker_op.lo mainprint.lo signal_op.lo trackdata_op.lo \
-		trackframe_op.lo tracklist_op.lo AFLIB/libaflib.la -lm -lfftw3
-	
-	rm -rf $(stow)/$(ofa)
-	cd $(ofa) && make install DESTDIR=$(stow)/$(ofa)
-	mv -fv $(stow)/$(ofa)$(prefix)/* $(stow)/$(ofa)/
-	-mkdir $(stow)/$(ofa)/bin/
-	cp $(ofa)/lib/libofa.dll $(stow)/$(ofa)/bin/
-	rm -f $(stow)/$(ofa)/lib/libofa.*
-	sed -i.bak -e's/\/lib/\/bin/' $(stow)/$(ofa)/lib/pkgconfig/*.pc
-	cd $(stow) && stow -R $(ofa)
 	touch $@
 
 .done-curl:
