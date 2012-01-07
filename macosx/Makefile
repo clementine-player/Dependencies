@@ -51,7 +51,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 # Top-level targets
 clementine-build-deps: boost liblastfm taglib libimobiledevice libmtp \
                        libgpod gstreamer glew qjson \
-                       protobuf spotify
+                       protobuf spotify fftw
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
 clementine-deps: clementine-build-deps clementine-gst-plugins
