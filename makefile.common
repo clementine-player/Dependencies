@@ -47,7 +47,7 @@ directx=directx-headers-0.03
 glew=glew-1.5.5
 gtk=gtk+-bundle_2.20.0
 mmswin32=libmms-win32
-opensslwin32=openssl-win32-1.0.0e
+opensslwin32=openssl-win32-0.9.8s
 pthreads=pthreads-win32-2.8.0
 pythonwin32=Python27
 # When changing the Qt version remember to change the sed line in .done-pyqt

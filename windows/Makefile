@@ -80,6 +80,7 @@ clementine_dlls=QtCore4.dll \
                 libsoup-2.4-1.dll \
                 libspeex-1.dll \
                 libspotify.dll \
+                libssl32.dll \
                 libtag.dll \
                 libtasn1-3.dll \
                 libusbmuxd.dll \
@@ -132,7 +133,8 @@ clementine_gst_plugins=libgstapetag.dll \
 clementine_imageformats=qgif4.dll \
                         qjpeg4.dll
 dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll \
-           -not -name ssleay32.dll -not -name libeay32.dll
+           -not -name ssleay32.dll -not -name libeay32.dll \
+           -not -name libssl32.dll
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
