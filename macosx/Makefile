@@ -242,22 +242,15 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(stow) && stow $(spotifymac)
 	touch $@
 
-.done-libmtp: .done-usblegacy
+.done-libmtp: .done-usb
 	$(call extractpkg,$(mtptgz))
+	cd $(mtp) && patch -p0 < ../patches/libmtp-01-pc.patch
 	$(call buildpkg,$(mtp))
 	rm -rf $(stow)/$(mtp)
 	cd $(mtp) && make install DESTDIR=$(stow)/$(mtp)
-	rmdir $(stow)/$(mtp)/lib/udev
-	rmdir $(stow)/$(mtp)/lib
 	mv -fv $(stow)/$(mtp)$(prefix)/* $(stow)/$(mtp)/
 	cd $(stow) && stow -R $(mtp)
 	touch $(work)/$@
-
-.done-usblegacy:
-	$(call extractpkg,$(usblegacytgz))
-	cd $(usblegacy) && $(configure) --disable-build-docs
-	cd $(usblegacy) && $(make)
-	$(call installpkg,$(usblegacy))
 
 .done-libmpcdec:
 	$(call extractandbuild,$(mpcdectgz),$(mpcdec))

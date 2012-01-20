@@ -1,0 +1,11 @@
+--- libmtp.pc.in.orig	2012-01-20 11:56:18.000000000 -0800
++++ libmtp.pc.in	2012-01-20 11:56:30.000000000 -0800
+@@ -8,7 +8,7 @@
+ Name: libmtp
+ Description: libmtp is a library for accessing Media Transfer Protocol devices
+ Version: @VERSION@
+-Requires: libusb
++Requires: libusb-1.0
+ Conflicts:
+ Libs: -L${libdir} -lmtp
+ Libs.private: @LIBS@
