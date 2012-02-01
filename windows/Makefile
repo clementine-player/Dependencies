@@ -224,11 +224,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl
 	$(call extractandbuild,$(glibnetworkingtgz),$(glibnetworking))
 	touch $@
 
-.done-libsoup:
-	unzip -o -d $(stow)/$(soup) $(soupzip)
-	unzip -o -d $(stow)/$(soup) $(soupdevzip)
-	sed -i.bak -e's/^prefix=.*/prefix=\$(prefix)/' $(stow)/$(soup)/lib/pkgconfig/*.pc
-	cd $(stow) && stow $(soup)
+.done-libsoup: .done-gtk .done-libxml
+	$(call extractpkg,$(souptgz),$(soup))
+	(cd $(soup) && $(configure) && $(make))
+	$(call installpkg,$(soup))
 	touch $@
 
 .done-libplist: .done-libxml .done-gtk
