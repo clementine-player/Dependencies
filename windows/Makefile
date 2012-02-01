@@ -159,11 +159,12 @@ clementine-build-deps: dlfcn boost liblastfm qt taglib libimobiledevice gtk \
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
 
-clementine-deps: clementine-build-deps clementine-gst-plugins openssl
+clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetworking
 	-rm -rf clementine-deps
 	mkdir -p clementine-deps/gstreamer-plugins
 	mkdir -p clementine-deps/imageformats
 	mkdir -p clementine-deps/nsisplugins
+	mkdir -p clementine-deps/gio-modules
 	for f in $(clementine_dlls); do \
 		cp -v $(prefix)/bin/$$f clementine-deps/ || exit 1; \
 	done
@@ -173,6 +174,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl
 	for f in $(clementine_imageformats); do \
 		cp -v $(prefix)/plugins/imageformats/$$f clementine-deps/imageformats || exit 1; \
 	done
+	cp -v $(prefix)/lib/gio/modules/libgiognutls.dll clementine-deps/gio-modules/
 	cp -vr $(src)/mingwm10.dll $(src)/nsisplugins clementine-deps/
 	cp -vr /usr/lib/gcc/$(host)/*/libgcc_sjlj_1.dll clementine-deps/
 	for f in `find clementine-deps/ -name '*.dll' $(dont_strip)`; do \
