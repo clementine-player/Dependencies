@@ -200,6 +200,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl
 .done-gtk:
 	unzip -o -d $(stow)/$(gtk) $(gtkzip)
 	sed -i.bak -e's/^prefix=.*/prefix=\$(prefix)/' $(stow)/$(gtk)/lib/pkgconfig/*.pc
+	# Remove a library that clashes with qt (lucid version of stow doesn't support --ignore)
+	rm -f $(stow)/$(gtk)/bin/libgcc_s_dw2-1.dll
 	cd $(stow) && stow $(gtk)
 	touch $@
 

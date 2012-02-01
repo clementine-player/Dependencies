@@ -45,7 +45,7 @@ xml=libxml2-2.7.7
 # Windows only packages
 directx=directx-headers-0.03
 glew=glew-1.5.5
-gtk=gtk+-bundle_2.20.0
+gtk=gtk+-bundle_2.24.8
 mmswin32=libmms-win32
 opensslwin32=openssl-win32-0.9.8s
 pthreads=pthreads-win32-2.8.0
@@ -106,7 +106,7 @@ gstffmpegtgz=$(src)/$(gstffmpeg).tar.gz
 gstgoodtgz=$(src)/$(gstgood).tar.gz
 gsttgz=$(src)/$(gst).tar.gz
 gstuglytgz=$(src)/$(gstugly).tar.gz
-gtkzip=$(src)/$(gtk)-20100406_win32.zip
+gtkzip=$(src)/$(gtk)-20111122_win32.zip
 id3tagtgz=$(src)/$(id3tag).tar.gz
 imobtgz=$(src)/$(imob).tar.bz2
 lametgz=$(src)/$(lame).tar.gz
