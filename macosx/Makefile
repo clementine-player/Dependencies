@@ -270,8 +270,17 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-libgpgerror:
 	$(call extractandbuild,$(gpgerrortgz),$(gpgerror))
-	
-.done-libsoup: .done-glib .done-gnutls
+
+.done-libproxy:
+	$(call extractandbuildcmake,$(proxytgz),$(proxy))
+
+.done-glib-networking: .done-glib .done-gnutls .done-libproxy
+	$(call extractpkg,$(glibnetworkingtgz))
+	cd $(glibnetworking) && $(configure) --with-ca-certificates=../../root-certs.pem
+	cd $(glibnetworking) && $(make)
+	$(call installpkg,$(glibnetworking))
+
+.done-libsoup: .done-glib .done-gnutls .done-glib-networking
 	$(call extractpkg,$(souptgz))
 	cd $(soup) && $(configure) --without-gnome
 	cd $(soup) && $(make)
