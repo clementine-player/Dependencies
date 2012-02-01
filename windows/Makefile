@@ -220,6 +220,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl
 	cd $(stow) && stow $(xml)
 	touch $@
 
+.done-glibnetworking: .done-gtk .done-libgnutls
+	$(call extractandbuild,$(glibnetworkingtgz),$(glibnetworking))
+	touch $@
+
 .done-libsoup:
 	unzip -o -d $(stow)/$(soup) $(soupzip)
 	unzip -o -d $(stow)/$(soup) $(soupdevzip)

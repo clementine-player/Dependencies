@@ -8,6 +8,7 @@ faac=faac-1.28
 faad=faad2-2.7
 fftw=fftw-3.2.2
 flac=flac-1.2.1
+glibnetworking=glib-networking-2.28.7
 gpod=libgpod-0.8.0
 gstbad=gst-plugins-bad-0.10.19
 gstbase=gst-plugins-base-0.10.30
@@ -79,7 +80,7 @@ allpackages=$(boost) $(directx) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod)
             $(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
             $(gcrypt) $(spotifymac) $(gstffmpeg) $(mtp) $(mpcdec) \
             $(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(pythonwin32) $(cdio) \
-            $(opensslwin32)
+            $(opensslwin32) $(glibnetworking)
 
 # Package filenames
 archivetgz=$(src)/$(archive).tar.gz
@@ -97,6 +98,7 @@ gettexttgz=$(src)/$(gettext).tar.gz
 glewtgz=$(src)/$(glew).tar.bz2
 glewwin32zip=$(src)/$(glew)-win32.zip
 glibtgz=$(src)/$(glib).tar.bz2
+glibnetworkingtgz=$(src)/$(glibnetworking).tar.bz2
 gnutlstgz=$(src)/$(gnutls).tar.bz2
 gpgerrortgz=$(src)/$(gpgerror).tar.bz2
 gpodtgz=$(src)/$(gpod).tar.gz
@@ -176,6 +178,7 @@ gcrypt: .done-gcrypt
 gettext: .done-gettext
 glew: .done-glew
 glib: .done-glib
+glibnetworking: .done-glibnetworking
 gnutls: .done-gnutls
 gst-ffmpeg: .done-gst-ffmpeg
 gst-plugins-bad: .done-gst-plugins-bad
