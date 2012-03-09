@@ -163,7 +163,6 @@ clean:
 		stow -d $(stow) -D $$package ; \
 	done
 	-rm .done-*
-	-rm $(pythonzip)
 
 boost: .done-boost
 cdio: .done-cdio
