@@ -537,11 +537,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-taglib: .done-gtk
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
-	# Common patches retrofitted from TagLib HEAD to fix some critical bugs
-	# in TagLib 1.7. Will have to be removed when moving to TagLib > 1.7
-	patch -d $(taglib) -p1 < ../patches.common/taglib1-7-01-4bdcc9662ebae82b36778202504cf62e0b5e77b3.patch
-	patch -d $(taglib) -p1 < ../patches.common/taglib1-7-02-7cc36db7606dfc85d2e344d35c4e26fe8f698bdc.patch
-	patch -d $(taglib) -p1 < ../patches.common/taglib1-7-03-b3646a07348ffa276ea41a9dae03ddc63ea6c532.patch
 	# Windows specfic patch
 	patch -d $(taglib) -p0 < patches/taglib-01-pkgconfig.patch
 	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON
