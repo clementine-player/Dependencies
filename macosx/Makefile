@@ -51,7 +51,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 # Top-level targets
 clementine-build-deps: boost liblastfm taglib libimobiledevice libmtp \
                        libgpod gstreamer glew qjson \
-                       protobuf spotify
+                       protobuf spotify fftw
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
 clementine-deps: clementine-build-deps clementine-gst-plugins
@@ -86,6 +86,15 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(glib) && $(make)
 	rm -fv
 	$(call installpkg,$(glib))
+
+.done-fftw:
+	$(call extractpkg,$(fftwtgz))
+	cd $(fftw) && $(configure) \
+		--with-our-malloc16 --with-windows-f77-mangling --enable-shared \
+		--disable-static --enable-threads --with-combined-threads \
+		--enable-portable-binary --enable-sse2
+	cd $(fftw) && $(make)
+	$(call installpkg,$(fftw))
 
 .done-libplist: .done-glib
 	$(call extractpkg,$(plisttgz))
