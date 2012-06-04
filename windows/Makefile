@@ -312,6 +312,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-flac:
 	$(call extractpkg,$(flactgz))
 	cd $(flac) && patch -p0 < ../patches/flac-01-size-t-max.patch
+	cd $(flac) && patch -p0 < ../patches/flac-02-include.patch
 	cd $(flac) && $(configure)
 	cd $(flac) && $(make)
 
