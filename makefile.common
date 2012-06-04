@@ -1,6 +1,6 @@
 # Package version numbers
 archive=libarchive-2.8.4
-boost=boost-1.47
+boost=boost-1.49
 cdio=libcdio-0.82
 curl=curl-7.21.4
 dlfcn=dlfcn-r19
