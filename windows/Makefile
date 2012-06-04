@@ -382,11 +382,12 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-mad: .done-id3tag
 	$(call extractpkg,$(madtgz))
+	cd $(mad) && patch -p0 < ../patches/libmad-01-force-mem.patch
 	$(call buildpkg,$(mad))
 
 	# libtool is retarded and doesn't link this dll properly
 	cd $(mad) && /bin/bash ./libtool --mode=link $(host)-gcc \
-		-Wall -march=i486 -g -O -fforce-mem -fforce-addr -fthread-jumps \
+		-Wall -march=i486 -g -O -fforce-addr -fthread-jumps \
 		-fcse-follow-jumps -fcse-skip-blocks -fexpensive-optimizations \
 		-fregmove -fschedule-insns2 -fstrength-reduce --shared  \
 		-o libmad.dll -rpath /target/lib -version-info 2:1:2 *.lo
