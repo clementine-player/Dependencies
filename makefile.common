@@ -31,7 +31,7 @@ proxy=libproxy-0.4.7
 pyqt=PyQt-x11-gpl-4.8.3
 python=Python-2.7.1
 qjson=qjson-0.7.1
-qtsparkle=davidsansome-qtsparkle-e0fbcf7
+qtsparkle=davidsansome-qtsparkle-edc77d7
 quicktime=libquicktime-1.1.5
 sip=sip-4.12.2
 soup=libsoup-2.36.0
@@ -53,7 +53,7 @@ opensslwin32=openssl-win32-0.9.8s
 pthreads=pthreads-win32-2.8.0
 pythonwin32=Python27
 # When changing the Qt version remember to change the sed line in .done-pyqt
-qt=qt-4.7.1
+qt=qt-4.8.2
 spotifywin32=libspotify-11.1.60-win32-release
 usbwin32=libusb-win32-bin-1.2.0.0
 win7sdk=win7-sdk
