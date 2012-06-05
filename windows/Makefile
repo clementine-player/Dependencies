@@ -527,6 +527,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	patch -d $(imob) -p0 < patches/libimobiledevice-03-asprintf.patch
 	patch -d $(imob) -p0 < patches/libimobiledevice-04-userpref-stdint.patch
 	patch -d $(imob) -p0 < patches/libimobiledevice-05-no-tools.patch
+	cd $(imob) && autoreconf
 	cd $(imob) && $(configure) --without-swig
 	cd $(imob) && $(make)
 	$(call installpkg,$(imob))
