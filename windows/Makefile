@@ -606,7 +606,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(fftw) && $(configure) \
 		--with-our-malloc16 --with-windows-f77-mangling --enable-shared \
 		--disable-static --enable-threads --with-combined-threads \
-		--enable-portable-binary --enable-sse2
+		--enable-portable-binary
 	cd $(fftw) && $(make)
 	$(call installpkg,$(fftw))
 
