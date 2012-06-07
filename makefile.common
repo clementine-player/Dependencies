@@ -54,7 +54,7 @@ pthreads=pthreads-win32-2.8.0
 pythonwin32=Python27
 # When changing the Qt version remember to change the sed line in .done-pyqt
 qt=qt-4.8.2
-spotifywin32=libspotify-11.1.60-win32-release
+spotifywin32=libspotify-12.1.45-win32-release
 usbwin32=libusb-win32-bin-1.2.0.0
 win7sdk=win7-sdk
 wmdm=wmdm-sdk-11
@@ -68,7 +68,7 @@ gpgerror=libgpg-error-1.9
 libiconv=libiconv-1.14
 mms=libmms-0.6.2
 mtp=libmtp-1.1.2
-spotifymac=libspotify-11.1.60-Darwin-universal
+spotifymac=libspotify-12.1.45-Darwin-universal
 tasn1=libtasn1-2.9
 usb=libusb-1.0.8
 
