@@ -276,7 +276,11 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractandbuild,$(gpgerrortgz),$(gpgerror))
 
 .done-libproxy:
-	$(call extractandbuildcmake,$(proxytgz),$(proxy))
+	$(call extractpkg,$(proxytgz))
+	cd $(proxy) && patch -p0 < ../patches/libproxy-01-posix.patch
+	$(call buildpkgcmake,$(proxy))
+	$(call installpkgcmake,$(proxy))
+
 
 .done-glib-networking: .done-glib .done-gnutls .done-libproxy
 	$(call extractpkg,$(glibnetworkingtgz))
