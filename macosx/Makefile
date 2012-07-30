@@ -80,12 +80,15 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call buildpkg,$(libiconv))
 	$(call installpkg,$(libiconv))
 
-.done-glib: .done-gettext .done-libiconv
+.done-glib: .done-gettext .done-libiconv .done-ffi
 	$(call extractpkg,$(glibtgz))
 	cd $(glib) && $(configure) --with-libiconv=gnu
 	cd $(glib) && $(make)
 	rm -fv
 	$(call installpkg,$(glib))
+
+.done-ffi:
+	$(call extractandbuild,$(ffitgz),$(ffi))
 
 .done-fftw:
 	$(call extractpkg,$(fftwtgz))

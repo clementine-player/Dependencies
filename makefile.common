@@ -61,9 +61,10 @@ win7sdk=win7-sdk
 wmdm=wmdm-sdk-11
 
 # OSX only packages
+ffi=libffi-3.0.9
 gcrypt=libgcrypt-1.4.6
 gettext=gettext-0.18.1.1
-glib=glib-2.28.6
+glib=glib-2.33.6
 gnutls=gnutls-2.12.3
 gpgerror=libgpg-error-1.9
 libiconv=libiconv-1.14
@@ -93,13 +94,14 @@ directxtgz=$(src)/$(directx).tar.gz
 dlfcntgz=$(src)/dlfcn-win32-static-r19.tar.bz2
 faactgz=$(src)/$(faac).tar.gz
 faadtgz=$(src)/$(faad).tar.gz
+ffitgz=$(src)/$(ffi).tar.gz
 fftwtgz=$(src)/$(fftw).tar.gz
 flactgz=$(src)/$(flac).tar.gz
 gcrypttgz=$(src)/$(gcrypt).tar.bz2
 gettexttgz=$(src)/$(gettext).tar.gz
 glewtgz=$(src)/$(glew).tar.bz2
 glewwin32zip=$(src)/$(glew)-win32.zip
-glibtgz=$(src)/$(glib).tar.bz2
+glibtgz=$(src)/$(glib).tar.xz
 glibnetworkingtgz=$(src)/$(glibnetworking).tar.bz2
 gnutlstgz=$(src)/$(gnutls).tar.bz2
 gpgerrortgz=$(src)/$(gpgerror).tar.bz2
