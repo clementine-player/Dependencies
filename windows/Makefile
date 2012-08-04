@@ -261,6 +261,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractpkg,$(gstbasetgz))
 	cd $(gstbase) && patch -p1 < ../patches/gst-plugins-base-01-tcp.patch
 	cd $(gstbase) && patch -p1 < ../patches/gst-plugins-base-02-tcp-no-gdp.patch
+	cd $(gstbase) && patch -p1 < ../patches/gst-plugins-base-03-tcp-fd_has_closed.patch
 	cd $(gstbase) && autoreconf
 	cd $(gstbase) && $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm
 	cd $(gstbase) && $(make)

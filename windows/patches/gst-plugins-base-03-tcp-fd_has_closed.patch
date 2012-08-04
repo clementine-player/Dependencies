@@ -1,0 +1,88 @@
+commit d4ff206b4d8ede084576a6eb8333e4c6a6240b3c
+Author: David Sansome <me@davidsansome.com>
+Date:   Sat Aug 4 16:43:19 2012 +0100
+
+    Check whether the socket has been closed after every gst_poll_wait
+
+diff --git a/gst/tcp/gsttcp.c b/gst/tcp/gsttcp.c
+index de4d4d1..b149a2a 100644
+--- a/gst/tcp/gsttcp.c
++++ b/gst/tcp/gsttcp.c
+@@ -256,7 +256,7 @@ gst_tcp_socket_close (GstPollFD * socket)
+  *         EOS
+  */
+ GstFlowReturn
+-gst_tcp_read_buffer (GstElement * this, int socket, GstPoll * fdset,
++gst_tcp_read_buffer (GstElement * this, GstPollFD* socket, GstPoll * fdset,
+     GstBuffer ** buf)
+ {
+   int ret;
+@@ -278,11 +278,15 @@ gst_tcp_read_buffer (GstElement * this, int socket, GstPoll * fdset,
+       goto select_error;
+   }
+ 
++  if (gst_poll_fd_has_closed(fdset, socket)) {
++    goto got_eos;
++  }
++
+   /* ask how much is available for reading on the socket */
+ #ifdef G_OS_WIN32
+-  if (ioctlsocket (socket, FIONREAD, &readsize) != 0)
++  if (ioctlsocket (socket->fd, FIONREAD, &readsize) != 0)
+ #else
+-  if (ioctl (socket, FIONREAD, &readsize) < 0)
++  if (ioctl (socket->fd, FIONREAD, &readsize) < 0)
+ #endif
+     goto ioctl_error;
+ 
+@@ -294,9 +298,9 @@ gst_tcp_read_buffer (GstElement * this, int socket, GstPoll * fdset,
+   *buf = gst_buffer_new_and_alloc (readsize);
+ 
+ #ifdef G_OS_WIN32
+-  bytes_read = recv (socket, (char*)GST_BUFFER_DATA (*buf), readsize, 0);
++  bytes_read = recv (socket->fd, (char*)GST_BUFFER_DATA (*buf), readsize, 0);
+ #else
+-  bytes_read = read (socket, GST_BUFFER_DATA (*buf), readsize);
++  bytes_read = read (socket->fd, GST_BUFFER_DATA (*buf), readsize);
+ #endif
+ 
+   if (bytes_read < 0)
+diff --git a/gst/tcp/gsttcp.h b/gst/tcp/gsttcp.h
+index d72ed47..ae8b561 100644
+--- a/gst/tcp/gsttcp.h
++++ b/gst/tcp/gsttcp.h
+@@ -52,7 +52,7 @@ gint gst_tcp_socket_write (int socket, const void *buf, size_t count);
+ 
+ void gst_tcp_socket_close (GstPollFD *socket);
+ 
+-GstFlowReturn gst_tcp_read_buffer (GstElement * this, int socket, GstPoll * fdset, GstBuffer **buf);
++GstFlowReturn gst_tcp_read_buffer (GstElement * this, GstPollFD* socket, GstPoll * fdset, GstBuffer **buf);
+ 
+ G_END_DECLS
+ 
+diff --git a/gst/tcp/gsttcpclientsrc.c b/gst/tcp/gsttcpclientsrc.c
+index 02fea52..d8bd469 100644
+--- a/gst/tcp/gsttcpclientsrc.c
++++ b/gst/tcp/gsttcpclientsrc.c
+@@ -205,7 +205,7 @@ gst_tcp_client_src_create (GstPushSrc * psrc, GstBuffer ** outbuf)
+   /* read the buffer header if we're using a protocol */
+   switch (src->protocol) {
+     case GST_TCP_PROTOCOL_NONE:
+-      ret = gst_tcp_read_buffer (GST_ELEMENT (src), src->sock_fd.fd,
++      ret = gst_tcp_read_buffer (GST_ELEMENT (src), &src->sock_fd,
+           src->fdset, outbuf);
+       break;
+ 
+diff --git a/gst/tcp/gsttcpserversrc.c b/gst/tcp/gsttcpserversrc.c
+index 7ec711d..4bf9fdb 100644
+--- a/gst/tcp/gsttcpserversrc.c
++++ b/gst/tcp/gsttcpserversrc.c
+@@ -218,7 +218,7 @@ restart:
+ 
+   switch (src->protocol) {
+     case GST_TCP_PROTOCOL_NONE:
+-      ret = gst_tcp_read_buffer (GST_ELEMENT (src), src->client_sock_fd.fd,
++      ret = gst_tcp_read_buffer (GST_ELEMENT (src), &src->client_sock_fd,
+           src->fdset, outbuf);
+       break;
+ 
