@@ -155,7 +155,7 @@ extractandbuild=$(call extractpkg,$(1)) && $(call buildpkg,$(2)) && $(call insta
 # Top-level targets
 clementine-build-deps: dlfcn boost liblastfm qt taglib libimobiledevice gtk \
                        libgpod glew gstreamer win7sdk wmdm qtsparkle \
-                       libarchive protobuf spotify qjson fftw
+                       libarchive protobuf spotify qjson fftw sparsehash
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
 
@@ -685,3 +685,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	unzip -o -d $(stow)/$(opensslwin32)/bin $(opensslwin32zip)
 	cd $(stow) && stow $(opensslwin32)
 	touch $@
+
+.done-sparsehash:
+	$(call extractandbuild,$(sparsehashtgz),$(sparsehash))
