@@ -250,14 +250,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	touch $@
 
 .done-libmtp: .done-usb
-	$(call extractpkg,$(mtptgz))
-	cd $(mtp) && patch -p0 < ../patches/libmtp-01-pc.patch
-	$(call buildpkg,$(mtp))
-	rm -rf $(stow)/$(mtp)
-	cd $(mtp) && make install DESTDIR=$(stow)/$(mtp)
-	mv -fv $(stow)/$(mtp)$(prefix)/* $(stow)/$(mtp)/
-	cd $(stow) && stow -R $(mtp)
-	touch $(work)/$@
+	$(call extractandbuild,$(mtptgz),$(mtp))
 
 .done-libmpcdec:
 	$(call extractandbuild,$(mpcdectgz),$(mpcdec))
