@@ -114,6 +114,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gstreamer: .done-glib .done-orc
 	$(call extractpkg,$(gsttgz))
+	cd $(gst) && patch -p0 < ../patches/gstreamer-01-flex.patch
 	cd $(gst) && $(configure) --disable-examples --disable-tests
 	cd $(gst) && $(make)
 	$(call installpkg,$(gst))

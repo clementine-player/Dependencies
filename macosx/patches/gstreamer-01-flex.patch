@@ -1,0 +1,11 @@
+--- configure.orig	2012-09-09 13:40:58.000000000 +0200
++++ configure	2012-09-09 13:41:36.000000000 +0200
+@@ -16253,7 +16253,7 @@
+   fi
+ 
+         flex_min_version=2.5.31
+-  flex_version=`$FLEX_PATH --version | head -n 1 | sed 's/^.* //' | sed 's/[a-zA-Z]*$//' | cut -d' ' -f1`
++  flex_version=`$FLEX_PATH --version | head -n 1 | awk '{print $2}'`
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking flex version $flex_version >= $flex_min_version" >&5
+ $as_echo_n "checking flex version $flex_version >= $flex_min_version... " >&6; }
+   if perl -w <<EOF
