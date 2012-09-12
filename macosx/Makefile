@@ -11,7 +11,7 @@ include ../makefile.common
 
 
 # Useful macros for building packages
-pkgconfig=PKG_CONFIG_PATH=$(prefix)/lib/pkgconfig
+pkgconfig=PKG_CONFIG_PATH=$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
 cflags=-m64 -I$(prefix)/include
 ldflags=-m64 -L$(prefix)/lib -Wl,-headerpad_max_install_names
 flagsm64=CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
