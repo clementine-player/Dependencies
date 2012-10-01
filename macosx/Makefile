@@ -102,7 +102,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-libplist: .done-glib
 	$(call extractpkg,$(plisttgz))
 	-mkdir $(plist)/build
-	cd $(plist)/build && $(cmake) -DENABLE_PYTHON=OFF
+	cd $(plist)/build && $(cmake) -DENABLE_CYTHON=OFF -DENABLE_SWIG=OFF
 	cd $(plist)/build && $(make)
 	$(call installpkgcmake,$(plist))
 
