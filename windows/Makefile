@@ -237,7 +237,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	-mkdir $(plist)/build
 	cd $(plist) && patch -p0 < ../patches/libplist-01-winsock.patch
 	cd $(plist)/build && $(cmake)
-	cd $(plist)/build && $(make)
+	cd $(plist)/build && make
 	rm -rf $(stow)/$(plist)
 	cd $(plist)/build && make install DESTDIR=$(stow)/$(plist)
 	mv -fv $(stow)/$(plist)$(prefix)/* $(stow)/$(plist)/
