@@ -75,7 +75,7 @@ clementine_dlls=QtCore4.dll \
                 liborc-test-0.4-0.dll \
                 libplist.dll \
                 libpng14-14.dll \
-                libprotobuf-lite-7.dll \
+                libprotobuf-7.dll \
                 libqjson.dll \
                 libsoup-2.4-1.dll \
                 libspeex-1.dll \
