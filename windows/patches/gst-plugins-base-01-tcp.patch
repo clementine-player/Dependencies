@@ -65,149 +65,6 @@ index c3ed8bd..b96504c 100644
  
  CLEANFILES = $(BUILT_SOURCES)
  
-diff --git a/gst/tcp/gsttcp.c b/gst/tcp/gsttcp.c
-index 5e8aae7..650bcf2 100644
---- a/gst/tcp/gsttcp.c
-+++ b/gst/tcp/gsttcp.c
-@@ -25,18 +25,26 @@
- #endif
- 
- #include <sys/types.h>
--#include <sys/socket.h>
--#include <netinet/in.h>
--#include <arpa/inet.h>
--#include <netdb.h>
- #include <unistd.h>
--#include <sys/ioctl.h>
-+#include "gsttcp.h"
-+
-+#ifdef G_OS_WIN32
-+# include <winsock2.h>
-+# ifndef socklen_t
-+#  define socklen_t int
-+# endif
-+#else
-+# include <sys/socket.h>
-+# include <arpa/inet.h>
-+# include <netinet/in.h>
-+# include <netdb.h>
-+# include <sys/ioctl.h>
-+#endif
- 
- #ifdef HAVE_FIONREAD_IN_SYS_FILIO
- #include <sys/filio.h>
- #endif
- 
--#include "gsttcp.h"
- #include <gst/gst-i18n-plugin.h>
- 
- GST_DEBUG_CATEGORY_EXTERN (tcp_debug);
-@@ -58,10 +66,20 @@ gst_tcp_host_to_ip (GstElement * element, const gchar * host)
-   gchar *ip;
-   struct in_addr addr;
- 
-+#ifdef G_OS_WIN32
-+  long inaddress;
-+#endif
-+
-   GST_DEBUG_OBJECT (element, "resolving host %s", host);
- 
-   /* first check if it already is an IP address */
-+#ifdef G_OS_WIN32
-+  inaddress = inet_addr(host);
-+  addr.S_un.S_addr = inaddress;
-+  if (inaddress != INADDR_NONE) {
-+#else
-   if (inet_aton (host, &addr)) {
-+#endif
-     ip = g_strdup (host);
-     goto beach;
-   }
-@@ -129,7 +147,11 @@ gst_tcp_socket_read (GstElement * this, int socket, void *buf, size_t count,
- {
-   ssize_t n;
-   size_t bytes_read;
-+#ifdef G_OS_WIN32
-+  u_long num_to_read;
-+#else
-   int num_to_read;
-+#endif
-   int ret;
- 
-   bytes_read = 0;
-@@ -145,7 +167,11 @@ gst_tcp_socket_read (GstElement * this, int socket, void *buf, size_t count,
-     }
- 
-     /* ask how much is available for reading on the socket */
-+#ifdef G_OS_WIN32
-+    if (ioctlsocket (socket, FIONREAD, &num_to_read) != 0)
-+#else
-     if (ioctl (socket, FIONREAD, &num_to_read) < 0)
-+#endif
-       goto ioctl_error;
- 
-     if (num_to_read == 0)
-@@ -155,7 +181,11 @@ gst_tcp_socket_read (GstElement * this, int socket, void *buf, size_t count,
- 
-     num_to_read = MIN (num_to_read, count - bytes_read);
- 
-+#ifdef G_OS_WIN32
-+    n = recv (socket, (char*)(((guint8 *) buf) + bytes_read), num_to_read, 0);
-+#else
-     n = read (socket, ((guint8 *) buf) + bytes_read, num_to_read);
-+#endif
- 
-     if (n < 0)
-       goto read_error;
-@@ -210,7 +240,11 @@ void
- gst_tcp_socket_close (GstPollFD * socket)
- {
-   if (socket->fd >= 0) {
-+#ifdef G_OS_WIN32
-+    closesocket (socket->fd);
-+#else
-     close (socket->fd);
-+#endif
-     socket->fd = -1;
-   }
- }
-@@ -227,7 +261,11 @@ gst_tcp_read_buffer (GstElement * this, int socket, GstPoll * fdset,
- {
-   int ret;
-   ssize_t bytes_read;
-+#ifdef G_OS_WIN32
-+  u_long readsize;
-+#else
-   int readsize;
-+#endif
- 
-   *buf = NULL;
- 
-@@ -241,7 +279,11 @@ gst_tcp_read_buffer (GstElement * this, int socket, GstPoll * fdset,
-   }
- 
-   /* ask how much is available for reading on the socket */
--  if ((ret = ioctl (socket, FIONREAD, &readsize)) < 0)
-+#ifdef G_OS_WIN32
-+  if (ioctlsocket (socket, FIONREAD, &readsize) != 0)
-+#else
-+  if (ioctl (socket, FIONREAD, &readsize) < 0)
-+#endif
-     goto ioctl_error;
- 
-   if (readsize == 0)
-@@ -251,7 +293,11 @@ gst_tcp_read_buffer (GstElement * this, int socket, GstPoll * fdset,
- 
-   *buf = gst_buffer_new_and_alloc (readsize);
- 
-+#ifdef G_OS_WIN32
-+  bytes_read = recv (socket, (char*)GST_BUFFER_DATA (*buf), readsize, 0);
-+#else
-   bytes_read = read (socket, GST_BUFFER_DATA (*buf), readsize);
-+#endif
- 
-   if (bytes_read < 0)
-     goto read_error;
 diff --git a/gst/tcp/gsttcpclientsink.c b/gst/tcp/gsttcpclientsink.c
 index ca60578..169968b 100644
 --- a/gst/tcp/gsttcpclientsink.c
@@ -362,66 +219,6 @@ index bb2cf48..26cc202 100644
      return FALSE;
  
    GST_DEBUG_CATEGORY_INIT (tcp_debug, "tcp", 0, "TCP calls");
-diff --git a/gst/tcp/gsttcpserversink.c b/gst/tcp/gsttcpserversink.c
-index c0cb95f..26415de 100644
---- a/gst/tcp/gsttcpserversink.c
-+++ b/gst/tcp/gsttcpserversink.c
-@@ -39,8 +39,6 @@
- #include <gst/gst-i18n-plugin.h>
- #include <string.h>             /* memset */
- 
--#include <sys/ioctl.h>
--
- #ifdef HAVE_FIONREAD_IN_SYS_FILIO
- #include <sys/filio.h>
- #endif
-@@ -49,6 +47,10 @@
- #include "gsttcpserversink.h"
- #include "gsttcp-marshal.h"
- 
-+#ifndef G_OS_WIN32
-+# include <sys/ioctl.h>
-+#endif
-+
- #define TCP_BACKLOG             5
- 
- GST_DEBUG_CATEGORY_STATIC (tcpserversink_debug);
-@@ -149,7 +151,11 @@ gst_tcp_server_sink_handle_server_read (GstTCPServerSink * sink)
-   /* new client */
-   int client_sock_fd;
-   struct sockaddr_in client_address;
-+#ifdef G_OS_WIN32
-+  int client_address_len;
-+#else
-   unsigned int client_address_len;
-+#endif
- 
-   /* For some stupid reason, client_address and client_address_len has to be
-    * zeroed */
-@@ -273,6 +279,10 @@ gst_tcp_server_sink_init_send (GstMultiFdSink * parent)
-   int ret;
-   GstTCPServerSink *this = GST_TCP_SERVER_SINK (parent);
- 
-+#ifdef G_OS_WIN32
-+  u_long ioctlarg;
-+#endif
-+
-   /* create sending server socket */
-   if ((this->server_sock.fd = socket (AF_INET, SOCK_STREAM, 0)) == -1)
-     goto no_socket;
-@@ -306,7 +316,12 @@ gst_tcp_server_sink_init_send (GstMultiFdSink * parent)
-     goto bind_failed;
- 
-   /* set the server socket to nonblocking */
-+#ifdef G_OS_WIN32
-+  ioctlarg = 1;
-+  ioctlsocket (this->server_sock.fd, FIONBIO, &ioctlarg);
-+#else
-   fcntl (this->server_sock.fd, F_SETFL, O_NONBLOCK);
-+#endif
- 
-   GST_DEBUG_OBJECT (this, "listening on server socket %d with queue of %d",
-       this->server_sock.fd, TCP_BACKLOG);
 diff --git a/gst/tcp/gsttcpserversink.h b/gst/tcp/gsttcpserversink.h
 index ac8846d..8b21293 100644
 --- a/gst/tcp/gsttcpserversink.h
@@ -621,3 +418,201 @@ index 22c7afe..93cf865 100644
  #include <fcntl.h>
  
  #define GST_TYPE_TCP_SERVER_SRC \
+--- a/gst/tcp/gsttcp.c	2012-11-12 14:21:20.987565421 +0000
++++ b/gst/tcp/gsttcp.c	2012-11-12 14:27:33.886001318 +0000
+@@ -25,18 +25,26 @@
+ #endif
+ 
+ #include <sys/types.h>
+-#include <sys/socket.h>
+-#include <netinet/in.h>
+-#include <arpa/inet.h>
+-#include <netdb.h>
+ #include <unistd.h>
+-#include <sys/ioctl.h>
++#include "gsttcp.h"
++
++#ifdef G_OS_WIN32
++# include <winsock2.h>
++# ifndef socklen_t
++#  define socklen_t int
++# endif
++#else
++# include <sys/socket.h>
++# include <arpa/inet.h>
++# include <netinet/in.h>
++# include <netdb.h>
++# include <sys/ioctl.h>
++#endif
+ 
+ #ifdef HAVE_FIONREAD_IN_SYS_FILIO
+ #include <sys/filio.h>
+ #endif
+ 
+-#include "gsttcp.h"
+ #include <gst/gst-i18n-plugin.h>
+ 
+ GST_DEBUG_CATEGORY_EXTERN (tcp_debug);
+@@ -58,10 +66,20 @@
+   gchar *ip;
+   struct in_addr addr;
+ 
++#ifdef G_OS_WIN32
++  long inaddress;
++#endif
++
+   GST_DEBUG_OBJECT (element, "resolving host %s", host);
+ 
+   /* first check if it already is an IP address */
++#ifdef G_OS_WIN32
++  inaddress = inet_addr(host);
++  addr.S_un.S_addr = inaddress;
++  if (inaddress != INADDR_NONE) {
++#else
+   if (inet_aton (host, &addr)) {
++#endif
+     ip = g_strdup (host);
+     goto beach;
+   }
+@@ -129,7 +147,11 @@
+ {
+   ssize_t n;
+   size_t bytes_read;
++#ifdef G_OS_WIN32
++  u_long num_to_read;
++#else
+   int num_to_read;
++#endif
+   int ret;
+ 
+   bytes_read = 0;
+@@ -145,7 +167,11 @@
+     }
+ 
+     /* ask how much is available for reading on the socket */
++#ifdef G_OS_WIN32
++    if (ioctlsocket (socket, FIONREAD, &num_to_read) != 0)
++#else
+     if (ioctl (socket, FIONREAD, &num_to_read) < 0)
++#endif
+       goto ioctl_error;
+ 
+     if (num_to_read == 0)
+@@ -155,7 +181,11 @@
+ 
+     num_to_read = MIN (num_to_read, count - bytes_read);
+ 
++#ifdef G_OS_WIN32
++    n = recv (socket, (char*)(((guint8*)buf) + bytes_read), num_to_read, 0);
++#else
+     n = read (socket, ((guint8 *) buf) + bytes_read, num_to_read);
++#endif
+ 
+     if (n < 0)
+       goto read_error;
+@@ -210,7 +240,11 @@
+ gst_tcp_socket_close (GstPollFD * socket)
+ {
+   if (socket->fd >= 0) {
++#ifdef G_OS_WIN32
++    closesocket (socket->fd);
++#else
+     close (socket->fd);
++#endif
+     socket->fd = -1;
+   }
+ }
+@@ -227,7 +261,11 @@
+ {
+   int ret;
+   ssize_t bytes_read;
++#ifdef G_OS_WIN32
++  u_long readsize;
++#else
+   int readsize;
++#endif
+ 
+   *buf = NULL;
+ 
+@@ -241,7 +279,11 @@
+   }
+ 
+   /* ask how much is available for reading on the socket */
++#ifdef G_OS_WIN32
++  if (ioctlsocket(socket, FIONREAD, &readsize) != 0)
++#else
+   if (ioctl (socket, FIONREAD, &readsize) < 0)
++#endif
+     goto ioctl_error;
+ 
+   if (readsize == 0)
+@@ -251,7 +293,11 @@
+ 
+   *buf = gst_buffer_new_and_alloc (readsize);
+ 
++#ifdef G_OS_WIN32
++  bytes_read = recv (socket, (char*)GST_BUFFER_DATA(*buf), readsize, 0);
++#else
+   bytes_read = read (socket, GST_BUFFER_DATA (*buf), readsize);
++#endif
+ 
+   if (bytes_read < 0)
+     goto read_error;
+--- a/gst/tcp/gsttcpserversink.c	2011-12-11 18:47:09.000000000 +0000
++++ b/gst/tcp/gsttcpserversink.c	2012-11-12 14:34:42.265690303 +0000
+@@ -39,8 +39,6 @@
+ #include <gst/gst-i18n-plugin.h>
+ #include <string.h>             /* memset */
+ 
+-#include <sys/ioctl.h>
+-
+ #ifdef HAVE_FIONREAD_IN_SYS_FILIO
+ #include <sys/filio.h>
+ #endif
+@@ -49,6 +47,10 @@
+ #include "gsttcpserversink.h"
+ #include "gsttcp-marshal.h"
+ 
++#ifndef G_OS_WIN32
++# include <sys/ioctl.h>
++#endif
++
+ #define TCP_BACKLOG             5
+ 
+ GST_DEBUG_CATEGORY_STATIC (tcpserversink_debug);
+@@ -149,7 +151,11 @@
+   /* new client */
+   int client_sock_fd;
+   struct sockaddr_in client_address;
++#ifdef G_OS_WIN32
++  int client_address_len
++#else
+   socklen_t client_address_len;
++#endif
+ 
+   /* For some stupid reason, client_address and client_address_len has to be
+    * zeroed */
+@@ -273,6 +279,10 @@
+   int ret;
+   GstTCPServerSink *this = GST_TCP_SERVER_SINK (parent);
+ 
++#ifdef G_OS_WIN32
++  u_long ioctlarg;
++#endif
++
+   /* create sending server socket */
+   if ((this->server_sock.fd = socket (AF_INET, SOCK_STREAM, 0)) == -1)
+     goto no_socket;
+@@ -306,7 +316,12 @@
+     goto bind_failed;
+ 
+   /* set the server socket to nonblocking */
++#ifdef G_OS_WIN32
++  ioctlarg = 1;
++  ioctlsocket (this->server_sock.fd, FIONBIO, &ioctlarg);
++#else
+   fcntl (this->server_sock.fd, F_SETFL, O_NONBLOCK);
++#endif
+ 
+   GST_DEBUG_OBJECT (this, "listening on server socket %d with queue of %d",
+       this->server_sock.fd, TCP_BACKLOG);

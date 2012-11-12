@@ -1,5 +1,5 @@
 # Target compiler
-host=i586-mingw32msvc
+host=i686-w64-mingw32
 
 # Local compiler
 build=i486-linux-gnu
@@ -23,13 +23,12 @@ clementine_dlls=QtCore4.dll \
                 QtSql4.dll \
                 QtSvg4.dll \
                 QtXml4.dll \
-                avcodec-52.dll \
-                avformat-52.dll \
-                avutil-50.dll \
+                avcodec-53.dll \
+                avformat-53.dll \
+                avutil-51.dll \
                 glew32.dll \
                 intl.dll \
-                libarchive.dll \
-                libcdio-12.dll \
+                libcdio-14.dll \
                 libeay32.dll \
                 libexpat-1.dll \
                 libfaac.dll \
@@ -97,7 +96,6 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstaudioresample.dll \
                        libgstaudiotestsrc.dll \
                        libgstautodetect.dll \
-                       libgstcdio.dll \
                        libgstcoreelements.dll \
                        libgstdecodebin2.dll \
                        libgstdirectsoundsink.dll \
@@ -155,7 +153,7 @@ extractandbuild=$(call extractpkg,$(1)) && $(call buildpkg,$(2)) && $(call insta
 # Top-level targets
 clementine-build-deps: dlfcn boost liblastfm qt taglib libimobiledevice gtk \
                        libgpod glew gstreamer win7sdk wmdm qtsparkle \
-                       libarchive protobuf spotify qjson fftw sparsehash
+                       protobuf spotify qjson fftw sparsehash ffi
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
 
@@ -176,9 +174,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	done
 	cp -v $(prefix)/lib/gio/modules/libgiognutls.dll clementine-deps/gio-modules/
 	cp -vr $(src)/mingwm10.dll $(src)/nsisplugins clementine-deps/
-	cp -vr /usr/lib/gcc/$(host)/*/libgcc_sjlj_1.dll clementine-deps/
+	cp -vr /root/mingw/$(host)/*/libgcc_s_sjlj-1.dll clementine-deps/
 	for f in `find clementine-deps/ -name '*.dll' $(dont_strip)`; do \
-		i586-mingw32msvc-strip -v $$f; \
+		$(host)-strip -v $$f; \
 	done
 
 
@@ -213,7 +211,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	touch $@
 
 .done-sqlite:
-	$(call extractandbuild,$(sqlitetgz),$(sqlite))
+	$(call extractpkg,$(sqlitetgz),$(sqlite))
+	(cd $(sqlite) && $(configure) && $(make))
+	$(call installpkg,$(sqlite))
+	touch $@
 
 .done-libxml:
 	unzip -o -d $(stow)/$(xml) $(xmlzip)
@@ -247,8 +248,11 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-libgpod: .done-sqlite .done-libplist
 	$(call extractpkg,$(gpodtgz))
 	cd $(gpod) && patch -p0 < ../patches/libgpod-01-nousb.patch
+	cd $(gpod) && patch -p0 < ../patches/libgpod-02-libtool.patch
 	cd $(gpod) && autoreconf
-	$(call buildpkg,$(gpod))
+	cd $(gpod) && LDFLAGS="-L/target/lib -Wl,-lsqlite3 -Wl,--export-symbols-regex" $(configure)
+	#sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gpod)/libtool
+	cd $(gpod) && make
 	$(call installpkg,$(gpod))
 
 .done-gstreamer: .done-gtk .done-libxml .done-orc
@@ -279,7 +283,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-libsoup .done-directx .done-wavpack
 	$(call extractpkg,$(gstgoodtgz))
 	cd $(gstgood) && patch -p0 < ../patches/gst-plugins-good-01-directsound.patch
-	cd $(gstgood) && $(configure) --disable-shout2 --disable-examples --disable-x 
+	cd $(gstgood) && $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace 
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstgood)/libtool
 	cd $(gstgood) && $(make)
 	$(call installpkg,$(gstgood))
@@ -354,7 +358,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
 	$(call extractpkg,$(gstuglytgz))
 	cd $(gstugly) && LDFLAGS="-L$(prefix)/bin" \
-	                 $(configure) --disable-examples --disable-x 
+	                 $(configure) --disable-examples --disable-x --disable-cdio
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstugly)/libtool
 	cd $(gstugly) && $(make)
 	$(call installpkg,$(gstugly))
@@ -370,7 +374,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	# libtool is retarded and doesn't link this dll properly
 	cd $(id3tag) && /bin/bash ./libtool --mode=link $(host)-gcc \
 		-Wall -g -O2 --shared  -o libid3tag.dll -rpath /target/lib \
-		-version-info 3:0:3 *.lo -lz
+		-version-info 3:0:3 *.lo -L/target/lib -lz
 
 	rm -rf $(stow)/$(id3tag)
 	cd $(id3tag) && make install DESTDIR=$(stow)/$(id3tag)
@@ -408,16 +412,14 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && patch -p0 < ../patches/gst-plugins-bad-01-librfb-winsock.patch
-	cd $(gstbad) && LDFLAGS="-L$(prefix)/bin" $(configure) --disable-acm --disable-examples --disable-x
+	cd $(gstbad) && LDFLAGS="-L$(prefix)/bin" $(configure) --disable-acm --disable-examples --disable-x --disable-dccp
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstbad)/libtool
 	cd $(gstbad) && $(make)
 	$(call installpkg,$(gstbad))
 
 .done-gst-ffmpeg: .done-gstreamer .done-gst-plugins-base
 	$(call extractpkg,$(gstffmpegtgz))
-	cd $(gstffmpeg) && patch -p1 < ../patches/gst-ffmpeg-01-off_t.patch
-	cd $(gstffmpeg) && patch -p1 < ../patches/gst-ffmpeg-02-dlls.patch
-	cd $(gstffmpeg) && patch -p0 < ../patches/gst-ffmpeg-03-no-missing-prototypes.patch
+	cd $(gstffmpeg) && patch -p0 < ../patches/gst-ffmpeg-04-mmx.patch
 	cd $(gstffmpeg) && autoreconf
 	cd $(gstffmpeg) && $(configure) --with-ffmpeg-extra-configure="--enable-shared --disable-debug"
 	cd $(gstffmpeg) && $(make)
@@ -425,7 +427,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(gstffmpeg) && make install DESTDIR=$(stow)/$(gstffmpeg)
 	mv -fv $(stow)/$(gstffmpeg)$(prefix)/* $(stow)/$(gstffmpeg)/
 	-mkdir $(stow)/$(gstffmpeg)/bin/
-	cp $(gstffmpeg)/gst-libs/ext/ffmpeg/lib*/*.dll* $(stow)/$(gstffmpeg)/bin/
+	cp $(gstffmpeg)/gst-libs/ext/libav/lib*/*.dll* $(stow)/$(gstffmpeg)/bin/
 	cd $(stow) && stow -R $(gstffmpeg)
 	touch $@
 
@@ -498,6 +500,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	patch -d $(usbmuxd) -p0 < patches/usbmuxd-02-errno.patch
 	patch -d $(usbmuxd) -p0 < patches/usbmuxd-03-pthreads.patch
 	patch -d $(usbmuxd) -p0 < patches/usbmuxd-04-notools.patch
+	patch -d $(usbmuxd) -p0 < patches/usbmuxd-06-winsock.patch
+	patch -d $(usbmuxd) -p0 < patches/usbmuxd-07-winsock.patch
 	echo 'set(VERSION_TAG "1.0.4")' >> $(usbmuxd)/Modules/VersionTag.cmake
 	cd $(usbmuxd)/build && $(cmake)
 	cd $(usbmuxd)/build && $(make)
@@ -666,12 +670,12 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-cdio:
 	$(call extractpkg,$(cdiotgz))
-	cd $(cdio) && patch -p1 < ../patches/libcdio-01-issock-islnk.patch
+	cd $(cdio) && patch -p0 < ../patches/libcdio-02-mingw-w64.patch
 	cd $(cdio) && autoreconf
 	cd $(cdio) && $(configure) --disable-joliet \
 		--without-cd-drive --without-cd-info \
 		--without-cdda-player --without-cd-read --without-iso-info \
-		--without-iso-read
+		--without-iso-read --disable-largefile
 	cd $(cdio) && $(make)
 	rm -rf $(stow)/$(cdio)
 	cd $(cdio) && make install DESTDIR=$(stow)/$(cdio)
@@ -688,3 +692,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-sparsehash:
 	$(call extractandbuild,$(sparsehashtgz),$(sparsehash))
+
+.done-ffi:
+	$(call extractandbuild,$(ffitgz),$(ffi))

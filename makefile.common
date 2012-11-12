@@ -1,21 +1,22 @@
 # Package version numbers
 archive=libarchive-2.8.4
 boost=boost-1.50
-cdio=libcdio-0.82
+cdio=libcdio-0.90
 curl=curl-7.21.4
 dlfcn=dlfcn-r19
 faac=faac-1.28
 faad=faad2-2.7
+ffi=libffi-3.0.11
 fftw=fftw-3.3.2
 flac=flac-1.2.1
 glibnetworking=glib-networking-2.28.7
 gpod=libgpod-0.8.0
 gstbad=gst-plugins-bad-0.10.19
-gstbase=gst-plugins-base-0.10.30
-gstffmpeg=gst-ffmpeg-0.10.11
+gstbase=gst-plugins-base-0.10.36
+gstffmpeg=gst-ffmpeg-0.10.13
 gstgood=gst-plugins-good-0.10.24
-gst=gstreamer-0.10.30
-gstugly=gst-plugins-ugly-0.10.15
+gst=gstreamer-0.10.36
+gstugly=gst-plugins-ugly-0.10.19
 id3tag=libid3tag-0.15.1b
 imob=libimobiledevice-1.0.7
 lame=lame-3.98.4
@@ -61,7 +62,6 @@ win7sdk=win7-sdk
 wmdm=wmdm-sdk-11
 
 # OSX only packages
-ffi=libffi-3.0.9
 gcrypt=libgcrypt-1.4.6
 gettext=gettext-0.18.1.1
 glib=glib-2.33.6
@@ -107,11 +107,11 @@ gnutlstgz=$(src)/$(gnutls).tar.bz2
 gpgerrortgz=$(src)/$(gpgerror).tar.bz2
 gpodtgz=$(src)/$(gpod).tar.gz
 gstbadtgz=$(src)/$(gstbad).tar.gz
-gstbasetgz=$(src)/$(gstbase).tar.gz
-gstffmpegtgz=$(src)/$(gstffmpeg).tar.gz
+gstbasetgz=$(src)/$(gstbase).tar.bz2
+gstffmpegtgz=$(src)/$(gstffmpeg).tar.bz2
 gstgoodtgz=$(src)/$(gstgood).tar.gz
-gsttgz=$(src)/$(gst).tar.gz
-gstuglytgz=$(src)/$(gstugly).tar.gz
+gsttgz=$(src)/$(gst).tar.bz2
+gstuglytgz=$(src)/$(gstugly).tar.bz2
 gtkzip=$(src)/$(gtk)-20111122_win32.zip
 id3tagtgz=$(src)/$(id3tag).tar.gz
 imobtgz=$(src)/$(imob).tar.bz2
@@ -175,6 +175,7 @@ directx: .done-directx
 dlfcn: .done-dlfcn
 faac: .done-faac
 faad: .done-faad
+ffi: .done-ffi
 fftw: .done-fftw
 flac: .done-flac
 gcrypt: .done-gcrypt

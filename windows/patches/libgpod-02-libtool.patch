@@ -1,0 +1,17 @@
+--- Makefile.am.orig	2012-11-09 11:31:27.365099696 +0000
++++ Makefile.am	2012-11-09 11:31:40.645398986 +0000
+@@ -1,4 +1,4 @@
+-SUBDIRS=src tools tests po m4 docs bindings 
++SUBDIRS=src tools po m4 docs bindings 
+ 
+ # build documentation when doing a distcheck.
+ DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc		\
+@@ -7,6 +7,8 @@
+ 
+ ACLOCAL_AMFLAGS = -I m4
+ 
++export to_tool_file_cmd=func_convert_file_noop
++
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = libgpod-1.0.pc
+ 
