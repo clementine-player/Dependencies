@@ -134,7 +134,9 @@ dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll 
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
-configure=$(pkgconfig) ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
+ldflags=-L$(prefix)/lib
+cflags=-I$(prefix)/include
+configure=$(pkgconfig) LDFLAGS=$(ldflags) CFLAGS=$(cflags) ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 cmake=$(pkgconfig) cmake .. -DCMAKE_TOOLCHAIN_FILE=$(src)/Toolchain-mingw32.cmake -DCMAKE_INSTALL_PREFIX=$(prefix)
 make=make $(jobs)
 extractpkg=tar -xvf $(1)
@@ -250,8 +252,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(gpod) && patch -p0 < ../patches/libgpod-01-nousb.patch
 	cd $(gpod) && patch -p0 < ../patches/libgpod-02-libtool.patch
 	cd $(gpod) && autoreconf
-	cd $(gpod) && LDFLAGS="-L/target/lib -Wl,-lsqlite3 -Wl,--export-symbols-regex" $(configure)
-	#sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gpod)/libtool
+	# Force link static sqlite3 because libtool is stupid.
+	cd $(gpod) && $(pkgconfig) LDFLAGS="$(ldflags) -Wl,-lsqlite3" CFLAGS=$(cflags) ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 	cd $(gpod) && make
 	$(call installpkg,$(gpod))
 
@@ -357,8 +359,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
 	$(call extractpkg,$(gstuglytgz))
-	cd $(gstugly) && LDFLAGS="-L$(prefix)/bin" \
-	                 $(configure) --disable-examples --disable-x --disable-cdio
+	cd $(gstugly) && \
+		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS=$(cflags) \
+		./configure --host=$(host) --build=$(build) --prefix=$(prefix) \
+		--disable-examples --disable-cdio
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstugly)/libtool
 	cd $(gstugly) && $(make)
 	$(call installpkg,$(gstugly))
@@ -412,7 +416,13 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && patch -p0 < ../patches/gst-plugins-bad-01-librfb-winsock.patch
-	cd $(gstbad) && LDFLAGS="-L$(prefix)/bin" $(configure) --disable-acm --disable-examples --disable-x --disable-dccp
+	cd $(gstbad) && \
+		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS=$(cflags) \
+		./configure --host=$(host) --build=$(build) --prefix=$(prefix) \
+		--disable-acm \
+		--disable-examples \
+		--disable-x \
+		--disable-dccp
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstbad)/libtool
 	cd $(gstbad) && $(make)
 	$(call installpkg,$(gstbad))
@@ -523,6 +533,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-pthreads:
 	tar -xzf $(pthreadstgz) -C $(stow)
+	patch -d $(stow)/$(pthreads) -p0 < patches/pthreads-01-timespec.patch
 	cd $(stow) && stow $(pthreads)
 	touch $@
 
@@ -671,8 +682,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-cdio:
 	$(call extractpkg,$(cdiotgz))
 	cd $(cdio) && patch -p0 < ../patches/libcdio-02-mingw-w64.patch
+	cd $(cdio) && patch -p0 < ../patches/libcdio-03-const.patch
 	cd $(cdio) && autoreconf
-	cd $(cdio) && $(configure) --disable-joliet \
+	cd $(cdio) && $(configure) \
 		--without-cd-drive --without-cd-info \
 		--without-cdda-player --without-cd-read --without-iso-info \
 		--without-iso-read --disable-largefile
