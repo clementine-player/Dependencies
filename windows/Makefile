@@ -417,7 +417,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-lame:
 	$(call extractandbuild,$(lametgz),$(lame))
 
-.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec
+.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec .done-opus
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && patch -p0 < ../patches/gst-plugins-bad-01-librfb-winsock.patch
 	cd $(gstbad) && \
@@ -425,7 +425,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		./configure --host=$(host) --build=$(build) --prefix=$(prefix) \
 		--disable-acm \
 		--disable-examples \
-		--disable-x \
 		--disable-dccp
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstbad)/libtool
 	cd $(gstbad) && $(make)
@@ -711,3 +710,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-ffi:
 	$(call extractandbuild,$(ffitgz),$(ffi))
+
+.done-opus:
+	$(call extractandbuild,$(opustgz),$(opus))
