@@ -255,7 +255,11 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	# Force link static sqlite3 because libtool is stupid.
 	cd $(gpod) && $(pkgconfig) LDFLAGS="$(ldflags) -Wl,-lsqlite3" CFLAGS=$(cflags) ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 	cd $(gpod) && make
-	$(call installpkg,$(gpod))
+	cd $(gpod) && make install DESTDIR=$(stow)/$(gpod)
+	# Delete the shared libraries. --disable-shared doesn't work.
+	rm $(stow)/$(gpod)/bin/*
+	cd $(stow) && stow $(gpod)
+	touch $@
 
 .done-gstreamer: .done-gtk .done-libxml .done-orc
 	$(call extractpkg,$(gsttgz))
