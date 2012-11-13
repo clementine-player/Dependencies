@@ -70,6 +70,7 @@ clementine_dlls=QtCore4.dll \
                 libmp3lame-0.dll \
                 libogg-0.dll \
                 liboil-0.3-0.dll \
+                libopus-0.dll \
                 liborc-0.4-0.dll \
                 liborc-test-0.4-0.dll \
                 libplist.dll \
@@ -114,6 +115,7 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstmpegaudioparse.dll \
                        libgstmusepack.dll \
                        libgstogg.dll \
+                       libgstopus.dll \
                        libgstqtdemux.dll \
                        libgstreplaygain.dll \
                        libgstsouphttpsrc.dll \
