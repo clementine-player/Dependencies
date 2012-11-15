@@ -35,7 +35,6 @@ clementine_dlls=QtCore4.dll \
                 libfaad.dll \
                 libfftw3-3.dll \
                 libFLAC.dll \
-                libgcc_s_dw2-1.dll \
                 libgcrypt-11.dll \
                 libgdk_pixbuf-2.0-0.dll \
                 libgio-2.0-0.dll \
@@ -178,7 +177,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	done
 	cp -v $(prefix)/lib/gio/modules/libgiognutls.dll clementine-deps/gio-modules/
 	cp -vr $(src)/mingwm10.dll $(src)/nsisplugins clementine-deps/
-	cp -vr /root/mingw/$(host)/*/libgcc_s_sjlj-1.dll clementine-deps/
+	cp -vr /mingw/$(host)/*/libgcc_s_sjlj-1.dll clementine-deps/
 	for f in `find clementine-deps/ -name '*.dll' $(dont_strip)`; do \
 		$(host)-strip -v $$f; \
 	done
@@ -189,7 +188,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-qjson: .done-qt
 	$(call extractpkg,$(qjsontgz))
 	cd $(qjson) && patch -p0 < ../patches/qjson-01-pkgconfig.patch
-	mkdir $(qjson)/build
+	mkdir -p $(qjson)/build
 	cd $(qjson)/build && $(cmake) \
 		-DQT_HEADERS_DIR=$(prefix)/include/ \
 		-DQT_LIBRARY_DIR=$(prefix)/bin
@@ -258,8 +257,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(gpod) && $(pkgconfig) LDFLAGS="$(ldflags) -Wl,-lsqlite3" CFLAGS=$(cflags) ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 	cd $(gpod) && make
 	cd $(gpod) && make install DESTDIR=$(stow)/$(gpod)
-	# Delete the shared libraries. --disable-shared doesn't work.
-	rm $(stow)/$(gpod)/bin/*
 	cd $(stow) && stow $(gpod)
 	touch $@
 
@@ -571,8 +568,25 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(taglib)
 	touch $@
 
-.done-qt:
-	tar -xf $(qttgz) -C $(stow)
+.done-qt: .done-openssl
+	$(call extractpkg,$(qttgz))
+	patch -d $(qt) -p0 < patches/qt-01-codecs.patch
+	patch -d $(qt) -p0 < patches/qt-02-dir.patch
+	patch -d $(qt) -p1 < patches/qt-03-config.patch
+	cd $(qt) && OPENSSL_LIBS="-llibeay32 -lssleay32" ./configure \
+		-opensource -confirm-license \
+		-xplatform win32-g++ -device-option CROSS_COMPILE=i686-w64-mingw32- \
+		-prefix $(stow)/$(qt) \
+		-no-phonon -no-webkit -no-xmlpatterns -no-qt3support \
+		-no-declarative -no-audio-backend \
+		-no-script -no-scripttools \
+		-nomake demos -nomake examples \
+		-no-exceptions \
+		-qt-sql-sqlite \
+		-openssl-linked
+	cd $(qt) && $(make)
+	cd $(qt) && make install
+	mv -fv $(stow)/$(qt)/lib/*.dll $(stow)/$(qt)/bin/
 	cd $(stow) && stow -R $(qt)
 	touch $@
 
@@ -702,9 +716,15 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	touch $@
 
 .done-openssl:
-	-mkdir -p $(stow)/$(opensslwin32)/bin
-	unzip -o -d $(stow)/$(opensslwin32)/bin $(opensslwin32zip)
-	cd $(stow) && stow $(opensslwin32)
+	$(call extractpkg,$(openssltgz))
+	cd $(openssl) && ./Configure \
+		--cross-compile-prefix="$(host)-" \
+		--prefix=$(stow)/$(openssl) \
+		--shared \
+		mingw
+	cd $(openssl) && make
+	cd $(openssl) && make install
+	cd $(stow) && stow -R $(openssl)
 	touch $@
 
 .done-sparsehash:
