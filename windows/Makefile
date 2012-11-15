@@ -96,6 +96,7 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstaudioresample.dll \
                        libgstaudiotestsrc.dll \
                        libgstautodetect.dll \
+                       libgstcdio.dll \
                        libgstcoreelements.dll \
                        libgstdecodebin2.dll \
                        libgstdirectsoundsink.dll \
@@ -362,10 +363,11 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
 	$(call extractpkg,$(gstuglytgz))
+	patch -d $(gstugly) -p1 < patches/gst-plugins-ugly-01-cdio.patch
 	cd $(gstugly) && \
 		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS=$(cflags) \
 		./configure --host=$(host) --build=$(build) --prefix=$(prefix) \
-		--disable-examples --disable-cdio
+		--disable-examples
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstugly)/libtool
 	cd $(gstugly) && $(make)
 	$(call installpkg,$(gstugly))
