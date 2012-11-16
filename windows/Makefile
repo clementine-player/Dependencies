@@ -426,7 +426,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		./configure --host=$(host) --build=$(build) --prefix=$(prefix) \
 		--disable-acm \
 		--disable-examples \
-		--disable-dccp
+		--disable-dccp \
+		--disable-apexsink
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstbad)/libtool
 	cd $(gstbad) && $(make)
 	$(call installpkg,$(gstbad))
