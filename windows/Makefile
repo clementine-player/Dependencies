@@ -179,6 +179,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cp -v $(prefix)/lib/gio/modules/libgiognutls.dll clementine-deps/gio-modules/
 	cp -vr $(src)/mingwm10.dll $(src)/nsisplugins clementine-deps/
 	cp -vr /mingw/$(host)/*/libgcc_s_sjlj-1.dll clementine-deps/
+	cp -vr /mingw/$(host)/lib/libstdc++-6.dll clementine-deps/
 	for f in `find clementine-deps/ -name '*.dll' $(dont_strip)`; do \
 		$(host)-strip -v $$f; \
 	done
