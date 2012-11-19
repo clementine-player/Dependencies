@@ -1,21 +1,22 @@
 # Package version numbers
 archive=libarchive-2.8.4
 boost=boost-1.50
-cdio=libcdio-0.82
+cdio=libcdio-0.90
 curl=curl-7.21.4
 dlfcn=dlfcn-r19
 faac=faac-1.28
 faad=faad2-2.7
+ffi=libffi-3.0.11
 fftw=fftw-3.3.2
 flac=flac-1.2.1
 glibnetworking=glib-networking-2.28.7
 gpod=libgpod-0.8.0
-gstbad=gst-plugins-bad-0.10.19
-gstbase=gst-plugins-base-0.10.30
-gstffmpeg=gst-ffmpeg-0.10.11
+gstbad=gst-plugins-bad-0.10.23
+gstbase=gst-plugins-base-0.10.36
+gstffmpeg=gst-ffmpeg-0.10.13
 gstgood=gst-plugins-good-0.10.24
-gst=gstreamer-0.10.30
-gstugly=gst-plugins-ugly-0.10.15
+gst=gstreamer-0.10.36
+gstugly=gst-plugins-ugly-0.10.19
 id3tag=libid3tag-0.15.1b
 imob=libimobiledevice-1.0.7
 lame=lame-3.98.4
@@ -24,12 +25,12 @@ mad=libmad-0.15.1b
 mpcdec=libmpcdec-1.2.6
 ogg=libogg-1.2.0
 oil=liboil-0.3.17
+openssl=openssl-1.0.1c
+opus=opus-1.0.1
 orc=orc-0.4.6
 plist=libplist-1.8
 protobuf=protobuf-2.4.0a
 proxy=libproxy-0.4.7
-pyqt=PyQt-x11-gpl-4.8.3
-python=Python-2.7.1
 qjson=qjson-0.7.1
 qtsparkle=davidsansome-qtsparkle-28721b5
 quicktime=libquicktime-1.1.5
@@ -53,15 +54,13 @@ mmswin32=libmms-win32
 opensslwin32=openssl-win32-0.9.8s
 pthreads=pthreads-win32-2.8.0
 pythonwin32=Python27
-# When changing the Qt version remember to change the sed line in .done-pyqt
-qt=qt-4.8.2
+qt=qt-everywhere-opensource-src-4.8.3
 spotifywin32=libspotify-12.1.45-win32-release
 usbwin32=libusb-win32-bin-1.2.0.0
 win7sdk=win7-sdk
 wmdm=wmdm-sdk-11
 
 # OSX only packages
-ffi=libffi-3.0.9
 gcrypt=libgcrypt-1.4.6
 gettext=gettext-0.18.1.1
 glib=glib-2.33.6
@@ -106,12 +105,12 @@ glibnetworkingtgz=$(src)/$(glibnetworking).tar.bz2
 gnutlstgz=$(src)/$(gnutls).tar.bz2
 gpgerrortgz=$(src)/$(gpgerror).tar.bz2
 gpodtgz=$(src)/$(gpod).tar.gz
-gstbadtgz=$(src)/$(gstbad).tar.gz
-gstbasetgz=$(src)/$(gstbase).tar.gz
-gstffmpegtgz=$(src)/$(gstffmpeg).tar.gz
+gstbadtgz=$(src)/$(gstbad).tar.bz2
+gstbasetgz=$(src)/$(gstbase).tar.bz2
+gstffmpegtgz=$(src)/$(gstffmpeg).tar.bz2
 gstgoodtgz=$(src)/$(gstgood).tar.gz
-gsttgz=$(src)/$(gst).tar.gz
-gstuglytgz=$(src)/$(gstugly).tar.gz
+gsttgz=$(src)/$(gst).tar.bz2
+gstuglytgz=$(src)/$(gstugly).tar.bz2
 gtkzip=$(src)/$(gtk)-20111122_win32.zip
 id3tagtgz=$(src)/$(id3tag).tar.gz
 imobtgz=$(src)/$(imob).tar.bz2
@@ -126,17 +125,16 @@ mtptgz=$(src)/$(mtp).tar.gz
 ofatgz=$(src)/$(ofa).tar.gz
 oggtgz=$(src)/$(ogg).tar.gz
 oiltgz=$(src)/$(oil).tar.gz
+openssltgz=$(src)/$(openssl).tar.gz
 opensslwin32zip=$(src)/$(opensslwin32).zip
+opustgz=$(src)/$(opus).tar.gz
 orctgz=$(src)/$(orc).tar.gz
 plisttgz=$(src)/$(plist).tar.bz2
 pthreadstgz=$(src)/$(pthreads).tar.gz
 protobuftgz=$(src)/$(protobuf).tar.bz2
 proxytgz=$(src)/$(proxy).tar.gz
-pyqttgz=$(src)/$(pyqt).tar.gz
-pythontgz=$(src)/$(python).tar.bz2
-pythonwin32zip=$(src)/$(pythonwin32).zip
 qjsontgz=$(src)/$(qjson).tar.bz2
-qttgz=$(src)/$(qt).tar.bz2
+qttgz=$(src)/$(qt).tar.gz
 qtsparkletgz=$(src)/$(qtsparkle).tar.gz
 quicktimetgz=$(src)/$(quicktime).tar.gz
 siptgz=$(src)/$(sip).tar.gz
@@ -175,6 +173,7 @@ directx: .done-directx
 dlfcn: .done-dlfcn
 faac: .done-faac
 faad: .done-faad
+ffi: .done-ffi
 fftw: .done-fftw
 flac: .done-flac
 gcrypt: .done-gcrypt
@@ -211,6 +210,7 @@ ofa: .done-ofa
 ogg: .done-ogg
 oil: .done-oil
 openssl: .done-openssl
+opus: .done-opus
 orc: .done-orc
 protobuf: .done-protobuf
 pthreads: .done-pthreads

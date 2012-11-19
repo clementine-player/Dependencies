@@ -1,0 +1,12 @@
+--- libusbmuxd/sock_stuff.c.orig	2012-11-09 10:43:25.980263660 +0000
++++ libusbmuxd/sock_stuff.c	        2012-11-09 10:44:00.871048855 +0000
+@@ -30,8 +30,8 @@
+ #include <sys/time.h>
+ #include <sys/stat.h>
+ #ifdef WIN32
+-#include <windows.h>
+ #include <winsock2.h>
++#include <windows.h>
+ static int wsa_init = 0;
+ #else
+ #include <sys/socket.h>

@@ -1,0 +1,12 @@
+--- libusbmuxd/libusbmuxd.c.orig	2012-11-09 10:50:03.139201529 +0000
++++ libusbmuxd/libusbmuxd.c	2012-11-09 10:49:56.139043993 +0000
+@@ -27,8 +27,8 @@
+ #include <stdio.h>
+ #include <string.h>
+ #ifdef WIN32
+-#include <windows.h>
+ #include <winsock2.h>
++#include <windows.h>
+ #define sleep(x) Sleep(x*1000)
+ #else
+ #include <sys/socket.h>
