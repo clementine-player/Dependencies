@@ -152,6 +152,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
 	$(call extractpkg,$(gstuglytgz))
 	cd $(gstugly) && $(configure) --disable-examples --disable-x --disable-amrnb --disable-amrwb --enable-mad --disable-mpeg2dec
+	patch -d $(gstugly) -p1 < patches/gst-plugins-ugly-01-cdio.patch
 	cd $(gstugly) && $(make)
 	$(call installpkg,$(gstugly))
 
@@ -317,12 +318,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	touch $(work)/$@
 
 .done-cdio:
-	$(call extractpkg,$(cdiotgz))
-	cd $(cdio) && patch -p0 < ../patches/libcdio-01-lion.patch
-	cd $(cdio) && patch -p0 < ../patches/libcdio-02-headers.patch
-	cd $(cdio) && autoconf
-	$(call buildpkg,$(cdio))
-	$(call installpkg,$(cdio))
+	$(call extractandbuild,$(cdiotgz),$(cdio))
 
 .done-sparsehash:
 	$(call extractandbuild,$(sparsehashtgz),$(sparsehash))
