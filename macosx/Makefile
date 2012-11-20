@@ -169,7 +169,18 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libquicktime .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
-	cd $(gstbad) && $(configure) --disable-acm --disable-examples --disable-dirac --disable-cog --disable-modplug --disable-zbar --disable-ofa --disable-curl
+	cd $(gstbad) && $(configure) \
+				--disable-acm \
+				--disable-apple_media \
+				--disable-cog \
+				--disable-curl
+				--disable-dirac \
+				--disable-examples \
+				--disable-gsettings \
+				--disable-modplug \
+				--disable-ofa \
+				--disable-rtmp \
+				--disable-zbar
 	cd $(gstbad) && $(make)
 	$(call installpkg,$(gstbad))
 
