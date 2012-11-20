@@ -173,7 +173,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 				--disable-acm \
 				--disable-apple_media \
 				--disable-cog \
-				--disable-curl
+				--disable-curl \
 				--disable-dirac \
 				--disable-examples \
 				--disable-gsettings \
