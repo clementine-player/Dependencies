@@ -151,8 +151,14 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
 	$(call extractpkg,$(gstuglytgz))
-	cd $(gstugly) && $(configure) --disable-examples --disable-x --disable-amrnb --disable-amrwb --enable-mad --disable-mpeg2dec
 	patch -d $(gstugly) -p1 < patches/gst-plugins-ugly-01-cdio.patch
+	cd $(gstugly) && $(configure) \
+					--disable-amrnb \
+					--disable-amrwb \
+					--disable-examples \
+					--disable-mpeg2dec
+					--disable-x264 \
+					--enable-mad
 	cd $(gstugly) && $(make)
 	$(call installpkg,$(gstugly))
 
