@@ -156,7 +156,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 					--disable-amrnb \
 					--disable-amrwb \
 					--disable-examples \
-					--disable-mpeg2dec
+					--disable-mpeg2dec \
 					--disable-x264 \
 					--enable-mad
 	cd $(gstugly) && $(make)
