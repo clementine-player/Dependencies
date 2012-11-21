@@ -192,11 +192,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkg,$(gstbad))
 
 .done-gst-ffmpeg: .done-gstreamer .done-gst-plugins-base
-	$(call extractpkg,$(gstffmpegtgz))
-	cd $(gstffmpeg) && $(configure) --with-ffmpeg-extra-configure="--enable-shared --disable-debug --disable-mmx"
-	sed -e 's/HAVE_EBX_AVAILABLE 1/HAVE_EBX_AVAILABLE 0/' -i "" $(gstffmpeg)/gst-libs/ext/ffmpeg/config.h
-	cd $(gstffmpeg) && $(make)
-	$(call installpkg,$(gstffmpeg))
+	$(call extractandbuild,$(gstffmpegtgz),$(gstffmpeg))
 
 .done-faad:
 	$(call extractandbuild,$(faadtgz),$(faad))
