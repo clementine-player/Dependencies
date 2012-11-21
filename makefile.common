@@ -2,7 +2,6 @@
 archive=libarchive-2.8.4
 boost=boost-1.50
 cdio=libcdio-0.90
-curl=curl-7.21.4
 dlfcn=dlfcn-r19
 faac=faac-1.28
 faad=faad2-2.7
@@ -25,7 +24,6 @@ mad=libmad-0.15.1b
 mpcdec=libmpcdec-1.2.6
 ogg=libogg-1.2.0
 oil=liboil-0.3.17
-openssl=openssl-1.0.1c
 opus=opus-1.0.1
 orc=orc-0.4.16
 plist=libplist-1.8
@@ -51,9 +49,8 @@ directx=directx-headers-0.03
 glew=glew-1.5.5
 gtk=gtk+-bundle_2.24.8
 mmswin32=libmms-win32
-opensslwin32=openssl-win32-0.9.8s
+openssl=openssl-1.0.1c
 pthreads=pthreads-win32-2.8.0
-pythonwin32=Python27
 qt=qt-everywhere-opensource-src-4.8.3
 spotifywin32=libspotify-12.1.45-win32-release
 usbwin32=libusb-win32-bin-1.2.0.0
@@ -78,17 +75,16 @@ allpackages=$(boost) $(directx) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod)
             $(imob) $(lame) $(lastfm) $(mad) $(mmswin32) $(ogg) $(oil) $(orc) $(plist) \
             $(pthreads) $(qjson) $(qt) $(quicktime) $(soup) $(speex) $(sqlite) $(taglib) \
             $(tls) $(usb) $(usbmuxd) $(vorbis) $(wpd) $(xml) $(qtsparkle) \
-            $(python) $(sip) $(pyqt) $(ofa) $(curl) $(fftw) $(archive) \
+            $(pyqt) $(ofa) $(curl) $(fftw) $(archive) \
             $(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
             $(gcrypt) $(spotifymac) $(gstffmpeg) $(mtp) $(mpcdec) \
-            $(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(pythonwin32) $(cdio) \
+            $(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(cdio) \
             $(opensslwin32) $(glibnetworking)
 
 # Package filenames
 archivetgz=$(src)/$(archive).tar.gz
 boosttgz=$(src)/$(boost).tar.bz2
 cdiotgz=$(src)/$(cdio).tar.gz
-curltgz=$(src)/$(curl).tar.gz
 directxtgz=$(src)/$(directx).tar.gz
 dlfcntgz=$(src)/dlfcn-win32-static-r19.tar.bz2
 faactgz=$(src)/$(faac).tar.gz
@@ -126,7 +122,6 @@ ofatgz=$(src)/$(ofa).tar.gz
 oggtgz=$(src)/$(ogg).tar.gz
 oiltgz=$(src)/$(oil).tar.gz
 openssltgz=$(src)/$(openssl).tar.gz
-opensslwin32zip=$(src)/$(opensslwin32).zip
 opustgz=$(src)/$(opus).tar.gz
 orctgz=$(src)/$(orc).tar.gz
 plisttgz=$(src)/$(plist).tar.bz2
@@ -137,7 +132,6 @@ qjsontgz=$(src)/$(qjson).tar.bz2
 qttgz=$(src)/$(qt).tar.gz
 qtsparkletgz=$(src)/$(qtsparkle).tar.gz
 quicktimetgz=$(src)/$(quicktime).tar.gz
-siptgz=$(src)/$(sip).tar.gz
 souptgz=$(src)/$(soup).tar.bz2
 sparsehashtgz=$(src)/$(sparsehash).tar.gz
 speextgz=$(src)/$(speex).tar.gz

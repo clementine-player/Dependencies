@@ -249,12 +249,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(stow) && stow -R $(boost)
 	touch $@
 
-.done-python:
-	$(call extractandbuild,$(pythontgz),$(python))
-
-.done-curl:
-	$(call extractandbuild,$(curltgz),$(curl))
-
 .done-protobuf:
 	$(call extractandbuild,$(protobuftgz),$(protobuf))
 
