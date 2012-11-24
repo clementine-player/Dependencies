@@ -1,0 +1,64 @@
+commit 4bc2550e657ef1029919a15448f6f045354eeb96
+Author: Andy Shaw <andy.shaw@digia.com>
+Date:   Thu Jun 7 17:04:13 2012 +0200
+
+    Ensure the mouse buttons are preserved when entering a widget
+    
+    On Mac we have to fake the QEvent::Enter event when entering a widget
+    so we need to ensure the buttons held down are set as part of that event
+    otherwise it causes problems with graphicsview which will update the
+    grabbed item based on this event.
+    
+    Task-number: QTBUG-19353
+    Change-Id: I89252a46b5edd0d82b6b1a0cf2592f72b472e5cc
+    Reviewed-by: Nils Jeisecke <jeisecke@saltation.de>
+    Reviewed-by: Morten Johan Sørvig <morten.sorvig@nokia.com>
+
+diff --git a/src/gui/kernel/qcocoaview_mac.mm b/src/gui/kernel/qcocoaview_mac.mm
+index 63bbd29..646053a 100644
+--- a/src/gui/kernel/qcocoaview_mac.mm
++++ b/src/gui/kernel/qcocoaview_mac.mm
+@@ -502,7 +502,7 @@ static int qCocoaViewCount = 0;
+     // and not just the one on top. Therefore, to we cannot use qwidget
+     // as native widget for this case. Instead, we let qt_mac_handleMouseEvent
+     // resolve it (last argument set to 0):
+-    qt_mac_handleMouseEvent(nsmoveEvent, QEvent::MouseMove, Qt::NoButton, 0);
++    qt_mac_handleMouseEvent(nsmoveEvent, QEvent::MouseMove, Qt::NoButton, 0, true);
+ }
+ 
+ - (void)mouseExited:(NSEvent *)event
+diff --git a/src/gui/kernel/qt_cocoa_helpers_mac.mm b/src/gui/kernel/qt_cocoa_helpers_mac.mm
+index f1db0e3..4e9d557 100644
+--- a/src/gui/kernel/qt_cocoa_helpers_mac.mm
++++ b/src/gui/kernel/qt_cocoa_helpers_mac.mm
+@@ -1174,7 +1174,7 @@ static inline void qt_mac_checkEnterLeaveForNativeWidgets(QWidget *maybeEnterWid
+     }
+ }
+ 
+-bool qt_mac_handleMouseEvent(NSEvent *event, QEvent::Type eventType, Qt::MouseButton button, QWidget *nativeWidget)
++bool qt_mac_handleMouseEvent(NSEvent *event, QEvent::Type eventType, Qt::MouseButton button, QWidget *nativeWidget, bool fakeEvent)
+ {
+     // Give the Input Manager a chance to process the mouse events.
+     NSInputManager *currentIManager = [NSInputManager currentInputManager];
+@@ -1222,6 +1222,8 @@ bool qt_mac_handleMouseEvent(NSEvent *event, QEvent::Type eventType, Qt::MouseBu
+         if (GetEventParameter(carbonEvent, kEventParamMouseChord, typeUInt32, 0,
+                               sizeof(mac_buttons), 0, &mac_buttons) == noErr)
+             buttons = qt_mac_get_buttons(mac_buttons);
++        if (fakeEvent && buttons == 0)
++            buttons = qt_mac_get_buttons(QApplication::mouseButtons());
+     }
+ 
+     // Send enter/leave events for the cases when QApplicationPrivate::sendMouseEvent do not:
+diff --git a/src/gui/kernel/qt_cocoa_helpers_mac_p.h b/src/gui/kernel/qt_cocoa_helpers_mac_p.h
+index 17f1769..e7d07b7 100644
+--- a/src/gui/kernel/qt_cocoa_helpers_mac_p.h
++++ b/src/gui/kernel/qt_cocoa_helpers_mac_p.h
+@@ -181,7 +181,7 @@ Qt::DropActions qt_mac_mapNSDragOperations(NSDragOperation nsActions);
+ QWidget *qt_mac_getTargetForKeyEvent(QWidget *widgetThatReceivedEvent);
+ QWidget *qt_mac_getTargetForMouseEvent(NSEvent *event, QEvent::Type eventType,
+     QPoint &returnLocalPoint, QPoint &returnGlobalPoint, QWidget *nativeWidget, QWidget **returnWidgetUnderMouse);
+-bool qt_mac_handleMouseEvent(NSEvent *event, QEvent::Type eventType, Qt::MouseButton button, QWidget *nativeWidget);
++bool qt_mac_handleMouseEvent(NSEvent *event, QEvent::Type eventType, Qt::MouseButton button, QWidget *nativeWidget, bool fakeEvent = false);
+ void qt_mac_handleNonClientAreaMouseEvent(NSWindow *window, NSEvent *event);
+ #endif
+ 

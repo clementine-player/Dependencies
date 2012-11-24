@@ -51,14 +51,14 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 # Top-level targets
 clementine-build-deps: boost liblastfm taglib libimobiledevice libmtp \
                        libgpod gstreamer glew qjson \
-                       protobuf spotify fftw sparsehash
+                       protobuf spotify fftw sparsehash qt
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
 clementine-deps: clementine-build-deps clementine-gst-plugins
 
 # The actual commands for compiling each package follow
 
-.done-qjson:
+.done-qjson: .done-qt
 	$(call extractpkg,$(qjsontgz))
 	$(call buildpkgcmake,$(qjson))
 	sed -e 's/QtCore//' -i "" $(qjson)/build/QJson.pc
@@ -237,7 +237,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(taglib)/build && $(make)
 	$(call installpkgcmake,$(taglib))
 
-.done-liblastfm:
+.done-liblastfm: .done-qt
 	$(call extractandbuildcmake,$(lastfmtgz),$(lastfm))
 
 .done-boost:
@@ -318,3 +318,21 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-sparsehash:
 	$(call extractandbuild,$(sparsehashtgz),$(sparsehash))
+
+.done-qt:
+	$(call extractpkg,$(qttgz))
+	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
+	cd $(qt) && ./configure \
+		-release \
+		-opensource -confirm-license \
+		-prefix $(stow)/$(qt) \
+		-no-phonon -no-webkit -no-xmlpatterns -no-qt3support \
+		-no-declarative -no-audio-backend \
+		-no-script -no-scripttools \
+		-nomake demos -nomake examples \
+		-no-exceptions \
+		-qt-sql-sqlite
+	cd $(qt) && $(make)
+	cd $(qt) && make install
+	cd $(stow) && stow -R $(qt)
+	touch $(work)/$@
