@@ -331,7 +331,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		-no-script -no-scripttools \
 		-nomake demos -nomake examples \
 		-no-exceptions \
-		-qt-sql-sqlite
+		-no-sql-sqlite
 	cd $(qt) && $(make)
 	cd $(qt) && make install
 	cd $(stow) && stow -R $(qt)
