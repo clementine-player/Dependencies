@@ -274,7 +274,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(gnutlstgz))
 	cd $(gnutls) && $(configure) --with-libgcrypt
 	cd $(gnutls) && $(make)
-	sed -e 's/zlib//' -i "" $(gnutls)/lib/gnutls.pc
+	sed -e 's/ *, *zlib//' -i "" $(gnutls)/lib/gnutls.pc
 	$(call installpkg,$(gnutls))
 
 .done-libtasn1:
