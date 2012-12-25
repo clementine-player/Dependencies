@@ -154,9 +154,12 @@ xmlzip=$(src)/libxml2_2.7.7-1_win32.zip
 all: clementine-deps
 
 clean:
+	for path in $(stow)/*; do \
+		directory=`basename $$path`; \
+		stow -d $(stow) -D $$directory; \
+	done
 	for package in $(allpackages); do \
 		rm -rf $$package; \
-		stow -d $(stow) -D $$package ; \
 	done
 	-rm .done-*
 
