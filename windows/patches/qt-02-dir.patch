@@ -6,7 +6,7 @@
  
 -QMAKE_INCDIR		=
 +QMAKE_INCDIR		= /target/include
-+QMAKE_LIBDIR		= /target/bin
++QMAKE_LIBDIR		= /target/bin /target/lib
  QMAKE_INCDIR_QT		= $$[QT_INSTALL_HEADERS]
  QMAKE_LIBDIR_QT		= $$[QT_INSTALL_LIBS]
 -

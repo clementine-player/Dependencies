@@ -572,7 +572,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(taglib)
 	touch $@
 
-.done-qt: .done-openssl
+.done-qt: .done-openssl .done-sqlite
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p0 < patches/qt-01-codecs.patch
 	patch -d $(qt) -p0 < patches/qt-02-dir.patch
@@ -586,7 +586,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-no-script -no-scripttools \
 		-nomake demos -nomake examples \
 		-no-exceptions \
-		-qt-sql-sqlite \
+		-qt-sql-sqlite -system-sqlite \
 		-openssl-linked
 	cd $(qt) && $(make)
 	cd $(qt) && make install
