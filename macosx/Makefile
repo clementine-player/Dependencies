@@ -174,7 +174,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-lame:
 	$(call extractandbuild,$(lametgz),$(lame))
 
-.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libquicktime .done-libmpcdec
+.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libquicktime .done-libmpcdec .done-opus
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && $(configure) \
 				--disable-acm \
@@ -336,3 +336,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(qt) && make install
 	cd $(stow) && stow -R $(qt)
 	touch $(work)/$@
+
+.done-opus:
+	$(call extractandbuild,$(opustgz),$(opus))
