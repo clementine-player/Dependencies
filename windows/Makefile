@@ -62,7 +62,6 @@ clementine_dlls=QtCore4.dll \
                 libgsttag-0.10-0.dll \
                 libgthread-2.0-0.dll \
                 libid3tag.dll \
-                libimobiledevice-1.dll \
                 liblastfm.dll \
                 libmad.dll \
                 libmms-0.dll \
@@ -72,7 +71,6 @@ clementine_dlls=QtCore4.dll \
                 libopus-0.dll \
                 liborc-0.4-0.dll \
                 liborc-test-0.4-0.dll \
-                libplist.dll \
                 libpng14-14.dll \
                 libprotobuf-7.dll \
                 libqjson.dll \
@@ -81,7 +79,6 @@ clementine_dlls=QtCore4.dll \
                 libspotify.dll \
                 libtag.dll \
                 libtasn1-3.dll \
-                libusbmuxd.dll \
                 libvorbis-0.dll \
                 libvorbisenc-2.dll \
                 libxml2-2.dll \
@@ -155,7 +152,7 @@ extractandbuild=$(call extractpkg,$(1)) && $(call buildpkg,$(2)) && $(call insta
 
 
 # Top-level targets
-clementine-build-deps: dlfcn boost liblastfm qt taglib libimobiledevice gtk \
+clementine-build-deps: dlfcn boost liblastfm qt taglib gtk \
                        libgpod glew gstreamer win7sdk wmdm qtsparkle \
                        protobuf spotify qjson fftw sparsehash ffi
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
@@ -238,19 +235,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call installpkg,$(soup))
 	touch $@
 
-.done-libplist: .done-libxml .done-gtk
-	tar -xf $(plisttgz)
-	-mkdir $(plist)/build
-	cd $(plist) && patch -p0 < ../patches/libplist-01-winsock.patch
-	cd $(plist)/build && $(cmake)
-	cd $(plist)/build && make
-	rm -rf $(stow)/$(plist)
-	cd $(plist)/build && make install DESTDIR=$(stow)/$(plist)
-	mv -fv $(stow)/$(plist)$(prefix)/* $(stow)/$(plist)/
-	cd $(stow) && stow $(plist)
-	touch $@
-
-.done-libgpod: .done-sqlite .done-libplist
+.done-libgpod: .done-sqlite
 	$(call extractpkg,$(gpodtgz))
 	cd $(gpod) && patch -p0 < ../patches/libgpod-01-nousb.patch
 	cd $(gpod) && patch -p0 < ../patches/libgpod-02-libtool.patch
@@ -510,23 +495,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(dlfcn)
 	touch $@
 
-.done-usbmuxd: .done-usb .done-pthreads .done-libplist
-	$(call extractpkg,$(usbmuxdtgz))
-	-cd $(usbmuxd) && mkdir build
-	patch -d $(usbmuxd) -p0 < patches/usbmuxd-02-errno.patch
-	patch -d $(usbmuxd) -p0 < patches/usbmuxd-03-pthreads.patch
-	patch -d $(usbmuxd) -p0 < patches/usbmuxd-04-notools.patch
-	patch -d $(usbmuxd) -p0 < patches/usbmuxd-06-winsock.patch
-	patch -d $(usbmuxd) -p0 < patches/usbmuxd-07-winsock.patch
-	echo 'set(VERSION_TAG "1.0.4")' >> $(usbmuxd)/Modules/VersionTag.cmake
-	cd $(usbmuxd)/build && $(cmake)
-	cd $(usbmuxd)/build && $(make)
-	rm -rf $(stow)/$(usbmuxd)
-	cd $(usbmuxd)/build && make install DESTDIR=$(stow)/$(usbmuxd)
-	mv -fv $(stow)/$(usbmuxd)$(prefix)/* $(stow)/$(usbmuxd)/
-	cd $(stow) && stow $(usbmuxd)
-	touch $@
-
 .done-usb:
 	unzip -o -d $(stow) $(usbwin32zip)
 	mv $(stow)/$(usbwin32)/bin/x86/* $(stow)/$(usbwin32)/bin
@@ -542,17 +510,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	patch -d $(stow)/$(pthreads) -p0 < patches/pthreads-01-timespec.patch
 	cd $(stow) && stow $(pthreads)
 	touch $@
-
-.done-libimobiledevice: .done-usbmuxd .done-libgnutls .done-libplist
-	$(call extractpkg,$(imobtgz))
-	patch -d $(imob) -p0 < patches/libimobiledevice-02-sleep.patch
-	patch -d $(imob) -p0 < patches/libimobiledevice-03-asprintf.patch
-	patch -d $(imob) -p0 < patches/libimobiledevice-04-userpref-stdint.patch
-	patch -d $(imob) -p0 < patches/libimobiledevice-05-no-tools.patch
-	cd $(imob) && autoreconf
-	cd $(imob) && $(configure) --without-swig
-	cd $(imob) && $(make)
-	$(call installpkg,$(imob))
 
 .done-libgnutls:
 	unzip -o -d $(stow)/$(tls) $(tlszip)

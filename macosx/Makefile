@@ -49,7 +49,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 
 # Top-level targets
-clementine-build-deps: boost liblastfm taglib libimobiledevice libmtp \
+clementine-build-deps: boost liblastfm taglib libmtp \
                        libgpod gstreamer glew qjson \
                        protobuf spotify fftw sparsehash qt
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
@@ -99,14 +99,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(fftw) && $(make)
 	$(call installpkg,$(fftw))
 
-.done-libplist: .done-glib
-	$(call extractpkg,$(plisttgz))
-	-mkdir $(plist)/build
-	cd $(plist)/build && $(cmake) -DENABLE_CYTHON=OFF -DENABLE_SWIG=OFF
-	cd $(plist)/build && $(make)
-	$(call installpkgcmake,$(plist))
-
-.done-libgpod: .done-sqlite .done-libplist
+.done-libgpod: .done-sqlite
 	$(call extractpkg,$(gpodtgz))
 	cd $(gpod) && $(configure) --disable-gdk-pixbuf
 	cd $(gpod) && $(make)
@@ -209,20 +202,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(quicktime) && $(make)
 	$(call installpkg,$(quicktime))
 
-.done-usbmuxd: .done-libplist .done-usb
-	$(call extractpkg,$(usbmuxdtgz))
-	echo 'set(VERSION_TAG "1.0.6")' >> $(usbmuxd)/Modules/VersionTag.cmake
-	$(call buildpkgcmake,$(usbmuxd))
-	$(call installpkgcmake,$(usbmuxd))
-
 .done-usb:
 	$(call extractandbuild,$(usbtgz),$(usb))
-
-.done-libimobiledevice: .done-usbmuxd .done-libplist .done-gnutls
-	$(call extractpkg,$(imobtgz))
-	cd $(imob) && $(configure) --without-swig
-	cd $(imob) && $(make)
-	$(call installpkg,$(imob))
 
 .done-gcrypt: .done-libgpgerror
 	$(call extractpkg,$(gcrypttgz))
@@ -290,7 +271,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	-mkdir $(proxy)/build
 	cd $(proxy)/build && $(cmake) -DWITH_PYTHON=OFF -DWITH_PERL=OFF
 	cd $(proxy)/build && $(make)
-	$(call installpkgcmake,$(plist))
 	$(call installpkgcmake,$(proxy))
 
 
