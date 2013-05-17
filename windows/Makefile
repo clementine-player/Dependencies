@@ -241,7 +241,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(gpod) && patch -p0 < ../patches/libgpod-02-libtool.patch
 	cd $(gpod) && autoreconf
 	# Force link static sqlite3 because libtool is stupid.
-	cd $(gpod) && $(pkgconfig) LDFLAGS="$(ldflags) -Wl,-lsqlite3" CFLAGS=$(cflags) ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
+	cd $(gpod) && $(pkgconfig) LDFLAGS="$(ldflags) -Wl,-lsqlite3" CFLAGS=$(cflags) ./configure --host=$(host) --build=$(build) --prefix=$(prefix) --without-libimobiledevice
 	cd $(gpod) && make
 	cd $(gpod) && make install DESTDIR=$(stow)/$(gpod)
 	cd $(stow) && stow $(gpod)

@@ -101,7 +101,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-libgpod: .done-sqlite
 	$(call extractpkg,$(gpodtgz))
-	cd $(gpod) && $(configure) --disable-gdk-pixbuf
+	cd $(gpod) && $(configure) --disable-gdk-pixbuf --without-libimobiledevice
 	cd $(gpod) && $(make)
 	$(call installpkg,$(gpod))
 
