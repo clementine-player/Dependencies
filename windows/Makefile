@@ -155,7 +155,7 @@ extractandbuild=$(call extractpkg,$(1)) && $(call buildpkg,$(2)) && $(call insta
 # Top-level targets
 clementine-build-deps: dlfcn boost liblastfm qt taglib gtk \
                        libgpod glew gstreamer win7sdk wmdm qtsparkle \
-                       protobuf spotify qjson fftw sparsehash ffi
+                       protobuf spotify qjson fftw sparsehash ffi pthreads
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
 
