@@ -71,6 +71,7 @@ clementine_dlls=QtCore4.dll \
                 libopus-0.dll \
                 liborc-0.4-0.dll \
                 liborc-test-0.4-0.dll \
+                libplist.dll \
                 libpng14-14.dll \
                 libprotobuf-7.dll \
                 libqjson.dll \
@@ -235,7 +236,19 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call installpkg,$(soup))
 	touch $@
 
-.done-libgpod: .done-sqlite
+.done-libplist: .done-libxml .done-gtk
+	tar -xf $(plisttgz)
+	-mkdir $(plist)/build
+	cd $(plist) && patch -p0 < ../patches/libplist-01-winsock.patch
+	cd $(plist)/build && $(cmake)
+	cd $(plist)/build && make
+	rm -rf $(stow)/$(plist)
+	cd $(plist)/build && make install DESTDIR=$(stow)/$(plist)
+	mv -fv $(stow)/$(plist)$(prefix)/* $(stow)/$(plist)/
+	cd $(stow) && stow $(plist)
+	touch $@
+
+.done-libgpod: .done-sqlite .done-libplist
 	$(call extractpkg,$(gpodtgz))
 	cd $(gpod) && patch -p0 < ../patches/libgpod-01-nousb.patch
 	cd $(gpod) && patch -p0 < ../patches/libgpod-02-libtool.patch

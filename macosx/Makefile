@@ -99,7 +99,14 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(fftw) && $(make)
 	$(call installpkg,$(fftw))
 
-.done-libgpod: .done-sqlite
+.done-libplist: .done-glib
+	$(call extractpkg,$(plisttgz))
+	-mkdir $(plist)/build
+	cd $(plist)/build && $(cmake) -DENABLE_CYTHON=OFF -DENABLE_SWIG=OFF
+	cd $(plist)/build && $(make)
+	$(call installpkgcmake,$(plist))
+
+.done-libgpod: .done-sqlite .done-libplist
 	$(call extractpkg,$(gpodtgz))
 	cd $(gpod) && $(configure) --disable-gdk-pixbuf --without-libimobiledevice
 	cd $(gpod) && $(make)

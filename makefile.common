@@ -25,6 +25,7 @@ ogg=libogg-1.2.0
 oil=liboil-0.3.17
 opus=opus-1.0.2
 orc=orc-0.4.16
+plist=libplist-1.8
 protobuf=protobuf-2.4.0a
 proxy=libproxy-0.4.7
 qjson=qjson-0.7.1
@@ -69,9 +70,9 @@ usb=libusb-1.0.8
 
 allpackages=$(boost) $(directx) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
             $(gstbad) $(gstbase) $(gstgood) $(gst) $(gstugly) $(gtk) $(id3tag) \
-            $(lame) $(lastfm) $(mad) $(mmswin32) $(ogg) $(oil) $(orc) \
+            $(lame) $(lastfm) $(mad) $(mmswin32) $(ogg) $(oil) $(orc) $(plist) \
             $(pthreads) $(qjson) $(qt) $(quicktime) $(soup) $(speex) $(sqlite) $(taglib) \
-            $(tls) $(usb) $(vorbis) $(wpd) $(xml) $(qtsparkle) \
+            $(tls) $(usb) $(usbmuxd) $(vorbis) $(wpd) $(xml) $(qtsparkle) \
             $(pyqt) $(ofa) $(curl) $(fftw) $(archive) \
             $(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
             $(gcrypt) $(spotifymac) $(gstffmpeg) $(mtp) $(mpcdec) \
@@ -120,6 +121,7 @@ oiltgz=$(src)/$(oil).tar.gz
 openssltgz=$(src)/$(openssl).tar.gz
 opustgz=$(src)/$(opus).tar.gz
 orctgz=$(src)/$(orc).tar.gz
+plisttgz=$(src)/$(plist).tar.bz2
 pthreadstgz=$(src)/$(pthreads).tar.gz
 protobuftgz=$(src)/$(protobuf).tar.bz2
 proxytgz=$(src)/$(proxy).tar.gz
@@ -189,6 +191,7 @@ libgpod: .done-libgpod
 liblastfm: .done-liblastfm
 libmms: .done-libmms
 libmpcdec: .done-libmpcdec
+libplist: .done-libplist
 libquicktime: .done-libquicktime
 libsoup: .done-libsoup
 libtasn1: .done-libtasn1
