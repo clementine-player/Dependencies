@@ -9,9 +9,11 @@ stow=$(prefix)/stow
 
 include ../makefile.common
 
+qt=qt-everywhere-opensource-src-4.8.4
+qttgz=$(src)/$(qt).tar.gz
 
 # Useful macros for building packages
-pkgconfig=PKG_CONFIG_PATH=$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
+pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
 cflags=-m64 -I$(prefix)/include
 ldflags=-m64 -L$(prefix)/lib -Wl,-headerpad_max_install_names
 flagsm64=CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
@@ -308,7 +310,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-qt:
 	$(call extractpkg,$(qttgz))
-	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
+	patch -d $(qt) -p1 < patches/qt-03-hdpi.patch
 	cd $(qt) && ./configure \
 		-release \
 		-opensource -confirm-license \
