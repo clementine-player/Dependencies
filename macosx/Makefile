@@ -74,6 +74,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(gettexttgz))
 	cd $(gettext) && patch -p0 < ../patches/gettext-01-stpncpy.patch
 	cd $(gettext) && patch -p0 < ../patches/gettext-02-examples.patch
+	cd $(gettext) && $(configure) --with-libiconv-prefix=/target
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
