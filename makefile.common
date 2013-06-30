@@ -53,7 +53,6 @@ qt=qt-everywhere-opensource-src-4.8.3
 spotifywin32=libspotify-12.1.45-win32-release
 usbwin32=libusb-win32-bin-1.2.0.0
 win7sdk=win7-sdk
-wmdm=wmdm-sdk-11
 
 # OSX only packages
 gcrypt=libgcrypt-1.4.6
@@ -142,7 +141,6 @@ usbwin32zip=$(src)/$(usbwin32).zip
 usbtgz=$(src)/$(usb).tar.bz2
 vorbistgz=$(src)/$(vorbis).tar.gz
 wavpacktgz=$(src)/$(wavpack).tar.bz2
-wmdmtgz=$(src)/$(wmdm).tar.gz
 xmldevzip=$(src)/libxml2-dev_2.7.7-1_win32.zip
 xmlzip=$(src)/libxml2_2.7.7-1_win32.zip
 
@@ -222,4 +220,3 @@ usb: .done-usb
 vorbis: .done-vorbis
 wavpack: .done-wavpack
 win7sdk: .done-win7sdk
-wmdm: .done-wmdm

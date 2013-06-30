@@ -155,7 +155,7 @@ extractandbuild=$(call extractpkg,$(1)) && $(call buildpkg,$(2)) && $(call insta
 
 # Top-level targets
 clementine-build-deps: dlfcn boost liblastfm qt taglib gtk \
-                       libgpod glew gstreamer win7sdk wmdm qtsparkle \
+                       libgpod glew gstreamer win7sdk qtsparkle \
                        protobuf spotify qjson fftw sparsehash ffi pthreads
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
@@ -587,11 +587,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-boost:
 	tar -xf $(boosttgz) -C $(stow)
 	cd $(stow) && stow -R $(boost)
-	touch $@
-
-.done-wmdm:
-	tar -xf $(wmdmtgz) -C $(stow)
-	cd $(stow) && stow -R $(wmdm)
 	touch $@
 
 .done-qtsparkle:
