@@ -26,6 +26,7 @@ cmake=$(pkgconfig) cmake .. \
 	-DQT_LIBRARY_DIR=$(prefix)/bin \
 	-DQT_QMAKE_EXECUTABLE=$(prefix)/bin/qmake
 make=$(path) make $(jobs)
+slowmake=$(path) make
 extractpkg=tar -xvf $(1)
 buildpkg=(cd $(1) && $(configure) && $(make))
 buildpkgcmake=(cd $(1) && mkdir build ; cd build && $(cmake) && $(make))
@@ -108,7 +109,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	-mkdir $(plist)/build
 	patch -d $(plist) -p1 < patches/libplist-01-clang.patch
 	cd $(plist)/build && $(cmake) -DENABLE_CYTHON=OFF -DENABLE_SWIG=OFF
-	cd $(plist)/build && $(make)
+	cd $(plist)/build && $(slowmake)
 	$(call installpkgcmake,$(plist))
 
 .done-libgpod: .done-sqlite .done-libplist
