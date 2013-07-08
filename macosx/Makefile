@@ -106,6 +106,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-libplist: .done-glib
 	$(call extractpkg,$(plisttgz))
 	-mkdir $(plist)/build
+	patch -d $(plist) -p1 < patches/libplist-01-clang.patch
 	cd $(plist)/build && $(cmake) -DENABLE_CYTHON=OFF -DENABLE_SWIG=OFF
 	cd $(plist)/build && $(make)
 	$(call installpkgcmake,$(plist))
