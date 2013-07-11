@@ -71,7 +71,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-sqlite:
 	$(call extractandbuild,$(sqlitetgz),$(sqlite))
 
-.done-gettext:
+.done-gettext: .done-libiconv
 	$(call extractpkg,$(gettexttgz))
 	cd $(gettext) && patch -p0 < ../patches/gettext-01-stpncpy.patch
 	cd $(gettext) && patch -p0 < ../patches/gettext-02-examples.patch
@@ -79,7 +79,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
-.done-libiconv: .done-gettext
+.done-libiconv:
 	$(call extractpkg,$(libiconvtgz))
 	cd $(libiconv) && patch -p1 < ../patches/libiconv-01-libtool.patch
 	$(call buildpkg,$(libiconv))
@@ -87,7 +87,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-glib: .done-gettext .done-libiconv .done-ffi
 	$(call extractpkg,$(glibtgz))
-	cd $(glib) && $(configure) --with-libiconv=gnu
+	cd $(glib) && $(configure) --with-libiconv=native
 	cd $(glib) && $(make)
 	rm -fv
 	$(call installpkg,$(glib))
@@ -118,7 +118,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(gpod) && $(make)
 	$(call installpkg,$(gpod))
 
-.done-gstreamer: .done-glib .done-orc
+.done-gstreamer: .done-glib .done-orc .done-gettext .done-libiconv
 	$(call extractpkg,$(gsttgz))
 	cd $(gst) && patch -p0 < ../patches/gstreamer-01-flex.patch
 	cd $(gst) && $(configure) --disable-examples --disable-tests
@@ -206,7 +206,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-faac:
 	$(call extractandbuild,$(faactgz),$(faac))
 
-.done-libmms: .done-glib
+.done-libmms: .done-glib .done-libiconv .done-gettext
 	$(call extractandbuild,$(mmstgz),$(mms))
 
 .done-libquicktime:
@@ -218,7 +218,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-usb:
 	$(call extractandbuild,$(usbtgz),$(usb))
 
-.done-gcrypt: .done-libgpgerror
+.done-gcrypt: .done-libgpgerror .done-libiconv .done-gettext
 	$(call extractpkg,$(gcrypttgz))
 	cd $(gcrypt) && $(configure) --with-gpg-error-prefix=$(prefix) --disable-asm
 	cd $(gcrypt) && $(make)
@@ -252,16 +252,16 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(stow) && stow $(spotifymac)
 	touch $@
 
-.done-libmtp: .done-usb
+.done-libmtp: .done-usb .done-libiconv
 	$(call extractpkg,$(mtptgz))
-	cd $(mtp) && $(configure) --disable-mtpz
+	cd $(mtp) && $(configure) --disable-mtpz --with-libiconv-prefix=/target
 	cd $(mtp) && $(make)
 	$(call installpkg,$(mtp))
 
 .done-libmpcdec:
 	$(call extractandbuild,$(mpcdectgz),$(mpcdec))
 
-.done-wavpack:
+.done-wavpack: .done-libiconv
 	$(call extractandbuild,$(wavpacktgz),$(wavpack))
 
 .done-gnutls: .done-gcrypt .done-libtasn1
@@ -293,7 +293,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(glibnetworking) && $(make)
 	$(call installpkg,$(glibnetworking))
 
-.done-libsoup: .done-glib .done-gnutls .done-glib-networking
+.done-libsoup: .done-glib .done-gnutls .done-glib-networking .done-libiconv .done-gettext
 	$(call extractpkg,$(souptgz))
 	cd $(soup) && $(configure) --without-gnome
 	cd $(soup) && $(make)
@@ -306,8 +306,11 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(stow) && stow -R $(glew)
 	touch $(work)/$@
 
-.done-cdio:
-	$(call extractandbuild,$(cdiotgz),$(cdio))
+.done-cdio: .done-libiconv
+	$(call extractpkg,$(cdiotgz))
+	cd $(cdio) && $(configure) --with-libiconv-prefix=/target
+	cd $(cdio) && $(make)
+	$(call installpkg,$(cdio))
 
 .done-sparsehash:
 	$(call extractandbuild,$(sparsehashtgz),$(sparsehash))
