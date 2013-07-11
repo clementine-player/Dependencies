@@ -14,7 +14,7 @@ qttgz=$(src)/$(qt).tar.gz
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
-cflags=-m64 -I$(prefix)/include
+cflags=-m64 -I$(prefix)/include -DLIBICONV_PLUG
 ldflags=-m64 -L$(prefix)/lib -Wl,-headerpad_max_install_names
 flagsm64=CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
 path=PATH=$(prefix)/bin:$$PATH
@@ -71,7 +71,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-sqlite:
 	$(call extractandbuild,$(sqlitetgz),$(sqlite))
 
-.done-gettext: .done-libiconv
+.done-gettext:
 	$(call extractpkg,$(gettexttgz))
 	cd $(gettext) && patch -p0 < ../patches/gettext-01-stpncpy.patch
 	cd $(gettext) && patch -p0 < ../patches/gettext-02-examples.patch
@@ -79,7 +79,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
-.done-libiconv:
+.done-libiconv: .done-gettext
 	$(call extractpkg,$(libiconvtgz))
 	cd $(libiconv) && patch -p1 < ../patches/libiconv-01-libtool.patch
 	$(call buildpkg,$(libiconv))
