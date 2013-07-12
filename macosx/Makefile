@@ -14,7 +14,7 @@ qttgz=$(src)/$(qt).tar.gz
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
-cflags=-m64 -I$(prefix)/include -DLIBICONV_PLUG
+cflags=-m64 -I$(prefix)/include
 ldflags=-m64 -L$(prefix)/lib -Wl,-headerpad_max_install_names
 flagsm64=CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
 path=PATH=$(prefix)/bin:$$PATH
@@ -75,17 +75,11 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(gettexttgz))
 	cd $(gettext) && patch -p0 < ../patches/gettext-01-stpncpy.patch
 	cd $(gettext) && patch -p0 < ../patches/gettext-02-examples.patch
-	cd $(gettext) && $(configure) --without-git --with-libiconv-prefix=/target
+	cd $(gettext) && $(configure) --without-git
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
-.done-libiconv: .done-gettext
-	$(call extractpkg,$(libiconvtgz))
-	cd $(libiconv) && patch -p1 < ../patches/libiconv-01-libtool.patch
-	$(call buildpkg,$(libiconv))
-	$(call installpkg,$(libiconv))
-
-.done-glib: .done-gettext .done-libiconv .done-ffi
+.done-glib: .done-gettext  .done-ffi
 	$(call extractpkg,$(glibtgz))
 	cd $(glib) && $(configure) --with-libiconv=native
 	cd $(glib) && $(make)
@@ -118,7 +112,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(gpod) && $(make)
 	$(call installpkg,$(gpod))
 
-.done-gstreamer: .done-glib .done-orc .done-gettext .done-libiconv
+.done-gstreamer: .done-glib .done-orc .done-gettext 
 	$(call extractpkg,$(gsttgz))
 	cd $(gst) && patch -p0 < ../patches/gstreamer-01-flex.patch
 	cd $(gst) && $(configure) --disable-examples --disable-tests
@@ -206,19 +200,19 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-faac:
 	$(call extractandbuild,$(faactgz),$(faac))
 
-.done-libmms: .done-glib .done-libiconv .done-gettext
+.done-libmms: .done-glib  .done-gettext
 	$(call extractandbuild,$(mmstgz),$(mms))
 
 .done-libquicktime:
 	$(call extractpkg,$(quicktimetgz))
-	cd $(quicktime) && $(configure) --without-doxygen --without-ffmpeg --without-libiconv-prefix
+	cd $(quicktime) && $(configure) --without-doxygen --without-ffmpeg
 	cd $(quicktime) && $(make)
 	$(call installpkg,$(quicktime))
 
 .done-usb:
 	$(call extractandbuild,$(usbtgz),$(usb))
 
-.done-gcrypt: .done-libgpgerror .done-libiconv .done-gettext
+.done-gcrypt: .done-libgpgerror  .done-gettext
 	$(call extractpkg,$(gcrypttgz))
 	cd $(gcrypt) && $(configure) --with-gpg-error-prefix=$(prefix) --disable-asm
 	cd $(gcrypt) && $(make)
@@ -252,16 +246,16 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(stow) && stow $(spotifymac)
 	touch $@
 
-.done-libmtp: .done-usb .done-libiconv
+.done-libmtp: .done-usb 
 	$(call extractpkg,$(mtptgz))
-	cd $(mtp) && $(configure) --disable-mtpz --with-libiconv-prefix=/target
+	cd $(mtp) && $(configure) --disable-mtpz
 	cd $(mtp) && $(make)
 	$(call installpkg,$(mtp))
 
 .done-libmpcdec:
 	$(call extractandbuild,$(mpcdectgz),$(mpcdec))
 
-.done-wavpack: .done-libiconv
+.done-wavpack: 
 	$(call extractandbuild,$(wavpacktgz),$(wavpack))
 
 .done-gnutls: .done-gcrypt .done-libtasn1
@@ -293,7 +287,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(glibnetworking) && $(make)
 	$(call installpkg,$(glibnetworking))
 
-.done-libsoup: .done-glib .done-gnutls .done-glib-networking .done-libiconv .done-gettext
+.done-libsoup: .done-glib .done-gnutls .done-glib-networking  .done-gettext
 	$(call extractpkg,$(souptgz))
 	cd $(soup) && $(configure) --without-gnome
 	cd $(soup) && $(make)
@@ -306,9 +300,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(stow) && stow -R $(glew)
 	touch $(work)/$@
 
-.done-cdio: .done-libiconv
+.done-cdio: 
 	$(call extractpkg,$(cdiotgz))
-	cd $(cdio) && $(configure) --with-libiconv-prefix=/target
+	cd $(cdio) && $(configure)
 	cd $(cdio) && $(make)
 	$(call installpkg,$(cdio))
 
