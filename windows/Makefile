@@ -131,7 +131,7 @@ clementine_imageformats=qgif4.dll \
                         qjpeg4.dll
 dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll \
            -not -name ssleay32.dll -not -name libeay32.dll \
-           -not -name ShellExecAsUser.dll -not -name libgstffmpeg
+           -not -name ShellExecAsUser.dll -not -name libgstffmpeg.dll
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
