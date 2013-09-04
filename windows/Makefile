@@ -436,7 +436,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractpkg,$(gstffmpegtgz))
 	cd $(gstffmpeg) && patch -p0 < ../patches/gst-ffmpeg-04-mmx.patch
 	cd $(gstffmpeg) && autoreconf
-	cd $(gstffmpeg) && $(configure) --with-ffmpeg-extra-configure="--enable-shared --disable-debug"
+	cd $(gstffmpeg) && $(configure) CFLAGS=-g --with-ffmpeg-extra-configure="--enable-shared"
 	cd $(gstffmpeg) && $(make)
 	rm -rf $(stow)/$(gstffmpeg)
 	cd $(gstffmpeg) && make install DESTDIR=$(stow)/$(gstffmpeg)
