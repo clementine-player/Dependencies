@@ -435,6 +435,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-gst-ffmpeg: .done-gstreamer .done-gst-plugins-base
 	$(call extractpkg,$(gstffmpegtgz))
 	cd $(gstffmpeg) && patch -p0 < ../patches/gst-ffmpeg-04-mmx.patch
+	cd $(gstffmpeg) && patch -d gst-libs/ext/libav/ -p1 < ../patches/gst-ffmpeg-libav-01-gcc48crash.patch
 	cd $(gstffmpeg) && autoreconf
 	cd $(gstffmpeg) && $(configure) CFLAGS=-g --with-ffmpeg-extra-configure="--enable-shared"
 	cd $(gstffmpeg) && $(make)
