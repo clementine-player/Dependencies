@@ -131,7 +131,7 @@ clementine_imageformats=qgif4.dll \
                         qjpeg4.dll
 dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll \
            -not -name ssleay32.dll -not -name libeay32.dll \
-           -not -name ShellExecAsUser.dll -not -name libgstffmpeg.dll
+           -not -name ShellExecAsUser.dll
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
@@ -437,7 +437,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(gstffmpeg) && patch -p0 < ../patches/gst-ffmpeg-04-mmx.patch
 	cd $(gstffmpeg) && patch -d gst-libs/ext/libav/ -p1 < ../patches/gst-ffmpeg-libav-01-gcc48crash.patch
 	cd $(gstffmpeg) && autoreconf
-	cd $(gstffmpeg) && $(configure) CFLAGS=-g --with-ffmpeg-extra-configure="--enable-shared"
+	cd $(gstffmpeg) && $(configure) --with-ffmpeg-extra-configure="--enable-shared --disable-debug"
 	cd $(gstffmpeg) && $(make)
 	rm -rf $(stow)/$(gstffmpeg)
 	cd $(gstffmpeg) && make install DESTDIR=$(stow)/$(gstffmpeg)
