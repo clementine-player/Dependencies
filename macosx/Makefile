@@ -273,10 +273,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-libproxy:
 	$(call extractpkg,$(proxytgz))
-	cd $(proxy) && patch -p0 < ../patches/libproxy-01-posix.patch
-	cd $(proxy) && patch -p0 < ../patches/libproxy-02-pc.patch
+	patch -d $(proxy) -p0 < patches/libproxy-03-build.patch
 	-mkdir $(proxy)/build
-	cd $(proxy)/build && $(cmake) -DWITH_PYTHON=OFF -DWITH_PERL=OFF
+	cd $(proxy)/build && $(cmake) -DWITH_PYTHON=OFF -DWITH_PERL=OFF -DBUILD_TESTING=OFF
 	cd $(proxy)/build && $(make)
 	$(call installpkgcmake,$(proxy))
 
