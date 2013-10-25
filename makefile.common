@@ -55,7 +55,7 @@ usbwin32=libusb-win32-bin-1.2.0.0
 win7sdk=win7-sdk
 
 # OSX only packages
-gcrypt=libgcrypt-1.4.6
+gcrypt=libgcrypt-1.5.3
 gettext=gettext-0.18.1.1
 glib=glib-2.33.6
 gnutls=gnutls-2.12.3
