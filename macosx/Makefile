@@ -9,7 +9,7 @@ stow=$(prefix)/stow
 
 include ../makefile.common
 
-qt=qt-everywhere-opensource-src-4.8.4
+qt=qt-everywhere-opensource-src-4.8.5
 qttgz=$(src)/$(qt).tar.gz
 
 # Useful macros for building packages
@@ -312,7 +312,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-qt:
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
-	patch -d $(qt) -p1 < patches/qt-03-hdpi.patch
+	patch -d $(qt) -p0 < patches/qt-05-corewlan.patch
+#	patch -d $(qt) -p1 < patches/qt-03-hdpi.patch
+#	patch -d $(qt) -p0 < patches/qt-05-scope.patch
 	cd $(qt) && ./configure \
 		-release \
 		-opensource -confirm-license \
@@ -322,6 +324,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		-no-script -no-scripttools \
 		-nomake demos -nomake examples \
 		-no-exceptions \
+		-no-libtiff \
 		-no-sql-sqlite
 	cd $(qt) && $(make)
 	cd $(qt) && make install
