@@ -240,7 +240,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-libplist: .done-libxml .done-gtk
 	tar -xf $(plisttgz)
 	-mkdir $(plist)/build
-	cd $(plist) && patch -p0 < ../patches/libplist-01-winsock.patch
 	cd $(plist)/build && $(cmake)
 	cd $(plist)/build && make
 	rm -rf $(stow)/$(plist)
