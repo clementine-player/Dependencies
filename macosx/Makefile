@@ -62,16 +62,16 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 # The actual commands for compiling each package follow
 
-.done-qjson: .done-qt
+.done-qjson: .done-qt all-downloads
 	$(call extractpkg,$(qjsontgz))
 	$(call buildpkgcmake,$(qjson))
 	sed -e 's/QtCore//' -i "" $(qjson)/build/QJson.pc
 	$(call installpkgcmake,$(qjson))
 
-.done-sqlite:
+.done-sqlite: all-downloads
 	$(call extractandbuild,$(sqlitetgz),$(sqlite))
 
-.done-gettext:
+.done-gettext: all-downloads
 	$(call extractpkg,$(gettexttgz))
 	cd $(gettext) && patch -p0 < ../patches/gettext-01-stpncpy.patch
 	cd $(gettext) && patch -p0 < ../patches/gettext-02-examples.patch
@@ -79,17 +79,17 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
-.done-glib: .done-gettext  .done-ffi
+.done-glib: .done-gettext  .done-ffi all-downloads
 	$(call extractpkg,$(glibtgz))
 	cd $(glib) && $(configure) --with-libiconv=native
 	cd $(glib) && $(make)
 	rm -fv
 	$(call installpkg,$(glib))
 
-.done-ffi:
+.done-ffi: all-downloads
 	$(call extractandbuild,$(ffitgz),$(ffi))
 
-.done-fftw:
+.done-fftw: all-downloads
 	$(call extractpkg,$(fftwtgz))
 	cd $(fftw) && $(configure) \
 		--with-our-malloc16 --with-windows-f77-mangling --enable-shared \
@@ -98,7 +98,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(fftw) && $(make)
 	$(call installpkg,$(fftw))
 
-.done-libplist: .done-glib
+.done-libplist: .done-glib all-downloads
 	$(call extractpkg,$(plisttgz))
 	cd $(plist) && patch -p0 < ../patches/libplist-02-iterator.patch
 	-mkdir $(plist)/build
@@ -106,50 +106,50 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(plist)/build && $(slowmake)
 	$(call installpkgcmake,$(plist))
 
-.done-libgpod: .done-sqlite .done-libplist
+.done-libgpod: .done-sqlite .done-libplist all-downloads
 	$(call extractpkg,$(gpodtgz))
 	cd $(gpod) && $(configure) --disable-gdk-pixbuf --without-libimobiledevice
 	cd $(gpod) && $(make)
 	$(call installpkg,$(gpod))
 
-.done-gstreamer: .done-glib .done-orc .done-gettext 
+.done-gstreamer: .done-glib .done-orc .done-gettext  all-downloads
 	$(call extractpkg,$(gsttgz))
 	cd $(gst) && patch -p0 < ../patches/gstreamer-01-flex.patch
 	cd $(gst) && $(configure) --disable-examples --disable-tests
 	cd $(gst) && $(make)
 	$(call installpkg,$(gst))
 
-.done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis
+.done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis all-downloads
 	$(call extractpkg,$(gstbasetgz))
 	cd $(gstbase) && $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm --disable-theora
 	cd $(gstbase) && $(make)
 	$(call installpkg,$(gstbase))
 
-.done-orc:
+.done-orc: all-downloads
 	$(call extractandbuild,$(orctgz),$(orc))
 
-.done-ogg:
+.done-ogg: all-downloads
 	$(call extractandbuild,$(oggtgz),$(ogg))
 
-.done-vorbis: .done-ogg
+.done-vorbis: .done-ogg all-downloads
 	$(call extractandbuild,$(vorbistgz),$(vorbis))
 
-.done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-wavpack .done-libsoup
+.done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-wavpack .done-libsoup all-downloads
 	$(call extractpkg,$(gstgoodtgz))
 	cd $(gstgood) && SOUP_CFLAGS=-I$(prefix)/include/libsoup-2.4 $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace --disable-osx_video --disable-aalib --disable-libdv --disable-libpng --disable-cairo --disable-esd --disable-libcaca
 	cd $(gstgood) && $(make)
 	$(call installpkg,$(gstgood))
 
-.done-flac:
+.done-flac: all-downloads
 	$(call extractpkg,$(flactgz))
 	cd $(flac) && $(configure) --disable-xmms-plugin --disable-asm-optimizations
 	cd $(flac) && $(make)
 	$(call installpkg,$(flac))
 
-.done-speex: .done-ogg
+.done-speex: .done-ogg all-downloads
 	$(call extractandbuild,$(speextgz),$(speex))
 
-.done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
+.done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio all-downloads
 	$(call extractpkg,$(gstuglytgz))
 	patch -d $(gstugly) -p1 < patches/gst-plugins-ugly-01-cdio.patch
 	cd $(gstugly) && $(configure) \
@@ -162,19 +162,19 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(gstugly) && $(make)
 	$(call installpkg,$(gstugly))
 
-.done-oil:
+.done-oil: all-downloads
 	$(call extractandbuild,$(oiltgz),$(oil))
 
-.done-id3tag:
+.done-id3tag: all-downloads
 	$(call extractandbuild,$(id3tagtgz),$(id3tag))
 
-.done-mad: .done-id3tag
+.done-mad: .done-id3tag all-downloads
 	$(call extractandbuild,$(madtgz),$(mad))
 
-.done-lame:
+.done-lame: all-downloads
 	$(call extractandbuild,$(lametgz),$(lame))
 
-.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libquicktime .done-libmpcdec .done-opus
+.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libquicktime .done-libmpcdec .done-opus all-downloads
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && $(configure) \
 				--disable-acm \
@@ -191,52 +191,52 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(gstbad) && $(make)
 	$(call installpkg,$(gstbad))
 
-.done-gst-ffmpeg: .done-gstreamer .done-gst-plugins-base
+.done-gst-ffmpeg: .done-gstreamer .done-gst-plugins-base all-downloads
 	$(call extractandbuild,$(gstffmpegtgz),$(gstffmpeg))
 
-.done-faad:
+.done-faad: all-downloads
 	$(call extractandbuild,$(faadtgz),$(faad))
 
-.done-faac:
+.done-faac: all-downloads
 	$(call extractandbuild,$(faactgz),$(faac))
 
-.done-libmms: .done-glib  .done-gettext
+.done-libmms: .done-glib  .done-gettext all-downloads
 	$(call extractandbuild,$(mmstgz),$(mms))
 
-.done-libquicktime:
+.done-libquicktime: all-downloads
 	$(call extractpkg,$(quicktimetgz))
 	cd $(quicktime) && $(configure) --without-doxygen --without-ffmpeg
 	cd $(quicktime) && $(make)
 	$(call installpkg,$(quicktime))
 
-.done-usb:
+.done-usb: all-downloads
 	$(call extractandbuild,$(usbtgz),$(usb))
 
-.done-gcrypt: .done-libgpgerror  .done-gettext
+.done-gcrypt: .done-libgpgerror  .done-gettext all-downloads
 	$(call extractpkg,$(gcrypttgz))
 	cd $(gcrypt) && $(configure) --with-gpg-error-prefix=$(prefix) --disable-asm
 	cd $(gcrypt) && $(make)
 	$(call installpkg,$(gcrypt))
 
-.done-taglib:
+.done-taglib: all-downloads
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
 	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON
 	cd $(taglib)/build && $(make)
 	$(call installpkgcmake,$(taglib))
 
-.done-liblastfm: .done-qt
+.done-liblastfm: .done-qt all-downloads
 	$(call extractandbuildcmake,$(lastfmtgz),$(lastfm))
 
-.done-boost:
+.done-boost: all-downloads
 	tar -xf $(boosttgz) -C $(stow)
 	cd $(stow) && stow -R $(boost)
 	touch $@
 
-.done-protobuf:
+.done-protobuf: all-downloads
 	$(call extractandbuild,$(protobuftgz),$(protobuf))
 
-.done-spotify:
+.done-spotify: all-downloads
 	unzip -o $(spotifymactgz) -d $(stow)
 	rm -rf $(stow)/$(spotifymac)/doc
 	rm -rf $(stow)/$(spotifymac)/ChangeLog
@@ -246,32 +246,32 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(stow) && stow $(spotifymac)
 	touch $@
 
-.done-libmtp: .done-usb 
+.done-libmtp: .done-usb  all-downloads
 	$(call extractpkg,$(mtptgz))
 	cd $(mtp) && $(configure) --disable-mtpz
 	cd $(mtp) && $(make)
 	$(call installpkg,$(mtp))
 
-.done-libmpcdec:
+.done-libmpcdec: all-downloads
 	$(call extractandbuild,$(mpcdectgz),$(mpcdec))
 
-.done-wavpack: 
+.done-wavpack:  all-downloads
 	$(call extractandbuild,$(wavpacktgz),$(wavpack))
 
-.done-gnutls: .done-gcrypt .done-libtasn1
+.done-gnutls: .done-gcrypt .done-libtasn1 all-downloads
 	$(call extractpkg,$(gnutlstgz))
 	cd $(gnutls) && $(configure) --with-libgcrypt
 	cd $(gnutls) && $(make)
 	sed -e 's/ *, *zlib//' -i "" $(gnutls)/lib/gnutls.pc
 	$(call installpkg,$(gnutls))
 
-.done-libtasn1:
+.done-libtasn1: all-downloads
 	$(call extractandbuild,$(tasn1tgz),$(tasn1))
 
-.done-libgpgerror:
+.done-libgpgerror: all-downloads
 	$(call extractandbuild,$(gpgerrortgz),$(gpgerror))
 
-.done-libproxy:
+.done-libproxy: all-downloads
 	$(call extractpkg,$(proxytgz))
 	patch -d $(proxy) -p0 < patches/libproxy-03-build.patch
 	-mkdir $(proxy)/build
@@ -280,35 +280,35 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkgcmake,$(proxy))
 
 
-.done-glib-networking: .done-glib .done-gnutls .done-libproxy
+.done-glib-networking: .done-glib .done-gnutls .done-libproxy all-downloads
 	$(call extractpkg,$(glibnetworkingtgz))
 	cd $(glibnetworking) && $(configure) --with-ca-certificates=../../root-certs.pem
 	cd $(glibnetworking) && $(make)
 	$(call installpkg,$(glibnetworking))
 
-.done-libsoup: .done-glib .done-gnutls .done-glib-networking  .done-gettext
+.done-libsoup: .done-glib .done-gnutls .done-glib-networking  .done-gettext all-downloads
 	$(call extractpkg,$(souptgz))
 	cd $(soup) && $(configure) --without-gnome
 	cd $(soup) && $(make)
 	$(call installpkg,$(soup))
 
-.done-glew:
+.done-glew: all-downloads
 	$(call extractpkg,$(glewtgz))
 	cd $(glew) && $(make) CFLAGS.EXTRA=-m64 LDFLAGS.EXTRA=-m64 GLEW_DEST=$(stow)/$(glew)
 	cd $(glew) && make install GLEW_DEST=$(stow)/$(glew)
 	cd $(stow) && stow -R $(glew)
 	touch $(work)/$@
 
-.done-cdio: 
+.done-cdio:  all-downloads
 	$(call extractpkg,$(cdiotgz))
 	cd $(cdio) && $(configure)
 	cd $(cdio) && $(make)
 	$(call installpkg,$(cdio))
 
-.done-sparsehash:
+.done-sparsehash: all-downloads
 	$(call extractandbuild,$(sparsehashtgz),$(sparsehash))
 
-.done-qt:
+.done-qt: all-downloads
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
 	patch -d $(qt) -p0 < patches/qt-05-corewlan.patch
@@ -330,5 +330,5 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(stow) && stow -R $(qt)
 	touch $(work)/$@
 
-.done-opus:
+.done-opus: all-downloads
 	$(call extractandbuild,$(opustgz),$(opus))

@@ -68,81 +68,83 @@ tasn1=libtasn1-2.9
 usb=libusb-1.0.8
 
 allpackages=$(boost) $(directx) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
-            $(gstbad) $(gstbase) $(gstgood) $(gst) $(gstugly) $(gtk) $(id3tag) \
-            $(lame) $(lastfm) $(mad) $(mmswin32) $(ogg) $(oil) $(orc) $(plist) \
-            $(pthreads) $(qjson) $(qt) $(quicktime) $(soup) $(speex) $(sqlite) $(taglib) \
-            $(tls) $(usb) $(usbmuxd) $(vorbis) $(wpd) $(xml) $(qtsparkle) \
-            $(pyqt) $(ofa) $(curl) $(fftw) $(archive) \
-            $(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
-            $(gcrypt) $(spotifymac) $(gstffmpeg) $(mtp) $(mpcdec) \
-            $(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(cdio) \
-            $(opensslwin32) $(glibnetworking)
+		$(gstbad) $(gstbase) $(gstgood) $(gst) $(gstugly) $(gtk) $(id3tag) \
+		$(lame) $(lastfm) $(mad) $(mmswin32) $(ogg) $(oil) $(orc) $(plist) \
+		$(pthreads) $(qjson) $(qt) $(quicktime) $(soup) $(speex) $(sqlite) $(taglib) \
+		$(tls) $(usb) $(usbmuxd) $(vorbis) $(wpd) $(xml) $(qtsparkle) \
+		$(pyqt) $(ofa) $(curl) $(fftw) $(archive) \
+		$(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
+		$(gcrypt) $(spotifymac) $(gstffmpeg) $(mtp) $(mpcdec) \
+		$(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(cdio) \
+		$(opensslwin32) $(glibnetworking)
+
+downloads=$(src)/downloads
 
 # Package filenames
-archivetgz=$(src)/$(archive).tar.gz
-boosttgz=$(src)/$(boost).tar.bz2
-cdiotgz=$(src)/$(cdio).tar.gz
-directxtgz=$(src)/$(directx).tar.gz
-dlfcntgz=$(src)/dlfcn-win32-static-r19.tar.bz2
-faactgz=$(src)/$(faac).tar.gz
-faadtgz=$(src)/$(faad).tar.gz
-ffitgz=$(src)/$(ffi).tar.gz
-fftwtgz=$(src)/$(fftw).tar.gz
-flactgz=$(src)/$(flac).tar.gz
-gcrypttgz=$(src)/$(gcrypt).tar.bz2
-gettexttgz=$(src)/$(gettext).tar.gz
-glewtgz=$(src)/$(glew).tar.bz2
-glewwin32zip=$(src)/$(glew)-win32.zip
-glibtgz=$(src)/$(glib).tar.gz
-glibnetworkingtgz=$(src)/$(glibnetworking).tar.bz2
-gnutlstgz=$(src)/$(gnutls).tar.bz2
-gpgerrortgz=$(src)/$(gpgerror).tar.bz2
-gpodtgz=$(src)/$(gpod).tar.gz
-gstbadtgz=$(src)/$(gstbad).tar.bz2
-gstbasetgz=$(src)/$(gstbase).tar.bz2
-gstffmpegtgz=$(src)/$(gstffmpeg).tar.bz2
-gstgoodtgz=$(src)/$(gstgood).tar.gz
-gsttgz=$(src)/$(gst).tar.bz2
-gstuglytgz=$(src)/$(gstugly).tar.bz2
-gtkzip=$(src)/$(gtk)-20111122_win32.zip
-id3tagtgz=$(src)/$(id3tag).tar.gz
-lametgz=$(src)/$(lame).tar.gz
-lastfmtgz=$(src)/davidsansome-liblastfm-0.3.1-17-g6748fcf.tar.gz
-libiconvtgz=$(src)/$(libiconv).tar.gz
-madtgz=$(src)/$(mad).tar.gz
-mmstgz=$(src)/$(mms).tar.gz
-mmswin32tgz=$(src)/$(mmswin32).tar.gz
-mpcdectgz=$(src)/$(mpcdec).tar.bz2
-mtptgz=$(src)/$(mtp).tar.gz
-ofatgz=$(src)/$(ofa).tar.gz
-oggtgz=$(src)/$(ogg).tar.gz
-oiltgz=$(src)/$(oil).tar.gz
-openssltgz=$(src)/$(openssl).tar.gz
-opustgz=$(src)/$(opus).tar.gz
-orctgz=$(src)/$(orc).tar.gz
-plisttgz=$(src)/$(plist).tar.bz2
-pthreadstgz=$(src)/$(pthreads).tar.gz
-protobuftgz=$(src)/$(protobuf).tar.bz2
-proxytgz=$(src)/$(proxy).tar.gz
-qjsontgz=$(src)/$(qjson).tar.bz2
-qttgz=$(src)/$(qt).tar.gz
-qtsparkletgz=$(src)/$(qtsparkle).tar.gz
-quicktimetgz=$(src)/$(quicktime).tar.gz
-souptgz=$(src)/$(soup).tar.bz2
-sparsehashtgz=$(src)/$(sparsehash).tar.gz
-speextgz=$(src)/$(speex).tar.gz
-spotifymactgz=$(src)/$(spotifymac).zip
-spotifywin32zip=$(src)/$(spotifywin32).zip
-sqlitetgz=$(src)/sqlite-amalgamation-3.7.0.tar.gz
-taglibtgz=$(src)/$(taglib).tar.gz
-tasn1tgz=$(src)/$(tasn1).tar.gz
-tlszip=$(src)/$(tls).zip
-usbwin32zip=$(src)/$(usbwin32).zip
-usbtgz=$(src)/$(usb).tar.bz2
-vorbistgz=$(src)/$(vorbis).tar.gz
-wavpacktgz=$(src)/$(wavpack).tar.bz2
-xmldevzip=$(src)/libxml2-dev_2.7.7-1_win32.zip
-xmlzip=$(src)/libxml2_2.7.7-1_win32.zip
+archivetgz=$(downloads)/$(archive).tar.gz
+boosttgz=$(downloads)/$(boost).tar.bz2
+cdiotgz=$(downloads)/$(cdio).tar.gz
+directxtgz=$(downloads)/$(directx).tar.gz
+dlfcntgz=$(downloads)/dlfcn-win32-static-r19.tar.bz2
+faactgz=$(downloads)/$(faac).tar.gz
+faadtgz=$(downloads)/$(faad).tar.gz
+ffitgz=$(downloads)/$(ffi).tar.gz
+fftwtgz=$(downloads)/$(fftw).tar.gz
+flactgz=$(downloads)/$(flac).tar.gz
+gcrypttgz=$(downloads)/$(gcrypt).tar.bz2
+gettexttgz=$(downloads)/$(gettext).tar.gz
+glewtgz=$(downloads)/$(glew).tar.bz2
+glewwin32zip=$(downloads)/$(glew)-win32.zip
+glibtgz=$(downloads)/$(glib).tar.gz
+glibnetworkingtgz=$(downloads)/$(glibnetworking).tar.bz2
+gnutlstgz=$(downloads)/$(gnutls).tar.bz2
+gpgerrortgz=$(downloads)/$(gpgerror).tar.bz2
+gpodtgz=$(downloads)/$(gpod).tar.gz
+gstbadtgz=$(downloads)/$(gstbad).tar.bz2
+gstbasetgz=$(downloads)/$(gstbase).tar.bz2
+gstffmpegtgz=$(downloads)/$(gstffmpeg).tar.bz2
+gstgoodtgz=$(downloads)/$(gstgood).tar.gz
+gsttgz=$(downloads)/$(gst).tar.bz2
+gstuglytgz=$(downloads)/$(gstugly).tar.bz2
+gtkzip=$(downloads)/$(gtk)-20111122_win32.zip
+id3tagtgz=$(downloads)/$(id3tag).tar.gz
+lametgz=$(downloads)/$(lame).tar.gz
+lastfmtgz=$(downloads)/davidsansome-liblastfm-0.3.1-17-g6748fcf.tar.gz
+libiconvtgz=$(downloads)/$(libiconv).tar.gz
+madtgz=$(downloads)/$(mad).tar.gz
+mmstgz=$(downloads)/$(mms).tar.gz
+mmswin32tgz=$(downloads)/$(mmswin32).tar.gz
+mpcdectgz=$(downloads)/$(mpcdec).tar.bz2
+mtptgz=$(downloads)/$(mtp).tar.gz
+ofatgz=$(downloads)/$(ofa).tar.gz
+oggtgz=$(downloads)/$(ogg).tar.gz
+oiltgz=$(downloads)/$(oil).tar.gz
+openssltgz=$(downloads)/$(openssl).tar.gz
+opustgz=$(downloads)/$(opus).tar.gz
+orctgz=$(downloads)/$(orc).tar.gz
+plisttgz=$(downloads)/$(plist).tar.bz2
+pthreadstgz=$(downloads)/$(pthreads).tar.gz
+protobuftgz=$(downloads)/$(protobuf).tar.bz2
+proxytgz=$(downloads)/$(proxy).tar.gz
+qjsontgz=$(downloads)/$(qjson).tar.bz2
+qttgz=$(downloads)/$(qt).tar.gz
+qtsparkletgz=$(downloads)/$(qtsparkle).tar.gz
+quicktimetgz=$(downloads)/$(quicktime).tar.gz
+souptgz=$(downloads)/$(soup).tar.bz2
+sparsehashtgz=$(downloads)/$(sparsehash).tar.gz
+speextgz=$(downloads)/$(speex).tar.gz
+spotifymactgz=$(downloads)/$(spotifymac).zip
+spotifywin32zip=$(downloads)/$(spotifywin32).zip
+sqlitetgz=$(downloads)/sqlite-amalgamation-3.7.0.tar.gz
+taglibtgz=$(downloads)/$(taglib).tar.gz
+tasn1tgz=$(downloads)/$(tasn1).tar.gz
+tlszip=$(downloads)/$(tls).zip
+usbwin32zip=$(downloads)/$(usbwin32).zip
+usbtgz=$(downloads)/$(usb).tar.bz2
+vorbistgz=$(downloads)/$(vorbis).tar.gz
+wavpacktgz=$(downloads)/$(wavpack).tar.bz2
+xmldevzip=$(downloads)/libxml2-dev_2.7.7-1_win32.zip
+xmlzip=$(downloads)/libxml2_2.7.7-1_win32.zip
 
 # Top-level targets
 all: clementine-deps
@@ -156,6 +158,9 @@ clean:
 		rm -rf $$package; \
 	done
 	-rm .done-*
+
+all-downloads:
+	python $(src)/downloader/downloader.py --output "$(downloads)"
 
 boost: .done-boost
 cdio: .done-cdio
