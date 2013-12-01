@@ -4,10 +4,7 @@ import os
 import sys
 import urllib
 
-from apiclient import discovery
 
-
-API_KEY = 'AIzaSyCb12d43P6NhK1UITiwrLYXBA9RK9vszF0'
 DOWNLOAD_URL = 'https://googledrive.com/host/%s/%s'
 FOLDER_ID = '0Byds9jlkR0IxbXVUa1Flb3h6bjQ'
 FILES = [
@@ -98,8 +95,6 @@ def Md5File(path):
 
 
 def DownloadFiles(flags):
-  service = discovery.build('drive', 'v2', developerKey=API_KEY)
-
   # Create the output directory if it doesn't exist.
   base_path = os.path.expanduser(flags.output)
   try:
