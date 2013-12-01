@@ -10,7 +10,7 @@ stow=$(prefix)/stow
 include ../makefile.common
 
 qt=qt-everywhere-opensource-src-4.8.5
-qttgz=$(src)/$(qt).tar.gz
+qttgz=$(downloads)/$(qt).tar.gz
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
