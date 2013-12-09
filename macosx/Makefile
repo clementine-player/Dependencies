@@ -163,7 +163,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkg,$(gstugly))
 
 .done-oil: all-downloads
-	$(call extractandbuild,$(oiltgz),$(oil))
+	$(call extractpkg,$(oiltgz))
+	cd $(oil) && $(pkgconfig) $(flagsm64) $(path) CFLAGS="$(cflags) -fheinous-gnu-extensions" ./configure --prefix=$(prefix) --build=x86_64-apple-darwin10.6.0
+	cd $(oil) && $(make)
+	$(call installpkg,$(oil))
 
 .done-id3tag: all-downloads
 	$(call extractandbuild,$(id3tagtgz),$(id3tag))
