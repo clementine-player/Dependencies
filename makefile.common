@@ -147,7 +147,9 @@ xmldevzip=$(downloads)/libxml2-dev_2.7.7-1_win32.zip
 xmlzip=$(downloads)/libxml2_2.7.7-1_win32.zip
 
 # Top-level targets
-all: clementine-deps
+all:
+	$(MAKE) all-downloads
+	$(MAKE) clementine-deps
 
 clean:
 	for path in $(stow)/*; do \

@@ -186,7 +186,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 # The actual commands for compiling each package follow
 
-.done-qjson: .done-qt all-downloads
+.done-qjson: .done-qt
 	$(call extractpkg,$(qjsontgz))
 	cd $(qjson) && patch -p0 < ../patches/qjson-01-pkgconfig.patch
 	mkdir -p $(qjson)/build
@@ -201,7 +201,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(qjson)
 	touch $@
 
-.done-gtk: all-downloads
+.done-gtk:
 	unzip -o -d $(stow)/$(gtk) $(gtkzip)
 	sed -i.bak -e's/^prefix=.*/prefix=\$(prefix)/' $(stow)/$(gtk)/lib/pkgconfig/*.pc
 	# Remove a library that clashes with qt (lucid version of stow doesn't support --ignore)
@@ -209,35 +209,35 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(gtk)
 	touch $@
 
-.done-win7sdk: all-downloads
+.done-win7sdk:
 	cp -r $(src)/$(win7sdk) $(stow)/
 	cd $(stow) && stow $(win7sdk)
 	touch $@
 
-.done-sqlite: all-downloads
+.done-sqlite:
 	$(call extractpkg,$(sqlitetgz),$(sqlite))
 	(cd $(sqlite) && $(configure) && $(make))
 	$(call installpkg,$(sqlite))
 	touch $@
 
-.done-libxml: all-downloads
+.done-libxml:
 	unzip -o -d $(stow)/$(xml) $(xmlzip)
 	unzip -o -d $(stow)/$(xml) $(xmldevzip)
 	sed -i.bak -e's/^prefix=.*/prefix=\$(prefix)/' $(stow)/$(xml)/lib/pkgconfig/*.pc
 	cd $(stow) && stow $(xml)
 	touch $@
 
-.done-glibnetworking: .done-gtk .done-libgnutls all-downloads
+.done-glibnetworking: .done-gtk .done-libgnutls
 	$(call extractandbuild,$(glibnetworkingtgz),$(glibnetworking))
 	touch $@
 
-.done-libsoup: .done-gtk .done-libxml all-downloads
+.done-libsoup: .done-gtk .done-libxml
 	$(call extractpkg,$(souptgz),$(soup))
 	(cd $(soup) && $(configure) && $(make))
 	$(call installpkg,$(soup))
 	touch $@
 
-.done-libplist: .done-libxml .done-gtk all-downloads
+.done-libplist: .done-libxml .done-gtk
 	tar -xf $(plisttgz)
 	-mkdir $(plist)/build
 	cd $(plist)/build && $(cmake)
@@ -248,7 +248,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(plist)
 	touch $@
 
-.done-libgpod: .done-sqlite .done-libplist all-downloads
+.done-libgpod: .done-sqlite .done-libplist
 	$(call extractpkg,$(gpodtgz))
 	cd $(gpod) && patch -p0 < ../patches/libgpod-01-nousb.patch
 	cd $(gpod) && patch -p0 < ../patches/libgpod-02-libtool.patch
@@ -260,13 +260,13 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(gpod)
 	touch $@
 
-.done-gstreamer: .done-gtk .done-libxml .done-orc all-downloads
+.done-gstreamer: .done-gtk .done-libxml .done-orc
 	$(call extractpkg,$(gsttgz))
 	cd $(gst) && $(configure) --disable-examples --disable-tests
 	cd $(gst) && $(make)
 	$(call installpkg,$(gst))
 
-.done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis all-downloads
+.done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis
 	$(call extractpkg,$(gstbasetgz))
 	cd $(gstbase) && patch -p1 < ../patches/gst-plugins-base-01-tcp.patch
 	cd $(gstbase) && patch -p1 < ../patches/gst-plugins-base-02-tcp-no-gdp.patch
@@ -276,16 +276,16 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(gstbase) && $(make)
 	$(call installpkg,$(gstbase))
 
-.done-orc: all-downloads
+.done-orc:
 	$(call extractandbuild,$(orctgz),$(orc))
 
-.done-ogg: all-downloads
+.done-ogg:
 	$(call extractandbuild,$(oggtgz),$(ogg))
 
-.done-vorbis: .done-ogg all-downloads
+.done-vorbis: .done-ogg
 	$(call extractandbuild,$(vorbistgz),$(vorbis))
 
-.done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-libsoup .done-directx .done-wavpack all-downloads
+.done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-libsoup .done-directx .done-wavpack
 	$(call extractpkg,$(gstgoodtgz))
 	cd $(gstgood) && patch -p0 < ../patches/gst-plugins-good-01-directsound.patch
 	cd $(gstgood) && $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace 
@@ -293,7 +293,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(gstgood) && $(make)
 	$(call installpkg,$(gstgood))
 
-.done-libmpcdec: all-downloads
+.done-libmpcdec:
 	$(call extractpkg,$(mpcdectgz))
 	cd $(mpcdec) && \
 		CFLAGS="-fno-common" \
@@ -308,7 +308,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(mpcdec)
 	touch $(work)/$@
 
-.done-wavpack: all-downloads
+.done-wavpack:
 	$(call extractpkg,$(wavpacktgz))
 	cd $(wavpack) && \
 		CPPFLAGS="-D__MSVCRT_VERSION__=0x0601" \
@@ -319,7 +319,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(wavpack) && $(make)
 	$(call installpkg,$(wavpack))
 
-.done-flac: all-downloads
+.done-flac:
 	$(call extractpkg,$(flactgz))
 	cd $(flac) && patch -p0 < ../patches/flac-01-size-t-max.patch
 	cd $(flac) && patch -p0 < ../patches/flac-02-include.patch
@@ -341,7 +341,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(flac)
 	touch $@
 
-.done-speex: .done-ogg all-downloads
+.done-speex: .done-ogg
 	$(call extractpkg,$(speextgz))
 	cd $(speex) && $(configure)
 	cd $(speex) && $(make)
@@ -355,12 +355,12 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(speex)
 	touch $@
 
-.done-directx: all-downloads
+.done-directx:
 	tar -xzf $(directxtgz) -C $(stow)
 	cd $(stow) && stow -R $(directx)
 	touch $@
 
-.done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio all-downloads
+.done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
 	$(call extractpkg,$(gstuglytgz))
 	patch -d $(gstugly) -p1 < patches/gst-plugins-ugly-01-cdio.patch
 	cd $(gstugly) && \
@@ -371,10 +371,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(gstugly) && $(make)
 	$(call installpkg,$(gstugly))
 
-.done-oil: all-downloads
+.done-oil:
 	$(call extractandbuild,$(oiltgz),$(oil))
 
-.done-id3tag: all-downloads
+.done-id3tag:
 	$(call extractpkg,$(id3tagtgz))
 	cd $(id3tag) && $(configure)
 	cd $(id3tag) && $(make)
@@ -393,7 +393,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(id3tag)
 	touch $@
 
-.done-mad: .done-id3tag all-downloads
+.done-mad: .done-id3tag
 	$(call extractpkg,$(madtgz))
 	cd $(mad) && patch -p0 < ../patches/libmad-01-force-mem.patch
 	$(call buildpkg,$(mad))
@@ -414,10 +414,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(mad)
 	touch $@
 
-.done-lame: all-downloads
+.done-lame:
 	$(call extractandbuild,$(lametgz),$(lame))
 
-.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec .done-opus all-downloads
+.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec .done-opus
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && patch -p0 < ../patches/gst-plugins-bad-01-librfb-winsock.patch
 	cd $(gstbad) && \
@@ -431,7 +431,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(gstbad) && $(make)
 	$(call installpkg,$(gstbad))
 
-.done-gst-ffmpeg: .done-gstreamer .done-gst-plugins-base all-downloads
+.done-gst-ffmpeg: .done-gstreamer .done-gst-plugins-base
 	$(call extractpkg,$(gstffmpegtgz))
 	cd $(gstffmpeg) && patch -p0 < ../patches/gst-ffmpeg-04-mmx.patch
 	cd $(gstffmpeg) && patch -d gst-libs/ext/libav/ -p1 < ../patches/gst-ffmpeg-libav-01-gcc48crash.patch
@@ -446,7 +446,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(gstffmpeg)
 	touch $@
 
-.done-faad: all-downloads
+.done-faad:
 	$(call extractpkg,$(faadtgz))
 	cd $(faad) && patch -p0 < ../patches/faad-01-off_t.patch
 	$(call buildpkg,$(faad))
@@ -465,7 +465,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(faad)
 	touch $@
 
-.done-faac: all-downloads
+.done-faac:
 	$(call extractpkg,$(faactgz))
 	cd $(faac) && patch -p0 < ../patches/faac-01-buildfixes.patch
 	$(call buildpkg,$(faac))
@@ -484,7 +484,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(faac)
 	touch $@
 
-.done-libmms: .done-gtk all-downloads
+.done-libmms: .done-gtk
 	$(call extractpkg,$(mmswin32tgz))
 	cd $(mmswin32) && ./autogen.sh
 	cd $(mmswin32) && patch -p0 < ../patches/mms-01-buildfixes.patch
@@ -495,7 +495,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call installpkg,$(mmswin32))
 
 # Not working - requires iconv.h
-.done-libquicktime: .done-dlfcn all-downloads
+.done-libquicktime: .done-dlfcn
 	$(call extractpkg,$(quicktimetgz))
 	cd $(quicktime) && patch -p0 < ../patches/libquicktime-01-configure.patch
 	cd $(quicktime) && autoconf
@@ -503,13 +503,13 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(quicktime) && $(make)
 	$(call installpkg,$(quicktime))
 
-.done-dlfcn: all-downloads
+.done-dlfcn:
 	-mkdir $(stow)/$(dlfcn)/
 	tar -xjf $(dlfcntgz) -C $(stow)/$(dlfcn)/
 	cd $(stow) && stow -R $(dlfcn)
 	touch $@
 
-.done-usb: all-downloads
+.done-usb:
 	unzip -o -d $(stow) $(usbwin32zip)
 	mv $(stow)/$(usbwin32)/bin/x86/* $(stow)/$(usbwin32)/bin
 	mv $(stow)/$(usbwin32)/lib/gcc/* $(stow)/$(usbwin32)/lib
@@ -519,18 +519,18 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(usbwin32)
 	touch $@
 
-.done-pthreads: all-downloads
+.done-pthreads:
 	tar -xzf $(pthreadstgz) -C $(stow)
 	patch -d $(stow)/$(pthreads) -p0 < patches/pthreads-01-timespec.patch
 	cd $(stow) && stow $(pthreads)
 	touch $@
 
-.done-libgnutls: all-downloads
+.done-libgnutls:
 	unzip -o -d $(stow)/$(tls) $(tlszip)
 	cd $(stow) && stow $(tls)
 	touch $@
 
-.done-taglib: .done-gtk all-downloads
+.done-taglib: .done-gtk
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
 	# Windows specfic patch
@@ -543,7 +543,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(taglib)
 	touch $@
 
-.done-qt: .done-openssl .done-sqlite .done-gtk all-downloads
+.done-qt: .done-openssl .done-sqlite .done-gtk
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p0 < patches/qt-01-codecs.patch
 	patch -d $(qt) -p0 < patches/qt-02-dir.patch
@@ -565,7 +565,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(qt)
 	touch $@
 
-.done-liblastfm: .done-qt all-downloads
+.done-liblastfm: .done-qt
 	$(call extractpkg,$(lastfmtgz))
 	-mkdir $(lastfm)/build
 	cd $(lastfm)/build && $(cmake) \
@@ -578,18 +578,18 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(lastfm)
 	touch $@
 
-.done-glew: all-downloads
+.done-glew:
 	unzip -o -d $(stow)/ $(glewwin32zip)
 	-rm $(stow)/$(glew)/*.txt
 	cd $(stow) && stow -R $(glew)
 	touch $@
 
-.done-boost: all-downloads
+.done-boost:
 	tar -xf $(boosttgz) -C $(stow)
 	cd $(stow) && stow -R $(boost)
 	touch $@
 
-.done-qtsparkle: all-downloads
+.done-qtsparkle:
 	$(call extractpkg,$(qtsparkletgz))
 	-mkdir $(qtsparkle)/build
 	cd $(qtsparkle)/build && $(cmake) \
@@ -603,10 +603,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(qtsparkle)
 	touch $@
 
-.done-curl: all-downloads
+.done-curl:
 	$(call extractandbuild,$(curltgz),$(curl))
 
-.done-fftw: all-downloads
+.done-fftw:
 	$(call extractpkg,$(fftwtgz))
 	cd $(fftw) && $(configure) \
 		--with-our-malloc16 --with-windows-f77-mangling --enable-shared \
@@ -615,7 +615,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(fftw) && $(make)
 	$(call installpkg,$(fftw))
 
-.done-libarchive: .done-libxml all-downloads
+.done-libarchive: .done-libxml
 	$(call extractpkg,$(archivetgz))
 	-mkdir $(archive)/bin
 	cd $(archive) && patch -p0 < ../patches/libarchive-01-no-iconv.patch
@@ -634,7 +634,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(archive)
 	touch $@
 
-.done-protobuf: all-downloads
+.done-protobuf:
 	# Compile a host version first for protoc
 	$(call extractpkg,$(protobuftgz))
 	-cd $(protobuf) && make clean
@@ -650,7 +650,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	# Now do the target build
 	$(call extractandbuild,$(protobuftgz),$(protobuf))
 
-.done-spotify: all-downloads
+.done-spotify:
 	-mkdir -p $(stow)/$(spotifywin32)
 	unzip -o -d $(stow)/$(spotifywin32) $(spotifywin32zip)
 	rm -rf $(stow)/$(spotifywin32)/README
@@ -668,7 +668,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(spotifywin32)
 	touch $@
 
-.done-cdio: all-downloads
+.done-cdio:
 	$(call extractpkg,$(cdiotgz))
 	cd $(cdio) && patch -p0 < ../patches/libcdio-02-mingw-w64.patch
 	cd $(cdio) && patch -p0 < ../patches/libcdio-03-const.patch
@@ -685,7 +685,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(cdio)
 	touch $@
 
-.done-openssl: all-downloads
+.done-openssl:
 	$(call extractpkg,$(openssltgz))
 	cd $(openssl) && ./Configure \
 		--cross-compile-prefix="$(host)-" \
@@ -697,11 +697,11 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(openssl)
 	touch $@
 
-.done-sparsehash: all-downloads
+.done-sparsehash:
 	$(call extractandbuild,$(sparsehashtgz),$(sparsehash))
 
-.done-ffi: all-downloads
+.done-ffi:
 	$(call extractandbuild,$(ffitgz),$(ffi))
 
-.done-opus: all-downloads
+.done-opus:
 	$(call extractandbuild,$(opustgz),$(opus))
