@@ -315,8 +315,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
 	patch -d $(qt) -p0 < patches/qt-05-corewlan.patch
-#	patch -d $(qt) -p1 < patches/qt-03-hdpi.patch
-#	patch -d $(qt) -p0 < patches/qt-05-scope.patch
+	patch -d $(qt) -p1 < patches/qt-06-qtbug-34358-performance.patch
 	cd $(qt) && ./configure \
 		-release \
 		-opensource -confirm-license \
