@@ -8,6 +8,7 @@ import urllib
 DOWNLOAD_URL = 'https://googledrive.com/host/%s/%s'
 FOLDER_ID = '0Byds9jlkR0IxbXVUa1Flb3h6bjQ'
 FILES = [
+    # filename, md5sum
     ('boost-1.50.tar.bz2', '5c0fdd406d965855e77f435d63a5d729'),
     ('davidsansome-liblastfm-0.3.1-17-g6748fcf.tar.gz', 'f8e739e24c91f74fca2d6a67106d8f7a'),
     ('davidsansome-qtsparkle-28721b5.tar.gz', '5d41ff15aaa85f43b9611bbf654b519e'),
@@ -72,7 +73,7 @@ FILES = [
     ('sparsehash-2.0.2.tar.gz', '1db92ed7f257d9b5f14a309d75e8a1d4'),
     ('speex-1.2rc1.tar.gz', 'c4438b22c08e5811ff10e2b06ee9b9ae'),
     ('sqlite-amalgamation-3.7.0.tar.gz', '61b85f108760f91b79afc7833e6e6cb4'),
-    ('taglib-1.8.tar.gz', 'dcb8bd1b756f2843e18b1fdf3aaeee15'),
+    ('taglib-1.9.1.tar.gz', '0d35df96822bbd564c5504cb3c2e4d86'),
     ('wavpack-4.60.1.tar.bz2', '7bb1528f910e4d0003426c02db856063'),
 ]
 
