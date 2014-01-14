@@ -1,6 +1,0 @@
-This directory contains all of Clementine's dependencies as well as Makefiles
-to build them from source for Windows and Mac OS X.
-
-Instructions are on Clementine's wiki:
-  http://code.google.com/p/clementine-player/wiki/CompilingFromSourceMac
-  http://code.google.com/p/clementine-player/wiki/CompilingFromSourceWindows
