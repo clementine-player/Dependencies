@@ -15,7 +15,7 @@ qttgz=$(downloads)/$(qt).tar.gz
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
 cflags=-m64 -I$(prefix)/include
-ldflags=-m64 -L$(prefix)/lib -Wl,-headerpad_max_install_names
+ldflags=-m64 -L$(prefix)/lib -lc++ -Wl,-headerpad_max_install_names
 flagsm64=CFLAGS="$(cflags)" CXXFLAGS="$(cflags) --stdlib=libc++" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
 path=PATH=$(prefix)/bin:$$PATH
 configure=$(pkgconfig) $(flagsm64) $(path) ./configure --prefix=$(prefix) --build=x86_64-apple-darwin10.6.0
