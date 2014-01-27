@@ -1,8 +1,0 @@
---- libproxy/cmake/devfiles.cmk.orig	2012-09-12 18:36:42.000000000 +0200
-+++ libproxy/cmake/devfiles.cmk	2012-09-12 18:36:49.000000000 +0200
-@@ -1,4 +1,4 @@
--if(NOT WIN32 AND NOT APPLE)
-+if(NOT WIN32)
-   # PkgConfig file
-   set (PKGCONFIG_PREFIX ${CMAKE_INSTALL_PREFIX})
-   
