@@ -263,7 +263,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gnutls: .done-gcrypt .done-libtasn1
 	$(call extractpkg,$(gnutlstgz))
-	cd $(gnutls) && $(configure) --with-libgcrypt
+	cd $(gnutls) && $(configure) --with-libgcrypt --disable-cxx
 	cd $(gnutls) && $(make)
 	sed -e 's/ *, *zlib//' -i "" $(gnutls)/lib/gnutls.pc
 	$(call installpkg,$(gnutls))
