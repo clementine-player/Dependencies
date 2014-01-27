@@ -14,9 +14,9 @@ qttgz=$(downloads)/$(qt).tar.gz
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
-cflags=-m64 -I$(prefix)/include
+cflags=-m64 -I$(prefix)/include --stdlib=libc++
 ldflags=-m64 -L$(prefix)/lib -lc++ -Wl,-headerpad_max_install_names
-flagsm64=CFLAGS="$(cflags)" CXXFLAGS="$(cflags) --stdlib=libc++" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
+flagsm64=CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
 path=PATH=$(prefix)/bin:$$PATH
 configure=$(pkgconfig) $(flagsm64) $(path) ./configure --prefix=$(prefix) --build=x86_64-apple-darwin10.6.0
 cmake=$(pkgconfig) cmake .. \
@@ -24,7 +24,10 @@ cmake=$(pkgconfig) cmake .. \
 	-DCMAKE_INSTALL_PREFIX=$(prefix) \
 	-DQT_HEADERS_DIR=$(prefix)/include/ \
 	-DQT_LIBRARY_DIR=$(prefix)/bin \
-	-DQT_QMAKE_EXECUTABLE=$(prefix)/bin/qmake
+	-DQT_QMAKE_EXECUTABLE=$(prefix)/bin/qmake \
+	-DCMAKE_C_FLAGS="$(cflags)" \
+	-DCMAKE_CXX_FLAGS="$(cflags)" \
+	-DCMAKE_EXE_LINKER_FLAGS="$(ldflags)"
 make=$(path) make $(jobs)
 slowmake=$(path) make
 extractpkg=tar -xvf $(1)
