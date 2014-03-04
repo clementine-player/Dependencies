@@ -64,7 +64,7 @@ FILES = [
     ('libvorbis-1.3.1.tar.gz', '016e523fac70bdd786258a9d15fd36e9'),
     ('libxml2-dev_2.7.7-1_win32.zip', 'b6f59b70eef0992df37f8db891d4b283'),
     ('libxml2_2.7.7-1_win32.zip', 'bd6b3d8c35e06a00937db65887c6e287'),
-    ('openssl-1.0.1e.tar.gz', '66bf6f10f060d561929de96f9dfe5b8c'),
+    ('openssl-1.0.1f.tar.gz', 'f26b09c028a0541cab33da697d522b25'),
     ('opus-1.0.2.tar.gz', 'c503ad05a59ddb44deab96204401be03'),
     ('orc-0.4.16.tar.gz', 'e482932e544c847761449b106ecbc483'),
     ('protobuf-2.5.0.tar.bz2', 'a72001a9067a4c2c4e0e836d0f92ece4'),
