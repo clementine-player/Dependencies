@@ -118,6 +118,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-gstreamer: .done-glib .done-orc .done-gettext 
 	$(call extractpkg,$(gsttgz))
 	cd $(gst) && patch -p0 < ../patches/gstreamer-01-flex.patch
+	cd $(gst) && patch -p1 < ../patches/gstreamer-02-log.patch
 	cd $(gst) && $(configure) --disable-examples --disable-tests
 	cd $(gst) && $(make)
 	$(call installpkg,$(gst))
@@ -261,15 +262,20 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-libmpcdec:
 	$(call extractandbuild,$(mpcdectgz),$(mpcdec))
 
-.done-wavpack: 
+.done-wavpack:
 	$(call extractandbuild,$(wavpacktgz),$(wavpack))
 
-.done-gnutls: .done-gcrypt .done-libtasn1
+.done-gmp:
+	$(call extractandbuild,$(gmptgz),$(gmp))
+
+.done-nettle: .done-gmp
+	$(call extractandbuild,$(nettletgz),$(nettle))
+
+.done-gnutls: .done-gcrypt .done-libtasn1 .done-nettle
 	$(call extractpkg,$(gnutlstgz))
-	patch -d $(gnutls) -p1 < patches/gnutls-CVE-2014-0092.patch
 	cd $(gnutls) && $(configure) --with-libgcrypt --disable-cxx
 	cd $(gnutls) && $(make)
-	sed -e 's/ *, *zlib//' -i "" $(gnutls)/lib/gnutls.pc
+#	sed -e 's/ *, *zlib//' -i "" $(gnutls)/lib/gnutls.pc
 	$(call installpkg,$(gnutls))
 
 .done-libtasn1:
@@ -290,6 +296,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-glib-networking: .done-glib .done-gnutls .done-libproxy
 	$(call extractpkg,$(glibnetworkingtgz))
+	patch -d $(glibnetworking) -p1 < patches/glib-networking-01-literals.patch
 	cd $(glibnetworking) && $(configure) --with-ca-certificates=../../root-certs.pem
 	cd $(glibnetworking) && $(make)
 	$(call installpkg,$(glibnetworking))
