@@ -266,6 +266,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gnutls: .done-gcrypt .done-libtasn1
 	$(call extractpkg,$(gnutlstgz))
+	patch -d $(gnutls) -p1 < patches/gnutls-CVE-2014-0092.patch
 	cd $(gnutls) && $(configure) --with-libgcrypt --disable-cxx
 	cd $(gnutls) && $(make)
 	sed -e 's/ *, *zlib//' -i "" $(gnutls)/lib/gnutls.pc
