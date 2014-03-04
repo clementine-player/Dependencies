@@ -158,7 +158,7 @@ extractandbuild=$(call extractpkg,$(1)) && $(call buildpkg,$(2)) && $(call insta
 # Top-level targets
 clementine-build-deps: dlfcn boost liblastfm qt taglib gtk \
                        libgpod glew gstreamer win7sdk qtsparkle \
-                       protobuf spotify qjson fftw sparsehash ffi pthreads
+                       protobuf spotify qjson fftw sparsehash pthreads
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-ffmpeg
 
@@ -224,9 +224,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	patch -d $(gettext) -p1 < patches/gettext-01-woe32.patch
 	patch -d $(gettext) -p1 < patches/gettext-02-reloc.patch
 	$(call buildpkg,$(gettext))
-	$(call installpkg,$(gettext))	
+	$(call installpkg,$(gettext))
 
-.done-glib: .done-zlib .done-gettext
+.done-glib: .done-zlib .done-gettext .done-ffi
 	$(call extractandbuild,$(glibtgz),$(glib))
 
 .done-gmp:
