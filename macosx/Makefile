@@ -76,7 +76,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gettext:
 	$(call extractpkg,$(gettexttgz))
-	cd $(gettext) && patch -p0 < ../patches/gettext-01-stpncpy.patch
 	cd $(gettext) && patch -p0 < ../patches/gettext-02-examples.patch
 	cd $(gettext) && $(configure) --without-git
 	$(call buildpkg,$(gettext))
