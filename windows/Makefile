@@ -1,5 +1,8 @@
 # Target compiler
 host=i686-w64-mingw32
+cc=$(host)-gcc
+cxx=$(host)-g++
+ranlib=$(host)-ranlib
 
 # Local compiler
 build=i486-linux-gnu
@@ -27,20 +30,18 @@ clementine_dlls=QtCore4.dll \
                 avformat-53.dll \
                 avutil-51.dll \
                 glew32.dll \
-                intl.dll \
+                libintl-8.dll \
                 libcdio-14.dll \
                 libeay32.dll \
-                libexpat-1.dll \
                 libfaac.dll \
                 libfaad.dll \
                 libfftw3-3.dll \
                 libFLAC.dll \
-                libgcrypt-11.dll \
-                libgdk_pixbuf-2.0-0.dll \
+                libgcrypt-20.dll \
                 libgio-2.0-0.dll \
                 libglib-2.0-0.dll \
                 libgmodule-2.0-0.dll \
-                libgnutls-26.dll \
+                libgnutls-28.dll \
                 libgobject-2.0-0.dll \
                 libgpg-error-0.dll \
                 libgstaudio-0.10-0.dll \
@@ -72,14 +73,13 @@ clementine_dlls=QtCore4.dll \
                 liborc-0.4-0.dll \
                 liborc-test-0.4-0.dll \
                 libplist.dll \
-                libpng14-14.dll \
                 libprotobuf-8.dll \
                 libqjson.dll \
                 libsoup-2.4-1.dll \
                 libspeex-1.dll \
                 libspotify.dll \
                 libtag.dll \
-                libtasn1-3.dll \
+                libtasn1-6.dll \
                 libvorbis-0.dll \
                 libvorbisenc-2.dll \
                 libxml2-2.dll \
@@ -136,8 +136,10 @@ dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
 ldflags=-L$(prefix)/lib
-cflags=-I$(prefix)/include
-configure=$(pkgconfig) LDFLAGS=$(ldflags) CFLAGS=$(cflags) ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
+# -O2 is required to work around link errors in gettext
+cflags=-I$(prefix)/include -O2
+cxxflags=$(cflags)
+configure=$(pkgconfig) LDFLAGS=$(ldflags) CFLAGS="$(cflags)" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 cmake=$(pkgconfig) cmake .. -DCMAKE_TOOLCHAIN_FILE=$(src)/Toolchain-mingw32.cmake -DCMAKE_INSTALL_PREFIX=$(prefix)
 make=make $(jobs)
 extractpkg=tar -xvf $(1)
@@ -201,13 +203,59 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(qjson)
 	touch $@
 
-.done-gtk:
-	unzip -o -d $(stow)/$(gtk) $(gtkzip)
-	sed -i.bak -e's/^prefix=.*/prefix=\$(prefix)/' $(stow)/$(gtk)/lib/pkgconfig/*.pc
-	# Remove a library that clashes with qt (lucid version of stow doesn't support --ignore)
-	rm -f $(stow)/$(gtk)/bin/libgcc_s_dw2-1.dll
-	cd $(stow) && stow $(gtk)
+.done-zlib:
+	$(call extractpkg,$(zlibtgz))
+	cd $(zlib) && PREFIX="$(host)-" CC=$(cc) CXX=$(cxx) RANLIB=$(ranlib) ./configure --prefix=$(prefix)
+	cd $(zlib) && make -f win32/Makefile.gcc PREFIX="$(host)-" CC=$(cc) CXX=$(cxx) LDSHAREDLIBC="" SHARED_MODE=1
+	cd $(zlib) && make -f win32/Makefile.gcc \
+		PREFIX="$(host)-" CC=$(cc) CXX=$(cxx) \
+		BINARY_PATH=$(stow)/$(zlib)/bin \
+		INCLUDE_PATH=$(stow)/$(zlib)/include \
+		LIBRARY_PATH=$(stow)/$(zlib)/lib \
+		LDSHAREDLIBC="" SHARED_MODE=1 install
+	cd $(stow) && stow -R $(zlib)
 	touch $@
+
+.done-iconv:
+	$(call extractandbuild,$(libiconvtgz),$(libiconv))
+
+.done-gettext: .done-iconv
+	$(call extractpkg,$(gettexttgz))
+	patch -d $(gettext) -p1 < patches/gettext-01-woe32.patch
+	patch -d $(gettext) -p1 < patches/gettext-02-reloc.patch
+	$(call buildpkg,$(gettext))
+	$(call installpkg,$(gettext))	
+
+.done-glib: .done-zlib .done-gettext
+	$(call extractandbuild,$(glibtgz),$(glib))
+
+.done-gmp:
+	$(call extractpkg,$(gmptgz))
+	cd $(gmp) && $(configure) --enable-shared --disable-static
+	cd $(gmp) && $(make)
+	$(call installpkg,$(gmp))
+
+.done-nettle: .done-gmp
+	$(call extractpkg,$(nettletgz))
+	cd $(nettle) && $(configure)
+	cd $(nettle) && $(make) libnettle-4-6.dll
+	cd $(nettle) && $(make) libhogweed-2-4.dll
+	$(call installpkg,$(nettle))
+
+.done-libgpgerror:
+	$(call extractandbuild,$(gpgerrortgz),$(gpgerror))
+
+.done-gcrypt: .done-libgpgerror .done-gettext
+	$(call extractpkg,$(gcrypttgz))
+	cd $(gcrypt) && $(configure) --with-gpg-error-prefix=$(prefix)
+	cd $(gcrypt) && $(make)
+	$(call installpkg,$(gcrypt))
+
+.done-libtasn1:
+	$(call extractandbuild,$(tasn1tgz),$(tasn1))
+
+.done-libgnutls: .done-gcrypt .done-libtasn1 .done-nettle
+	$(call extractandbuild,$(gnutlstgz),$(gnutls))
 
 .done-win7sdk:
 	cp -r $(src)/$(win7sdk) $(stow)/
@@ -218,7 +266,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractpkg,$(sqlitetgz),$(sqlite))
 	(cd $(sqlite) && $(configure) && $(make))
 	$(call installpkg,$(sqlite))
-	touch $@
 
 .done-libxml:
 	unzip -o -d $(stow)/$(xml) $(xmlzip)
@@ -227,17 +274,16 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(xml)
 	touch $@
 
-.done-glibnetworking: .done-gtk .done-libgnutls
+.done-glibnetworking: .done-glib .done-libgnutls
 	$(call extractandbuild,$(glibnetworkingtgz),$(glibnetworking))
-	touch $@
 
-.done-libsoup: .done-gtk .done-libxml
+.done-libsoup: .done-glib .done-libxml
 	$(call extractpkg,$(souptgz),$(soup))
 	(cd $(soup) && $(configure) && $(make))
 	$(call installpkg,$(soup))
 	touch $@
 
-.done-libplist: .done-libxml .done-gtk
+.done-libplist: .done-libxml .done-glib
 	tar -xf $(plisttgz)
 	-mkdir $(plist)/build
 	cd $(plist)/build && $(cmake)
@@ -254,13 +300,13 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(gpod) && patch -p0 < ../patches/libgpod-02-libtool.patch
 	cd $(gpod) && autoreconf
 	# Force link static sqlite3 because libtool is stupid.
-	cd $(gpod) && $(pkgconfig) LDFLAGS="$(ldflags) -Wl,-lsqlite3" CFLAGS=$(cflags) ./configure --host=$(host) --build=$(build) --prefix=$(prefix) --without-libimobiledevice
+	cd $(gpod) && $(pkgconfig) LDFLAGS="$(ldflags) -Wl,-lsqlite3" CFLAGS="$(cflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix) --without-libimobiledevice
 	cd $(gpod) && make
 	cd $(gpod) && make install DESTDIR=$(stow)/$(gpod)
 	cd $(stow) && stow $(gpod)
 	touch $@
 
-.done-gstreamer: .done-gtk .done-libxml .done-orc
+.done-gstreamer: .done-glib .done-libxml .done-orc
 	$(call extractpkg,$(gsttgz))
 	cd $(gst) && $(configure) --disable-examples --disable-tests
 	cd $(gst) && $(make)
@@ -364,7 +410,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractpkg,$(gstuglytgz))
 	patch -d $(gstugly) -p1 < patches/gst-plugins-ugly-01-cdio.patch
 	cd $(gstugly) && \
-		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS=$(cflags) \
+		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)" \
 		./configure --host=$(host) --build=$(build) --prefix=$(prefix) \
 		--disable-examples
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstugly)/libtool
@@ -421,7 +467,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && patch -p0 < ../patches/gst-plugins-bad-01-librfb-winsock.patch
 	cd $(gstbad) && \
-		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS=$(cflags) \
+		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)" \
 		./configure --host=$(host) --build=$(build) --prefix=$(prefix) \
 		--disable-acm \
 		--disable-examples \
@@ -484,7 +530,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(faac)
 	touch $@
 
-.done-libmms: .done-gtk
+.done-libmms: .done-glib
 	$(call extractpkg,$(mmswin32tgz))
 	cd $(mmswin32) && ./autogen.sh
 	cd $(mmswin32) && patch -p0 < ../patches/mms-01-buildfixes.patch
@@ -525,12 +571,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(pthreads)
 	touch $@
 
-.done-libgnutls:
-	unzip -o -d $(stow)/$(tls) $(tlszip)
-	cd $(stow) && stow $(tls)
-	touch $@
-
-.done-taglib: .done-gtk
+.done-taglib: .done-glib
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
 	# Windows specfic patch
@@ -543,7 +584,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(taglib)
 	touch $@
 
-.done-qt: .done-openssl .done-sqlite .done-gtk
+.done-qt: .done-openssl .done-sqlite .done-glib
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p0 < patches/qt-01-codecs.patch
 	patch -d $(qt) -p0 < patches/qt-02-dir.patch

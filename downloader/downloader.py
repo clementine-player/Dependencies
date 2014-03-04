@@ -18,7 +18,7 @@ FILES = [
     ('faad2-2.7.tar.gz', 'ee1b4d67ea2d76ee52c5621bc6dbf61e'),
     ('fftw-3.3.2.tar.gz', '6977ee770ed68c85698c7168ffa6e178'),
     ('flac-1.2.1.tar.gz', '153c8b15a54da428d1f0fadc756c22c7'),
-    ('gettext-0.18.1.1.tar.gz', '3dd55b952826d2b32f51308f2f91aa89'),
+    ('gettext-0.18.3.1.tar.gz', '3fc808f7d25487fc72b5759df7419e02'),
     ('glew-1.5.5-win32.zip', '48c8c982644ba11dfe94aaf756217eec'),
     ('glew-1.5.5.tar.bz2', '25afa3ff4cff7b67add612e148a54240'),
     ('glib-2.38.2.tar.xz', '26d1d08e478fc48c181ca8be44f5b69f'),
@@ -37,8 +37,8 @@ FILES = [
     ('libarchive-2.8.4.tar.gz', '83b237a542f27969a8d68ac217dc3796'),
     ('libcdio-0.90.tar.gz', '1b245b023fb03a58d030fd2800db3247'),
     ('libffi-3.0.11.tar.gz', 'f69b9693227d976835b4857b1ba7d0e3'),
-    ('libgcrypt-1.5.3.tar.bz2', '993159b2924ae7b0e4eaff0743c2db35'),
-    ('libgpg-error-1.9.tar.bz2', '521b98aa9395e7eaf0ef2236233a0796'),
+    ('libgcrypt-1.6.1.tar.bz2', 'a5a5060dc2f80bcac700ab0236ea47dc'),
+    ('libgpg-error-1.12.tar.bz2', '8f0eb41a344d19ac2aa9bd101dfb9ce6'),
     ('libgpod-0.8.0.tar.gz', '6660f74cc53293dcc847407aa5f672ce'),
     ('libiconv-1.14.tar.gz', 'e34509b1623cec449dfeb73d7ce9c6c6'),
     ('libid3tag-0.15.1b.tar.gz', 'e5808ad997ba32c498803822078748c3'),
@@ -77,6 +77,7 @@ FILES = [
     ('sqlite-amalgamation-3.7.0.tar.gz', '61b85f108760f91b79afc7833e6e6cb4'),
     ('taglib-1.9.1.tar.gz', '0d35df96822bbd564c5504cb3c2e4d86'),
     ('wavpack-4.60.1.tar.bz2', '7bb1528f910e4d0003426c02db856063'),
+    ('zlib-1.2.8.tar.gz', '44d667c142d7cda120332623eab69f40'),
 ]
 
 
