@@ -217,7 +217,14 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	touch $@
 
 .done-iconv:
-	$(call extractandbuild,$(libiconvtgz),$(libiconv))
+	$(call extractpkg,$(libiconvtgz))
+	$(call buildpkg,$(libiconv))
+	rm -rf $(stow)/$(libiconv)
+	cd $(libiconv) && make install DESTDIR=$(stow)/$(libiconv)
+	mv -fv $(stow)/$(libiconv)$(prefix)/* $(stow)/$(libiconv)
+	rm -f $(stow)/$(libiconv)/lib/charset.alias
+	cd $(stow) && stow -R $(libiconv)
+	touch $@
 
 .done-gettext: .done-iconv
 	$(call extractpkg,$(gettexttgz))
