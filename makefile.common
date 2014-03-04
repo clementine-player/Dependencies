@@ -52,7 +52,6 @@ xml=libxml2-2.7.7
 # Windows only packages
 directx=directx-headers-0.03
 glew=glew-1.5.5
-gtk=gtk+-bundle_2.24.8
 mmswin32=libmms-win32
 openssl=openssl-1.0.1f
 pthreads=pthreads-win32-2.8.0
@@ -71,7 +70,7 @@ tasn1=libtasn1-3.4
 usb=libusb-1.0.8
 
 allpackages=$(boost) $(directx) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
-		$(gstbad) $(gstbase) $(gstgood) $(gst) $(gstugly) $(gtk) $(id3tag) \
+		$(gstbad) $(gstbase) $(gstgood) $(gst) $(gstugly) $(id3tag) \
 		$(lame) $(lastfm) $(mad) $(mmswin32) $(ogg) $(oil) $(orc) $(plist) \
 		$(pthreads) $(qjson) $(qt) $(quicktime) $(soup) $(speex) $(sqlite) $(taglib) \
 		$(tls) $(usb) $(usbmuxd) $(vorbis) $(wpd) $(xml) $(qtsparkle) \
@@ -110,7 +109,6 @@ gstffmpegtgz=$(downloads)/$(gstffmpeg).tar.bz2
 gstgoodtgz=$(downloads)/$(gstgood).tar.gz
 gsttgz=$(downloads)/$(gst).tar.bz2
 gstuglytgz=$(downloads)/$(gstugly).tar.bz2
-gtkzip=$(downloads)/$(gtk)-20111122_win32.zip
 id3tagtgz=$(downloads)/$(id3tag).tar.gz
 lametgz=$(downloads)/$(lame).tar.gz
 lastfmtgz=$(downloads)/davidsansome-liblastfm-0.3.1-17-g6748fcf.tar.gz
@@ -192,7 +190,6 @@ gst-plugins-base: .done-gst-plugins-base
 gst-plugins-good: .done-gst-plugins-good
 gst-plugins-ugly: .done-gst-plugins-ugly
 gstreamer: .done-gstreamer
-gtk: .done-gtk
 id3tag: .done-id3tag
 lame: .done-lame
 libarchive: .done-libarchive
