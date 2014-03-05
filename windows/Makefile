@@ -41,6 +41,7 @@ clementine_dlls=QtCore4.dll \
                 libgio-2.0-0.dll \
                 libglib-2.0-0.dll \
                 libgmodule-2.0-0.dll \
+                libgpg-error-0.dll \
                 libgnutls-28.dll \
                 libgobject-2.0-0.dll \
                 libgpg-error-0.dll \
@@ -62,11 +63,15 @@ clementine_dlls=QtCore4.dll \
                 libgstsdp-0.10-0.dll \
                 libgsttag-0.10-0.dll \
                 libgthread-2.0-0.dll \
+                libhogweed-2-4.dll \
+                libiconv-2.dll \
                 libid3tag.dll \
+                libintl-8.dll \
                 liblastfm.dll \
                 libmad.dll \
                 libmms-0.dll \
                 libmp3lame-0.dll \
+                libnettle-4-6.dll \
                 libogg-0.dll \
                 liboil-0.3-0.dll \
                 libopus-0.dll \
