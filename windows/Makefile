@@ -35,6 +35,7 @@ clementine_dlls=QtCore4.dll \
                 libeay32.dll \
                 libfaac.dll \
                 libfaad.dll \
+                libffi-6.dll \
                 libfftw3-3.dll \
                 libFLAC.dll \
                 libgcrypt-20.dll \
