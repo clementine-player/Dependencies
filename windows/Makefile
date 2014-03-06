@@ -281,17 +281,16 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call installpkg,$(sqlite))
 
 .done-libxml:
-	unzip -o -d $(stow)/$(xml) $(xmlzip)
-	unzip -o -d $(stow)/$(xml) $(xmldevzip)
-	sed -i.bak -e's/^prefix=.*/prefix=\$(prefix)/' $(stow)/$(xml)/lib/pkgconfig/*.pc
-	cd $(stow) && stow $(xml)
-	touch $@
+	$(call extractpkg,$(xmltgz))
+	cd $(xml) && $(configure) --without-python
+	cd $(xml) && $(make)
+	$(call installpkg,$(xml))
 
 .done-glibnetworking: .done-glib .done-libgnutls
 	$(call extractandbuild,$(glibnetworkingtgz),$(glibnetworking))
 
 .done-libsoup: .done-glib .done-libxml
-	$(call extractpkg,$(souptgz),$(soup))
+	$(call extractpkg,$(souptgz))
 	(cd $(soup) && $(configure) && $(make))
 	$(call installpkg,$(soup))
 	touch $@
