@@ -280,7 +280,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	(cd $(sqlite) && $(configure) && $(make))
 	$(call installpkg,$(sqlite))
 
-.done-libxml:
+.done-libxml: .done-iconv
 	$(call extractpkg,$(xmltgz))
 	cd $(xml) && $(configure) --without-python
 	cd $(xml) && $(make)
