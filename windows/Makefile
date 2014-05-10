@@ -19,18 +19,10 @@ stow=$(prefix)/stow
 include ../makefile.common
 
 # List of dlls that get included in the final package for Clementine
-clementine_dlls=QtCore4.dll \
-                QtGui4.dll \
-                QtNetwork4.dll \
-                QtOpenGL4.dll \
-                QtSql4.dll \
-                QtSvg4.dll \
-                QtXml4.dll \
-                avcodec-53.dll \
+clementine_dlls=avcodec-53.dll \
                 avformat-53.dll \
                 avutil-51.dll \
                 glew32.dll \
-                libintl-8.dll \
                 libcdio-14.dll \
                 libeay32.dll \
                 libfaac.dll \
@@ -42,13 +34,12 @@ clementine_dlls=QtCore4.dll \
                 libgio-2.0-0.dll \
                 libglib-2.0-0.dll \
                 libgmodule-2.0-0.dll \
-                libgpg-error-0.dll \
                 libgmp-10.dll \
                 libgnutls-28.dll \
                 libgobject-2.0-0.dll \
                 libgpg-error-0.dll \
-                libgstaudio-0.10-0.dll \
                 libgstapp-0.10-0.dll \
+                libgstaudio-0.10-0.dll \
                 libgstbase-0.10-0.dll \
                 libgstcdda-0.10-0.dll \
                 libgstcontroller-0.10-0.dll \
@@ -90,8 +81,15 @@ clementine_dlls=QtCore4.dll \
                 libvorbis-0.dll \
                 libvorbisenc-2.dll \
                 libxml2-2.dll \
-                ssleay32.dll \
                 pthreadGC2.dll \
+                QtCore4.dll \
+                QtGui4.dll \
+                QtNetwork4.dll \
+                QtOpenGL4.dll \
+                QtSql4.dll \
+                QtSvg4.dll \
+                QtXml4.dll \
+                ssleay32.dll \
                 zlib1.dll
 clementine_gst_plugins=libgstapetag.dll \
                        libgstapp.dll \
