@@ -43,6 +43,7 @@ clementine_dlls=QtCore4.dll \
                 libglib-2.0-0.dll \
                 libgmodule-2.0-0.dll \
                 libgpg-error-0.dll \
+                libgmp-10.dll \
                 libgnutls-28.dll \
                 libgobject-2.0-0.dll \
                 libgpg-error-0.dll \
