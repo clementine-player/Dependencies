@@ -68,7 +68,7 @@ FILES = [
     ('pthreads-win32-2.8.0.tar.gz', '66bba1fc3713f9bf070eca539139def8'),
     ('qjson-0.7.1.tar.bz2', 'eea7099c762590531b336c4213cb00e7'),
     ('qt-everywhere-opensource-src-4.8.3.tar.gz', 'a663b6c875f8d7caa8ac9c30e4a4ec3b'),
-    ('qt-everywhere-opensource-src-4.8.5.tar.gz', '1864987bdbb2f58f8ae8b350dfdbe133'),
+    ('qt-everywhere-opensource-src-4.8.6.tar.gz', '2edbe4d6c2eff33ef91732602f3518eb'),
     ('sparsehash-2.0.2.tar.gz', '1db92ed7f257d9b5f14a309d75e8a1d4'),
     ('speex-1.2rc1.tar.gz', 'c4438b22c08e5811ff10e2b06ee9b9ae'),
     ('sqlite-amalgamation-3.7.0.tar.gz', '61b85f108760f91b79afc7833e6e6cb4'),
