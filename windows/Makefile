@@ -48,6 +48,7 @@ clementine_dlls=glew32.dll \
                 libgstrtsp-1.0-0.dll \
                 libgstsdp-1.0-0.dll \
                 libgsttag-1.0-0.dll \
+                libgstvideo-1.0-0.dll \
                 libgthread-2.0-0.dll \
                 libhogweed-2-4.dll \
                 libiconv-2.dll \
