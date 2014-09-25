@@ -1,0 +1,9 @@
+--- libsoup-2.4.pc.in.old	2014-09-25 13:32:25.662289027 +0000
++++ libsoup-2.4.pc.in	2014-09-25 13:32:32.854288805 +0000
+@@ -8,5 +8,5 @@
+ Version: @VERSION@
+ Requires: glib-2.0 gobject-2.0 gio-2.0
+ Requires.private: libxml-2.0
+-Libs: -L${libdir} -lsoup-2.4
++Libs: -L${libdir} -lsoup-2.4 -lws2_32
+ Cflags: -I${includedir}/libsoup-2.4

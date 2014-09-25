@@ -10,18 +10,18 @@ fftw=fftw-3.3.2
 flac=flac-1.2.1
 gcrypt=libgcrypt-1.6.1
 gettext=gettext-0.18.3.1
-glib=glib-2.38.2
-glibnetworking=glib-networking-2.38.2
+glib=glib-2.42.0
+glibnetworking=glib-networking-2.42.0
 gmp=gmp-5.1.3
 gnutls=gnutls-3.2.12
 gpgerror=libgpg-error-1.12
 gpod=libgpod-0.8.0
-gstbad=gst-plugins-bad-0.10.23
-gstbase=gst-plugins-base-0.10.36
-gstffmpeg=gst-ffmpeg-0.10.13
-gstgood=gst-plugins-good-0.10.24
-gst=gstreamer-0.10.36
-gstugly=gst-plugins-ugly-0.10.19
+gst=gstreamer-1.4.2
+gstbad=gst-plugins-bad-1.4.2
+gstbase=gst-plugins-base-1.4.2
+gstgood=gst-plugins-good-1.4.2
+gstlibav=gst-libav-1.4.2
+gstugly=gst-plugins-ugly-1.4.2
 id3tag=libid3tag-0.15.1b
 lame=lame-3.98.4
 lastfm=davidsansome-liblastfm-6748fcf
@@ -39,7 +39,7 @@ qjson=qjson-0.7.1
 qtsparkle=davidsansome-qtsparkle-28721b5
 quicktime=libquicktime-1.1.5
 sip=sip-4.12.2
-soup=libsoup-2.36.0
+soup=libsoup-2.48.0
 sparsehash=sparsehash-2.0.2
 speex=speex-1.2rc1
 sqlite=sqlite-3.7.0
@@ -50,7 +50,6 @@ wavpack=wavpack-4.60.1
 xml=libxml2-2.9.1
 
 # Windows only packages
-directx=directx-headers-0.03
 glew=glew-1.5.5
 mmswin32=libmms-win32
 openssl=openssl-1.0.1h
@@ -69,14 +68,14 @@ spotifymac=libspotify-12.1.45-Darwin-universal
 tasn1=libtasn1-3.4
 usb=libusb-1.0.8
 
-allpackages=$(boost) $(directx) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
+allpackages=$(boost) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
 		$(gstbad) $(gstbase) $(gstgood) $(gst) $(gstugly) $(id3tag) \
 		$(lame) $(lastfm) $(mad) $(mmswin32) $(ogg) $(oil) $(orc) $(plist) \
 		$(pthreads) $(qjson) $(qt) $(quicktime) $(soup) $(speex) $(sqlite) $(taglib) \
 		$(tls) $(usb) $(usbmuxd) $(vorbis) $(wpd) $(xml) $(qtsparkle) \
 		$(pyqt) $(ofa) $(curl) $(fftw) $(archive) \
 		$(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
-		$(gcrypt) $(spotifymac) $(gstffmpeg) $(mtp) $(mpcdec) \
+		$(gcrypt) $(spotifymac) $(gstlibav) $(mtp) $(mpcdec) \
 		$(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(cdio) \
 		$(opensslwin32) $(glibnetworking)
 
@@ -86,7 +85,6 @@ downloads=$(src)/downloads
 archivetgz=$(downloads)/$(archive).tar.gz
 boosttgz=$(downloads)/$(boost).tar.bz2
 cdiotgz=$(downloads)/$(cdio).tar.gz
-directxtgz=$(downloads)/$(directx).tar.gz
 dlfcntgz=$(downloads)/dlfcn-win32-static-r19.tar.bz2
 faactgz=$(downloads)/$(faac).tar.gz
 faadtgz=$(downloads)/$(faad).tar.gz
@@ -103,12 +101,12 @@ gmptgz=$(downloads)/$(gmp).tar.xz
 gnutlstgz=$(downloads)/$(gnutls).tar.xz
 gpgerrortgz=$(downloads)/$(gpgerror).tar.bz2
 gpodtgz=$(downloads)/$(gpod).tar.gz
-gstbadtgz=$(downloads)/$(gstbad).tar.bz2
-gstbasetgz=$(downloads)/$(gstbase).tar.bz2
-gstffmpegtgz=$(downloads)/$(gstffmpeg).tar.bz2
-gstgoodtgz=$(downloads)/$(gstgood).tar.gz
-gsttgz=$(downloads)/$(gst).tar.bz2
-gstuglytgz=$(downloads)/$(gstugly).tar.bz2
+gstbadtgz=$(downloads)/$(gstbad).tar.xz
+gstbasetgz=$(downloads)/$(gstbase).tar.xz
+gstlibavtgz=$(downloads)/$(gstlibav).tar.xz
+gstgoodtgz=$(downloads)/$(gstgood).tar.xz
+gsttgz=$(downloads)/$(gst).tar.xz
+gstuglytgz=$(downloads)/$(gstugly).tar.xz
 id3tagtgz=$(downloads)/$(id3tag).tar.gz
 lametgz=$(downloads)/$(lame).tar.gz
 lastfmtgz=$(downloads)/davidsansome-liblastfm-0.3.1-17-g6748fcf.tar.gz
@@ -133,7 +131,7 @@ qjsontgz=$(downloads)/$(qjson).tar.bz2
 qttgz=$(downloads)/$(qt).tar.gz
 qtsparkletgz=$(downloads)/$(qtsparkle).tar.gz
 quicktimetgz=$(downloads)/$(quicktime).tar.gz
-souptgz=$(downloads)/$(soup).tar.bz2
+souptgz=$(downloads)/$(soup).tar.xz
 sparsehashtgz=$(downloads)/$(sparsehash).tar.gz
 speextgz=$(downloads)/$(speex).tar.gz
 spotifymactgz=$(downloads)/$(spotifymac).zip
@@ -170,7 +168,6 @@ all-downloads:
 boost: .done-boost
 cdio: .done-cdio
 curl: .done-curl
-directx: .done-directx
 dlfcn: .done-dlfcn
 faac: .done-faac
 faad: .done-faad
@@ -183,7 +180,7 @@ glew: .done-glew
 glib: .done-glib
 glibnetworking: .done-glibnetworking
 gnutls: .done-gnutls
-gst-ffmpeg: .done-gst-ffmpeg
+gst-libav: .done-gst-libav
 gst-plugins-bad: .done-gst-plugins-bad
 gst-plugins-base: .done-gst-plugins-base
 gst-plugins-good: .done-gst-plugins-good

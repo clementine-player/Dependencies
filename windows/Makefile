@@ -19,10 +19,7 @@ stow=$(prefix)/stow
 include ../makefile.common
 
 # List of dlls that get included in the final package for Clementine
-clementine_dlls=avcodec-53.dll \
-                avformat-53.dll \
-                avutil-51.dll \
-                glew32.dll \
+clementine_dlls=glew32.dll \
                 libcdio-14.dll \
                 libeay32.dll \
                 libfaac.dll \
@@ -38,23 +35,19 @@ clementine_dlls=avcodec-53.dll \
                 libgnutls-28.dll \
                 libgobject-2.0-0.dll \
                 libgpg-error-0.dll \
-                libgstapp-0.10-0.dll \
-                libgstaudio-0.10-0.dll \
-                libgstbase-0.10-0.dll \
-                libgstcdda-0.10-0.dll \
-                libgstcontroller-0.10-0.dll \
-                libgstdataprotocol-0.10-0.dll \
-                libgstfft-0.10-0.dll \
-                libgstinterfaces-0.10-0.dll \
-                libgstnet-0.10-0.dll \
-                libgstnetbuffer-0.10-0.dll \
-                libgstpbutils-0.10-0.dll \
-                libgstreamer-0.10-0.dll \
-                libgstriff-0.10-0.dll \
-                libgstrtp-0.10-0.dll \
-                libgstrtsp-0.10-0.dll \
-                libgstsdp-0.10-0.dll \
-                libgsttag-0.10-0.dll \
+                libgstapp-1.0-0.dll \
+                libgstaudio-1.0-0.dll \
+                libgstbase-1.0-0.dll \
+                libgstcontroller-1.0-0.dll \
+                libgstfft-1.0-0.dll \
+                libgstnet-1.0-0.dll \
+                libgstpbutils-1.0-0.dll \
+                libgstreamer-1.0-0.dll \
+                libgstriff-1.0-0.dll \
+                libgstrtp-1.0-0.dll \
+                libgstrtsp-1.0-0.dll \
+                libgstsdp-1.0-0.dll \
+                libgsttag-1.0-0.dll \
                 libgthread-2.0-0.dll \
                 libhogweed-2-4.dll \
                 libiconv-2.dll \
@@ -73,7 +66,6 @@ clementine_dlls=avcodec-53.dll \
                 libplist.dll \
                 libprotobuf-8.dll \
                 libqjson.dll \
-                libsoup-2.4-1.dll \
                 libspeex-1.dll \
                 libspotify.dll \
                 libtag.dll \
@@ -96,30 +88,29 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstasf.dll \
                        libgstaudioconvert.dll \
                        libgstaudiofx.dll \
+                       libgstaudioparsers.dll \
                        libgstaudioresample.dll \
                        libgstaudiotestsrc.dll \
                        libgstautodetect.dll \
                        libgstcdio.dll \
                        libgstcoreelements.dll \
-                       libgstdecodebin2.dll \
                        libgstdirectsoundsink.dll \
                        libgstequalizer.dll \
                        libgstfaac.dll \
                        libgstfaad.dll \
-                       libgstffmpeg.dll \
                        libgstflac.dll \
                        libgstgdp.dll \
                        libgstgio.dll \
                        libgsticydemux.dll \
                        libgstid3demux.dll \
+                       libgstisomp4.dll \
                        libgstlame.dll \
+                       libgstlibav.dll \
                        libgstmad.dll \
                        libgstmms.dll \
-                       libgstmpegaudioparse.dll \
-                       libgstmusepack.dll \
                        libgstogg.dll \
                        libgstopus.dll \
-                       libgstqtdemux.dll \
+                       libgstplayback.dll \
                        libgstreplaygain.dll \
                        libgstsouphttpsrc.dll \
                        libgstspectrum.dll \
@@ -165,7 +156,7 @@ clementine-build-deps: dlfcn boost liblastfm qt taglib \
                        libgpod glew gstreamer win7sdk qtsparkle \
                        protobuf spotify qjson fftw sparsehash pthreads
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
-                        gst-plugins-ugly gst-ffmpeg
+                        gst-plugins-ugly gst-libav
 
 clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetworking
 	-rm -rf clementine-deps
@@ -177,7 +168,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		cp -v $(prefix)/bin/$$f clementine-deps/ || exit 1; \
 	done
 	for f in $(clementine_gst_plugins); do \
-		cp -v $(prefix)/lib/gstreamer-0.10/$$f clementine-deps/gstreamer-plugins || exit 1; \
+		cp -v $(prefix)/lib/gstreamer-1.0/$$f clementine-deps/gstreamer-plugins || exit 1; \
 	done
 	for f in $(clementine_imageformats); do \
 		cp -v $(prefix)/plugins/imageformats/$$f clementine-deps/imageformats || exit 1; \
@@ -290,6 +281,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-libsoup: .done-glib .done-libxml
 	$(call extractpkg,$(souptgz))
+	cd $(soup) && patch -p0 < ../patches/libsoup-01-winsock.patch
 	(cd $(soup) && $(configure) && $(make))
 	$(call installpkg,$(soup))
 	touch $@
@@ -325,9 +317,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis
 	$(call extractpkg,$(gstbasetgz))
-	cd $(gstbase) && patch -p1 < ../patches/gst-plugins-base-01-tcp.patch
-	cd $(gstbase) && patch -p1 < ../patches/gst-plugins-base-02-tcp-no-gdp.patch
-	cd $(gstbase) && patch -p1 < ../patches/gst-plugins-base-03-tcp-fd_has_closed.patch
 	cd $(gstbase) && autoreconf
 	cd $(gstbase) && $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm
 	cd $(gstbase) && $(make)
@@ -342,10 +331,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-vorbis: .done-ogg
 	$(call extractandbuild,$(vorbistgz),$(vorbis))
 
-.done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-libsoup .done-directx .done-wavpack
+.done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-libsoup .done-wavpack
 	$(call extractpkg,$(gstgoodtgz))
-	cd $(gstgood) && patch -p0 < ../patches/gst-plugins-good-01-directsound.patch
-	cd $(gstgood) && patch -p1 < ../patches/gst-plugins-good-02-device-property.patch
 	cd $(gstgood) && $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace 
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstgood)/libtool
 	cd $(gstgood) && $(make)
@@ -413,14 +400,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(speex)
 	touch $@
 
-.done-directx:
-	tar -xzf $(directxtgz) -C $(stow)
-	cd $(stow) && stow -R $(directx)
-	touch $@
-
 .done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
 	$(call extractpkg,$(gstuglytgz))
-	patch -d $(gstugly) -p1 < patches/gst-plugins-ugly-01-cdio.patch
 	cd $(gstugly) && \
 		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)" \
 		./configure --host=$(host) --build=$(build) --prefix=$(prefix) \
@@ -477,7 +458,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec .done-opus
 	$(call extractpkg,$(gstbadtgz))
-	cd $(gstbad) && patch -p0 < ../patches/gst-plugins-bad-01-librfb-winsock.patch
 	cd $(gstbad) && \
 		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)" \
 		./configure --host=$(host) --build=$(build) --prefix=$(prefix) \
@@ -489,19 +469,17 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(gstbad) && $(make)
 	$(call installpkg,$(gstbad))
 
-.done-gst-ffmpeg: .done-gstreamer .done-gst-plugins-base
-	$(call extractpkg,$(gstffmpegtgz))
-	cd $(gstffmpeg) && patch -p0 < ../patches/gst-ffmpeg-04-mmx.patch
-	cd $(gstffmpeg) && patch -d gst-libs/ext/libav/ -p1 < ../patches/gst-ffmpeg-libav-01-gcc48crash.patch
-	cd $(gstffmpeg) && autoreconf
-	cd $(gstffmpeg) && $(configure) --with-ffmpeg-extra-configure="--enable-shared --disable-debug"
-	cd $(gstffmpeg) && $(make)
-	rm -rf $(stow)/$(gstffmpeg)
-	cd $(gstffmpeg) && make install DESTDIR=$(stow)/$(gstffmpeg)
-	mv -fv $(stow)/$(gstffmpeg)$(prefix)/* $(stow)/$(gstffmpeg)/
-	-mkdir $(stow)/$(gstffmpeg)/bin/
-	cp $(gstffmpeg)/gst-libs/ext/libav/lib*/*.dll* $(stow)/$(gstffmpeg)/bin/
-	cd $(stow) && stow -R $(gstffmpeg)
+.done-gst-libav: .done-gstreamer .done-gst-plugins-base
+	$(call extractpkg,$(gstlibavtgz))
+	cd $(gstlibav) && autoreconf
+	cd $(gstlibav) && $(configure) --with-ffmpeg-extra-configure="--enable-shared --disable-debug"
+	cd $(gstlibav) && $(make)
+	rm -rf $(stow)/$(gstlibav)
+	cd $(gstlibav) && make install DESTDIR=$(stow)/$(gstlibav)
+	mv -fv $(stow)/$(gstlibav)$(prefix)/* $(stow)/$(gstlibav)/
+	-mkdir $(stow)/$(gstlibav)/bin/
+	cp $(gstlibav)/ext/libav/.libs/*.dll $(stow)/$(gstlibav)/bin/
+	cd $(stow) && stow -R $(gstlibav)
 	touch $@
 
 .done-faad:
