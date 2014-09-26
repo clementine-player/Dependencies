@@ -60,7 +60,7 @@ FILES = [
     ('libvorbis-1.3.1.tar.gz', '016e523fac70bdd786258a9d15fd36e9'),
     ('libxml2-2.9.1.tar.gz', '9c0cfef285d5c4a5c80d00904ddab380'),
     ('nettle-2.7.tar.gz', '2caa1bd667c35db71becb93c5d89737f'),
-    ('openssl-1.0.1h.tar.gz', '8d6d684a9430d5cc98a62a5d8fbda8cf'),
+    ('openssl-1.0.1i.tar.gz', 'c8dc151a671b9b92ff3e4c118b174972'),
     ('opus-1.0.2.tar.gz', 'c503ad05a59ddb44deab96204401be03'),
     ('orc-0.4.16.tar.gz', 'e482932e544c847761449b106ecbc483'),
     ('protobuf-2.5.0.tar.bz2', 'a72001a9067a4c2c4e0e836d0f92ece4'),
