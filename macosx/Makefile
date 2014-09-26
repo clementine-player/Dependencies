@@ -60,7 +60,7 @@ clementine-build-deps: boost liblastfm taglib libmtp \
                        libgpod gstreamer glew qjson \
                        protobuf spotify fftw sparsehash qt
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
-                        gst-plugins-ugly gst-ffmpeg
+                        gst-plugins-ugly gst-libav
 clementine-deps: clementine-build-deps clementine-gst-plugins
 
 # The actual commands for compiling each package follow
@@ -116,8 +116,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gstreamer: .done-glib .done-orc .done-gettext 
 	$(call extractpkg,$(gsttgz))
-	cd $(gst) && patch -p0 < ../patches/gstreamer-01-flex.patch
-	cd $(gst) && patch -p1 < ../patches/gstreamer-02-log.patch
 	cd $(gst) && $(configure) --disable-examples --disable-tests
 	cd $(gst) && $(make)
 	$(call installpkg,$(gst))
@@ -154,7 +152,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
 	$(call extractpkg,$(gstuglytgz))
-	patch -d $(gstugly) -p1 < patches/gst-plugins-ugly-01-cdio.patch
 	cd $(gstugly) && $(configure) \
 					--disable-amrnb \
 					--disable-amrwb \
@@ -197,8 +194,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(gstbad) && $(make)
 	$(call installpkg,$(gstbad))
 
-.done-gst-ffmpeg: .done-gstreamer .done-gst-plugins-base
-	$(call extractandbuild,$(gstffmpegtgz),$(gstffmpeg))
+.done-gst-libav: .done-gstreamer .done-gst-plugins-base
+	$(call extractandbuild,$(gstlibavtgz),$(gstlibav))
 
 .done-faad:
 	$(call extractandbuild,$(faadtgz),$(faad))
