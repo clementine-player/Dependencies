@@ -62,7 +62,7 @@ zlib=zlib-1.2.8
 
 # OSX only packages
 mms=libmms-0.6.2
-mtp=libmtp-1.1.6
+mtp=libmtp-1.1.8
 nettle=nettle-2.7
 spotifymac=libspotify-12.1.45-Darwin-universal
 tasn1=libtasn1-3.4

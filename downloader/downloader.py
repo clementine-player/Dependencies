@@ -43,7 +43,7 @@ FILES = [
     ('libmms-0.6.2.tar.gz', '9f63aa363deb4874e072a45850161bff'),
     ('libmms-win32.tar.gz', '82c856c6495ca351f6ce99b0b7057901'),
     ('libmpcdec-1.2.6.tar.bz2', '7f7a060e83b4278acf4b77d7a7b9d2c0'),
-    ('libmtp-1.1.6.tar.gz', '87835626dbcf39e62bfcdd4ae6da2063'),
+    ('libmtp-1.1.8.tar.gz', 'f76abc22fdbe96e96f0066e0f2dc0efd'),
     ('libmusicbrainz-2.1.5.tar.gz', 'd5e19bb77edd6ea798ce206bd05ccc5f'),
     ('libogg-1.2.0.tar.gz', 'c95b73759acfc30712beef6ce4e88efa'),
     ('liboil-0.3.17.tar.gz', '47dc734f82faeb2964d97771cfd2e701'),
