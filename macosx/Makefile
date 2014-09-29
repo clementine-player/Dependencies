@@ -298,6 +298,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-libsoup: .done-glib .done-gnutls .done-glib-networking  .done-gettext
 	$(call extractpkg,$(souptgz))
+	cd $(soup) && patch -p0 < ../patches/libsoup-01-sym.patch
 	cd $(soup) && $(configure) --without-gnome
 	cd $(soup) && $(make)
 	$(call installpkg,$(soup))
