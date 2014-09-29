@@ -292,7 +292,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-glib-networking: .done-glib .done-gnutls .done-libproxy
 	$(call extractpkg,$(glibnetworkingtgz))
-	patch -d $(glibnetworking) -p1 < patches/glib-networking-01-literals.patch
 	cd $(glibnetworking) && $(configure) --with-ca-certificates=../../root-certs.pem
 	cd $(glibnetworking) && $(make)
 	$(call installpkg,$(glibnetworking))
