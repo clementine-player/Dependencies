@@ -292,7 +292,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-glib-networking: .done-glib .done-gnutls .done-libproxy
 	$(call extractpkg,$(glibnetworkingtgz))
-	cd $(glibnetworking) && $(configure) --with-ca-certificates=../../root-certs.pem
+	cd $(glibnetworking) && $(configure) --without-ca-certificates
 	cd $(glibnetworking) && $(make)
 	$(call installpkg,$(glibnetworking))
 
