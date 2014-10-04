@@ -335,6 +335,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-libsoup .done-wavpack
 	$(call extractpkg,$(gstgoodtgz))
 	cd $(gstgood) && patch -p1 < ../patches/gst-plugins-good-01-device-property.patch
+	cd $(gstgood) && patch -p1 < ../patches/gst-plugins-good-02-equalizer-writeable-buffers.patch
 	cd $(gstgood) && $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace 
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstgood)/libtool
 	cd $(gstgood) && $(make)
