@@ -20,7 +20,7 @@ include ../makefile.common
 
 # List of dlls that get included in the final package for Clementine
 clementine_dlls=glew32.dll \
-                libcdio-14.dll \
+                libcdio-16.dll \
                 libeay32.dll \
                 libfaac.dll \
                 libfaad.dll \
@@ -705,9 +705,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-cdio:
 	$(call extractpkg,$(cdiotgz))
-	cd $(cdio) && patch -p0 < ../patches/libcdio-02-mingw-w64.patch
-	cd $(cdio) && patch -p0 < ../patches/libcdio-03-const.patch
-	cd $(cdio) && autoreconf
 	cd $(cdio) && $(configure) \
 		--without-cd-drive --without-cd-info \
 		--without-cdda-player --without-cd-read --without-iso-info \

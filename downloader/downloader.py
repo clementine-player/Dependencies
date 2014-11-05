@@ -32,7 +32,7 @@ FILES = [
     ('gstreamer-1.4.2.tar.xz', 'f9970ab3f2537b772074f97ecfb8430c'),
     ('lame-3.98.4.tar.gz', '8e9866ad6b570c6c95c8cba48060473f'),
     ('libarchive-2.8.4.tar.gz', '83b237a542f27969a8d68ac217dc3796'),
-    ('libcdio-0.90.tar.gz', '1b245b023fb03a58d030fd2800db3247'),
+    ('libcdio-0.93.tar.gz', 'd154476feaac5a7b5f180e83eaf3d689'),
     ('libffi-3.0.11.tar.gz', 'f69b9693227d976835b4857b1ba7d0e3'),
     ('libgcrypt-1.6.1.tar.bz2', 'a5a5060dc2f80bcac700ab0236ea47dc'),
     ('libgpg-error-1.12.tar.bz2', '8f0eb41a344d19ac2aa9bd101dfb9ce6'),

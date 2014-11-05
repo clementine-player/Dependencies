@@ -1,7 +1,7 @@
 # Package version numbers
 archive=libarchive-2.8.4
 boost=boost-1.50
-cdio=libcdio-0.90
+cdio=libcdio-0.93
 dlfcn=dlfcn-r19
 faac=faac-1.28
 faad=faad2-2.7
