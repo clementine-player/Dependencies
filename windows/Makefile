@@ -584,6 +584,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	patch -d $(qt) -p1 < patches/qt-03-config.patch
 	cd $(qt) && OPENSSL_LIBS="-llibeay32 -lssleay32" ./configure \
 		-opensource -confirm-license \
+		-platform linux-g++-32 \
 		-xplatform win32-g++ -device-option CROSS_COMPILE=i686-w64-mingw32- \
 		-prefix $(stow)/$(qt) \
 		-no-phonon -no-webkit -no-xmlpatterns -no-qt3support \
