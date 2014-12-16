@@ -1,0 +1,29 @@
+From 71acf3b6f705dbcc9c760d2fec664be9d68c5a49 Mon Sep 17 00:00:00 2001
+From: Tsuda Kageyu <tsuda.kageyu@gmail.com>
+Date: Mon, 20 Oct 2014 23:13:15 +0900
+Subject: [PATCH] Comment on a weird workaround for duplicate ID3v2 tags.
+
+---
+ taglib/mpeg/mpegfile.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/taglib/mpeg/mpegfile.cpp b/taglib/mpeg/mpegfile.cpp
+index e64e830..5f953cc 100644
+--- a/taglib/mpeg/mpegfile.cpp
++++ b/taglib/mpeg/mpegfile.cpp
+@@ -434,8 +434,12 @@ long MPEG::File::firstFrameOffset()
+   long position = 0;
+ 
+   if(ID3v2Tag()) {
++
+     // Skip duplicate ID3v2 tags.
+ 
++    // Workaround for some faulty files that have duplicate ID3v2 tags.
++    // Combination of EAC and LAME creates such files when configured incorrectly.
++
+     position = d->ID3v2Location + ID3v2Tag()->header()->completeTagSize();
+ 
+     long location;
+-- 
+2.1.3
+
