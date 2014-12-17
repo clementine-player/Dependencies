@@ -226,7 +226,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
 	# Common patches to skip multiple ID3v2 tags in MPEG files which causes bugs
-	# with the length
+	# with the length. To remove after a new release of taglib (>1.9.1)
 	patch -d $(taglib) -p1 < ../patches.common/taglib1-9-1-01-Skip-duplicate-ID3v2-tags-in-MPEG-files.patch
 	patch -d $(taglib) -p1 < ../patches.common/taglib1-9-1-02-Comment-on-a-weird-workaround-for-duplicate-ID3v2-ta.patch
 	patch -d $(taglib) -p1 < ../patches.common/taglib1-9-1-03-Avoid-reading-an-entire-ID3v2-tag-when-skipping-it.patch
