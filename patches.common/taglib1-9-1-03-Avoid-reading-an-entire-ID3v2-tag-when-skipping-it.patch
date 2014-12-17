@@ -1,0 +1,39 @@
+From 73b9b9b58d5bfee2ea9baba62b4db5d92cb4b42f Mon Sep 17 00:00:00 2001
+From: Tsuda Kageyu <tsuda.kageyu@gmail.com>
+Date: Thu, 23 Oct 2014 08:14:10 +0900
+Subject: [PATCH] Avoid reading an entire ID3v2 tag when skipping it.
+
+---
+ taglib/mpeg/mpegfile.cpp | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/taglib/mpeg/mpegfile.cpp b/taglib/mpeg/mpegfile.cpp
+index 5f953cc..0ac87d1 100644
+--- a/taglib/mpeg/mpegfile.cpp
++++ b/taglib/mpeg/mpegfile.cpp
+@@ -434,18 +434,18 @@ long MPEG::File::firstFrameOffset()
+   long position = 0;
+ 
+   if(ID3v2Tag()) {
++    position = d->ID3v2Location + ID3v2Tag()->header()->completeTagSize();
+ 
+     // Skip duplicate ID3v2 tags.
+ 
+     // Workaround for some faulty files that have duplicate ID3v2 tags.
+     // Combination of EAC and LAME creates such files when configured incorrectly.
+ 
+-    position = d->ID3v2Location + ID3v2Tag()->header()->completeTagSize();
+-
+     long location;
+     while((location = findID3v2(position)) >= 0) {
+-      ID3v2::Tag dupTag(this, location);
+-      position = location + dupTag.header()->completeTagSize();
++      seek(location);
++      const ID3v2::Header header(readBlock(ID3v2::Header::size()));
++      position = location + header.completeTagSize();
+ 
+       debug("MPEG::File::firstFrameOffset() - Duplicate ID3v2 tag found.");
+     }
+-- 
+2.1.3
+
