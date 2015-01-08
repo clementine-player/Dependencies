@@ -52,7 +52,7 @@ xml=libxml2-2.9.1
 # Windows only packages
 glew=glew-1.5.5
 mmswin32=libmms-win32
-openssl=openssl-1.0.1i
+openssl=openssl-1.0.1k
 pthreads=pthreads-win32-2.8.0
 qt=qt-everywhere-opensource-src-4.8.3
 spotifywin32=libspotify-12.1.45-win32-release
