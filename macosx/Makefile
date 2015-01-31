@@ -56,7 +56,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 
 # Top-level targets
-clementine-build-deps: boost liblastfm taglib libmtp \
+clementine-build-deps: boost taglib libmtp \
                        libgpod gstreamer glew qjson \
                        protobuf spotify fftw sparsehash qt
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
@@ -234,9 +234,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON
 	cd $(taglib)/build && $(make)
 	$(call installpkgcmake,$(taglib))
-
-.done-liblastfm: .done-qt
-	$(call extractandbuildcmake,$(lastfmtgz),$(lastfm))
 
 .done-boost:
 	tar -xf $(boosttgz) -C $(stow)
