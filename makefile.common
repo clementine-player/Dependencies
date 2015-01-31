@@ -24,7 +24,6 @@ gstlibav=gst-libav-1.4.2
 gstugly=gst-plugins-ugly-1.4.2
 id3tag=libid3tag-0.15.1b
 lame=lame-3.98.4
-lastfm=davidsansome-liblastfm-6748fcf
 libiconv=libiconv-1.14
 mad=libmad-0.15.1b
 mpcdec=libmpcdec-1.2.6
@@ -70,7 +69,7 @@ usb=libusb-1.0.8
 
 allpackages=$(boost) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
 		$(gstbad) $(gstbase) $(gstgood) $(gst) $(gstugly) $(id3tag) \
-		$(lame) $(lastfm) $(mad) $(mmswin32) $(ogg) $(oil) $(orc) $(plist) \
+		$(lame) $(mad) $(mmswin32) $(ogg) $(oil) $(orc) $(plist) \
 		$(pthreads) $(qjson) $(qt) $(quicktime) $(soup) $(speex) $(sqlite) $(taglib) \
 		$(tls) $(usb) $(usbmuxd) $(vorbis) $(wpd) $(xml) $(qtsparkle) \
 		$(pyqt) $(ofa) $(curl) $(fftw) $(archive) \
@@ -109,7 +108,6 @@ gsttgz=$(downloads)/$(gst).tar.xz
 gstuglytgz=$(downloads)/$(gstugly).tar.xz
 id3tagtgz=$(downloads)/$(id3tag).tar.gz
 lametgz=$(downloads)/$(lame).tar.gz
-lastfmtgz=$(downloads)/davidsansome-liblastfm-0.3.1-17-g6748fcf.tar.gz
 libiconvtgz=$(downloads)/$(libiconv).tar.gz
 madtgz=$(downloads)/$(mad).tar.gz
 mmstgz=$(downloads)/$(mms).tar.gz
@@ -192,7 +190,6 @@ libarchive: .done-libarchive
 libgnutls: .done-libgnutls
 libgpgerror: .done-libgpgerror
 libgpod: .done-libgpod
-liblastfm: .done-liblastfm
 libmms: .done-libmms
 libmpcdec: .done-libmpcdec
 libplist: .done-libplist

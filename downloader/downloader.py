@@ -10,7 +10,6 @@ FOLDER_ID = '0Byds9jlkR0IxbXVUa1Flb3h6bjQ'
 FILES = [
     # filename, md5sum
     ('boost-1.50.tar.bz2', '5c0fdd406d965855e77f435d63a5d729'),
-    ('davidsansome-liblastfm-0.3.1-17-g6748fcf.tar.gz', 'f8e739e24c91f74fca2d6a67106d8f7a'),
     ('davidsansome-qtsparkle-28721b5.tar.gz', '5d41ff15aaa85f43b9611bbf654b519e'),
     ('dlfcn-win32-static-r19.tar.bz2', '2c8d5b7767c2e2e4a38bf6a22364cc00'),
     ('faac-1.28.tar.gz', '80763728d392c7d789cde25614c878f6'),
