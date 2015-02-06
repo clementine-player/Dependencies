@@ -746,7 +746,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-opus:
 	$(call extractandbuild,$(opustgz),$(opus))
 
-.done-echonest:
+.done-echonest: .done-qt .done-qjson
 	$(call extractpkg,$(echonesttgz))
 	-mkdir $(echonest)/build
 	cd $(echonest)/build && $(cmake) \
