@@ -171,6 +171,7 @@ all-downloads:
 
 boost: .done-boost
 cdio: .done-cdio
+chromaprint: .done-chromaprint
 curl: .done-curl
 dlfcn: .done-dlfcn
 echonest: .done-echonest
