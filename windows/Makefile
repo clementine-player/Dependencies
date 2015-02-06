@@ -760,7 +760,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(echonest)
 	touch $@
 
-.done-chromaprint:
+.done-chromaprint: .done-fftw
 	$(call extractpkg,$(chromaprinttgz))
 	-mkdir $(chromaprint)/build
 	cd $(chromaprint)/build && $(cmake) \

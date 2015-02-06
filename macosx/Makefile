@@ -350,5 +350,5 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-echonest: .done-qjson .done-qt
 	$(call extractandbuildcmake,$(echonesttgz),$(echonest))
 
-.done-chromaprint:
+.done-chromaprint: .done-fftw
 	$(call extractandbuildcmake,$(chromaprinttgz),$(chromaprint))
