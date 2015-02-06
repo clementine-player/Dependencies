@@ -21,6 +21,7 @@ include ../makefile.common
 # List of dlls that get included in the final package for Clementine
 clementine_dlls=glew32.dll \
                 libcdio-16.dll \
+                libchromaprint.dll \
                 libeay32.dll \
                 libechonest.dll \
                 libfaac.dll \
@@ -155,7 +156,7 @@ extractandbuild=$(call extractpkg,$(1)) && $(call buildpkg,$(2)) && $(call insta
 
 # Top-level targets
 clementine-build-deps: dlfcn boost liblastfm qt taglib \
-                       libgpod glew gstreamer win7sdk qtsparkle \
+                       libgpod glew gstreamer win7sdk qtsparkle chromaprint \
                        protobuf spotify qjson fftw sparsehash pthreads echonest
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-libav
@@ -757,4 +758,18 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(echonest)/build && make install DESTDIR=$(stow)/$(echonest)
 	cd $(echonest)/build && mv -fv $(stow)/$(echonest)$(prefix)/* $(stow)/$(echonest)
 	cd $(stow) && stow -R $(echonest)
+	touch $@
+
+.done-chromaprint:
+	$(call extractpkg,$(chromaprinttgz))
+	-mkdir $(chromaprint)/build
+	cd $(chromaprint)/build && $(cmake) \
+		-DQT_HEADERS_DIR=$(prefix)/include/ \
+		-DQT_LIBRARY_DIR=$(prefix)/bin \
+		-DCMAKE_BUILD_TYPE=Release
+	cd $(chromaprint)/build && $(make)
+	rm -rf $(stow)/$(chromaprint)
+	cd $(chromaprint)/build && make install DESTDIR=$(stow)/$(chromaprint)
+	cd $(chromaprint)/build && mv -fv $(stow)/$(chromaprint)$(prefix)/* $(stow)/$(chromaprint)
+	cd $(stow) && stow -R $(chromaprint)
 	touch $@

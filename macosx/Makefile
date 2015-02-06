@@ -57,7 +57,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 # Top-level targets
 clementine-build-deps: boost liblastfm taglib libmtp \
-                       libgpod gstreamer glew qjson \
+                       libgpod gstreamer glew qjson chromaprint \
                        protobuf spotify fftw sparsehash qt echonest
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-libav
@@ -349,3 +349,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-echonest: .done-qjson .done-qt
 	$(call extractandbuildcmake,$(echonesttgz),$(echonest))
+
+.done-chromaprint:
+	$(call extractandbuildcmake,$(chromaprinttgz),$(chromaprint))

@@ -2,6 +2,7 @@
 archive=libarchive-2.8.4
 boost=boost-1.50
 cdio=libcdio-0.93
+chromaprint=chromaprint-1.1
 dlfcn=dlfcn-r19
 echonest=libechonest-2.3.0
 faac=faac-1.28
@@ -86,6 +87,7 @@ downloads=$(src)/downloads
 archivetgz=$(downloads)/$(archive).tar.gz
 boosttgz=$(downloads)/$(boost).tar.bz2
 cdiotgz=$(downloads)/$(cdio).tar.gz
+chromaprinttgz=$(downloads)/$(chromaprint).tar.gz
 dlfcntgz=$(downloads)/dlfcn-win32-static-r19.tar.bz2
 echonesttgz=$(downloads)/$(echonest).tar.gz
 faactgz=$(downloads)/$(faac).tar.gz
