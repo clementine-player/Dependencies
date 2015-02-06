@@ -22,6 +22,7 @@ include ../makefile.common
 clementine_dlls=glew32.dll \
                 libcdio-16.dll \
                 libeay32.dll \
+                libechonest.dll \
                 libfaac.dll \
                 libfaad.dll \
                 libffi-6.dll \
