@@ -324,11 +324,15 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkg,$(cdio))
 
 .done-sparsehash:
-	$(call extractandbuild,$(sparsehashtgz),$(sparsehash))
+	$(call extractpkg,$(sparsehashtgz))
+	cd $(sparsehash) && patch -p1 < ../patches/sparsehash-01-allocator.patch
+	$(call buildpkg,$(sparsehash))
+	$(call installpkg,$(sparsehash))
 
 .done-qt:
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
+	patch -d $(qt) -p1 < patches/qt-02-yosemite.patch
 	cd $(qt) && ./configure \
 		-release \
 		-opensource -confirm-license \
