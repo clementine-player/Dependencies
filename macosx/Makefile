@@ -351,4 +351,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractandbuildcmake,$(echonesttgz),$(echonest))
 
 .done-chromaprint: .done-fftw
-	$(call extractandbuildcmake,$(chromaprinttgz),$(chromaprint))
+	$(call extractpkg,$(chromaprinttgz))
+	patch -d $(chromaprint) -p0 < patches/chromaprint-01-pkgconfig.patch
+	$(call buildpkgcmake,$(chromaprint))
+	$(call installpkgcmake,$(chromaprint))
