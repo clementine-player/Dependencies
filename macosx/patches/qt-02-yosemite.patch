@@ -1,4 +1,4 @@
-rom http://sourceforge.net/p/fink/mailman/message/32842938/
+From http://sourceforge.net/p/fink/mailman/message/32842938/
 diff --git a/src/gui/dialogs/qcolordialog_mac.mm b/src/gui/dialogs/qcolordialog_mac.mm
 index f65422f..df53f6f 100644
 --- a/src/gui/dialogs/qcolordialog_mac.mm
