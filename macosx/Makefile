@@ -14,7 +14,7 @@ qttgz=$(downloads)/$(qt).tar.gz
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
-cflags=-m64 -I$(prefix)/include --stdlib=libc++
+cflags=-m64 -I$(prefix)/include --stdlib=libc++ -Qunused-arguments
 ldflags=-m64 -L$(prefix)/lib -lc++ -Wl,-headerpad_max_install_names
 flagsm64=CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
 path=PATH=$(prefix)/bin:$$PATH
@@ -186,6 +186,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 				--disable-cog \
 				--disable-curl \
 				--disable-dirac \
+				--disable-dtls \
 				--disable-examples \
 				--disable-gsettings \
 				--disable-modplug \
