@@ -134,6 +134,7 @@ dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll 
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
+autoconf=ACLOCAL_PATH=$(prefix)/share/aclocal
 ldflags=-L$(prefix)/lib
 # -O2 is required to work around link errors in gettext
 cflags=-I$(prefix)/include -O2
@@ -300,11 +301,11 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(plist)
 	touch $@
 
-.done-libgpod: .done-sqlite .done-libplist
+.done-libgpod: .done-sqlite .done-libplist .done-glib
 	$(call extractpkg,$(gpodtgz))
 	cd $(gpod) && patch -p0 < ../patches/libgpod-01-nousb.patch
 	cd $(gpod) && patch -p0 < ../patches/libgpod-02-libtool.patch
-	cd $(gpod) && autoreconf
+	cd $(gpod) && $(autoconf) autoreconf
 	# Force link static sqlite3 because libtool is stupid.
 	cd $(gpod) && $(pkgconfig) LDFLAGS="$(ldflags) -Wl,-lsqlite3" CFLAGS="$(cflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix) --without-libimobiledevice
 	cd $(gpod) && make
