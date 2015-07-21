@@ -144,6 +144,7 @@ cmake=$(pkgconfig) cmake .. -DCMAKE_TOOLCHAIN_FILE=$(src)/Toolchain-mingw32.cmak
 make=make $(jobs)
 extractpkg=tar -xvf $(1)
 buildpkg=(cd $(1) && $(configure) && $(make))
+buildpkgcmake=(cd $(1) && mkdir build ; cd build && $(cmake) && $(make))
 installpkg=rm -rf $(stow)/$(1) && \
 	cd $(1) && \
 	make install DESTDIR=$(stow)/$(1) && \
@@ -151,8 +152,16 @@ installpkg=rm -rf $(stow)/$(1) && \
 	cd $(stow) && \
 	stow -R $(1) && \
 	touch $(work)/$@
+installpkgcmake=rm -rf $(stow)/$(1) && \
+	cd $(1)/build && \
+	make install DESTDIR=$(stow)/$(1) && \
+	mv -fv $(stow)/$(1)$(prefix)/* $(stow)/$(1)/ && \
+	cd $(stow) && \
+	stow -R $(1) && \
+	touch $(work)/$@
 
 extractandbuild=$(call extractpkg,$(1)) && $(call buildpkg,$(2)) && $(call installpkg,$(2))
+extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(call installpkgcmake,$(2))
 
 
 # Top-level targets
@@ -302,16 +311,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	touch $@
 
 .done-libgpod: .done-sqlite .done-libplist .done-glib
-	$(call extractpkg,$(gpodtgz))
-	cd $(gpod) && patch -p0 < ../patches/libgpod-01-nousb.patch
-	cd $(gpod) && patch -p0 < ../patches/libgpod-02-libtool.patch
-	cd $(gpod) && $(autoconf) autoreconf
-	# Force link static sqlite3 because libtool is stupid.
-	cd $(gpod) && $(pkgconfig) LDFLAGS="$(ldflags) -Wl,-lsqlite3" CFLAGS="$(cflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix) --without-libimobiledevice
-	cd $(gpod) && make
-	cd $(gpod) && make install DESTDIR=$(stow)/$(gpod)
-	cd $(stow) && stow $(gpod)
-	touch $@
+	$(call extractandbuildcmake,$(gpodtgz),$(gpod))
 
 .done-gstreamer: .done-glib .done-libxml .done-orc
 	$(call extractpkg,$(gsttgz))

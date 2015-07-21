@@ -109,10 +109,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkgcmake,$(plist))
 
 .done-libgpod: .done-sqlite .done-libplist
-	$(call extractpkg,$(gpodtgz))
-	cd $(gpod) && $(configure) --disable-gdk-pixbuf --without-libimobiledevice
-	cd $(gpod) && $(make)
-	$(call installpkg,$(gpod))
+	$(call extractandbuildcmake,$(gpodtgz),$(gpod))
 
 .done-gstreamer: .done-glib .done-orc .done-gettext 
 	$(call extractpkg,$(gsttgz))
