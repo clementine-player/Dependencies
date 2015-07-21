@@ -1,0 +1,24 @@
+From 7d7a7be115976d31715b7d4051d50249f32d2a05 Mon Sep 17 00:00:00 2001
+From: Tsuda Kageyu <tsuda.kageyu@gmail.com>
+Date: Sat, 23 Nov 2013 23:42:20 +0900
+Subject: [PATCH] Fixed warnings in MinGW
+
+---
+ taglib/toolkit/trefcounter.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/taglib/toolkit/trefcounter.h b/taglib/toolkit/trefcounter.h
+index 75388b1..c231779 100644
+--- a/taglib/toolkit/trefcounter.h
++++ b/taglib/toolkit/trefcounter.h
+@@ -33,7 +33,9 @@
+ #  include <libkern/OSAtomic.h>
+ #  define TAGLIB_ATOMIC_MAC
+ #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
+-#  define NOMINMAX
++#  ifndef NOMINMAX
++#    define NOMINMAX
++#  endif
+ #  include <windows.h>
+ #  define TAGLIB_ATOMIC_WIN
+ #elif defined (__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 401)    \

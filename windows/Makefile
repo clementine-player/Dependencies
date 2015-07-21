@@ -578,6 +578,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	patch -d $(taglib) -p1 < ../patches.common/taglib1-9-1-03-Avoid-reading-an-entire-ID3v2-tag-when-skipping-it.patch
 	# Windows specific patch
 	patch -d $(taglib) -p0 < patches/taglib-01-pkgconfig.patch
+	patch -d $(taglib) -p1 < patches/taglib-02-nominmax.patch
 
 	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON
 	cd $(taglib)/build && $(make)
