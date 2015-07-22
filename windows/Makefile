@@ -134,7 +134,7 @@ dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll 
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
-autoconf=ACLOCAL_PATH=$(prefix)/share/aclocal
+autoconf=ACLOCAL_PATH=$(prefix)/share/aclocal:/usr/share/aclocal
 ldflags=-L$(prefix)/lib
 # -O2 is required to work around link errors in gettext
 cflags=-I$(prefix)/include -O2
@@ -531,7 +531,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-libmms: .done-glib
 	$(call extractpkg,$(mmswin32tgz))
-	cd $(mmswin32) && ./autogen.sh
+	cd $(mmswin32) && $(autoconf) ./autogen.sh
 	cd $(mmswin32) && patch -p0 < ../patches/mms-01-buildfixes.patch
 	cd $(mmswin32) && $(configure)
 	cd $(mmswin32) && patch -p0 < ../patches/mms-02-config.patch
