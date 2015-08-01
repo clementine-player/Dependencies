@@ -37,6 +37,7 @@ clementine_dlls=glew32.dll \
                 libgnutls-28.dll \
                 libgobject-2.0-0.dll \
                 libgpg-error-0.dll \
+                libgpod.dll \
                 libgstapp-1.0-0.dll \
                 libgstaudio-1.0-0.dll \
                 libgstbase-1.0-0.dll \
