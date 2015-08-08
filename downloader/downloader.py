@@ -38,7 +38,7 @@ FILES = [
     ('libffi-3.0.11.tar.gz', 'f69b9693227d976835b4857b1ba7d0e3'),
     ('libgcrypt-1.6.1.tar.bz2', 'a5a5060dc2f80bcac700ab0236ea47dc'),
     ('libgpg-error-1.12.tar.bz2', '8f0eb41a344d19ac2aa9bd101dfb9ce6'),
-    ('libgpod-0.8.0.2.tar.gz', '134d1b68b66e73ba15714ebc07c34e22'),
+    ('libgpod-0.8.0.3.tar.gz', 'e3633f4ddf1be74cdededb32e2022e2d'),
     ('libiconv-1.14.tar.gz', 'e34509b1623cec449dfeb73d7ce9c6c6'),
     ('libid3tag-0.15.1b.tar.gz', 'e5808ad997ba32c498803822078748c3'),
     ('libmad-0.15.1b.tar.gz', '1be543bc30c56fb6bea1d7bf6a64e66c'),
