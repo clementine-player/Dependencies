@@ -157,9 +157,10 @@ all:
 	$(MAKE) clementine-deps
 
 clean:
+	realstow=`python -c "import os.path; print os.path.realpath('$(stow)')"`; \
 	for path in $(stow)/*; do \
 		directory=`basename $$path`; \
-		stow -d $(stow) -D $$directory; \
+		stow -d $$realstow -D $$directory; \
 	done
 	for package in $(allpackages); do \
 		rm -rf $$package; \
