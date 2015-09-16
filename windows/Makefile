@@ -72,6 +72,7 @@ clementine_dlls=glew32.dll \
                 libqjson.dll \
                 libspeex-1.dll \
                 libspotify.dll \
+                libsqlite3-0.dll \
                 libtag.dll \
                 libtasn1-6.dll \
                 libvorbis-0.dll \
