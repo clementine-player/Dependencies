@@ -344,7 +344,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(gstgood) && patch -p1 < ../patches/gst-plugins-good-02-equalizer-writeable-buffers.patch
 	cd $(gstgood) && patch -p0 < ../patches/gst-plugins-good-03-c90.patch
 
-	cd $(gstgood) && $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace 
+	cd $(gstgood) && $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstgood)/libtool
 	cd $(gstgood) && $(make)
 	$(call installpkg,$(gstgood))
@@ -387,7 +387,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		--shared  -I/target/include -O3 -funroll-loops -finline-functions \
 		-Wall -W -Winline -g -O2 -o libFLAC.dll -rpath $(prefix)/lib \
 		-version-info 10:0:2 -lm -lws2_32 *.lo -L$(prefix)/lib -logg
-	
+
 	rm -rf $(stow)/$(flac)
 	cd $(flac) && make install DESTDIR=$(stow)/$(flac)
 	mv -fv $(stow)/$(flac)$(prefix)/* $(stow)/$(flac)/
@@ -576,11 +576,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-taglib: .done-glib
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
-	# Common patches to skip multiple ID3v2 tags in MPEG files which causes bugs
-	# with the length. To remove after a new release of taglib (>1.9.1)
-	patch -d $(taglib) -p1 < ../patches.common/taglib1-9-1-01-Skip-duplicate-ID3v2-tags-in-MPEG-files.patch
-	patch -d $(taglib) -p1 < ../patches.common/taglib1-9-1-02-Comment-on-a-weird-workaround-for-duplicate-ID3v2-ta.patch
-	patch -d $(taglib) -p1 < ../patches.common/taglib1-9-1-03-Avoid-reading-an-entire-ID3v2-tag-when-skipping-it.patch
 	# Windows specific patch
 	patch -d $(taglib) -p0 < patches/taglib-01-pkgconfig.patch
 	patch -d $(taglib) -p1 < patches/taglib-02-nominmax.patch
