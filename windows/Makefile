@@ -576,9 +576,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-taglib: .done-glib
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
-	# Windows specific patch
-	patch -d $(taglib) -p0 < patches/taglib-01-pkgconfig.patch
-	patch -d $(taglib) -p1 < patches/taglib-02-nominmax.patch
 
 	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON
 	cd $(taglib)/build && $(make)
