@@ -1,12 +1,6 @@
 cc_library(
     name = "orc-lib",
-    srcs = glob(
-        ["orc/*.h", "orc/*.c"],
-        exclude = [
-          "orc/orcarm.c",
-          "orc/orccpu-arm.c",
-          "orc/orccodemem.c",
-        ])
+    srcs = glob(["orc/*.h", "orc/*.c"])
         + ["config.h"],
     includes = ["."],
     defines = [
