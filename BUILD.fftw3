@@ -6,15 +6,9 @@ cc_library(
             "**/*.h",
         ],
         exclude = [
-            "dft/simd/altivec/**/*",
-            "dft/simd/avx/**/*",
-            "dft/simd/common/**/*",
-            "dft/simd/neon/**/*",
+            "dft/simd/**/*",
+            "rdft/simd/**/*",
             "libbench2/main.c",
-            "rdft/simd/altivec/**/*",
-            "rdft/simd/avx/**/*",
-            "rdft/simd/common/**/*",
-            "rdft/simd/neon/**/*",
             "mpi/**/*",
             "support/addchain.c",
             "tests/**/*",
@@ -51,14 +45,32 @@ cc_library(
         "dft/simd/common/**/*",
         "rdft/simd/common/**/*",
     ]),
+    deps = [":fftw3-simd-sse2"],
 )
 
 cc_library(
     name = "fftw3-simd-sse2",
     srcs = glob(
-        ["dft/simd/sse2/**/*.c"],
-    ),
-    deps = [":fftw-simd-common"],
+        [
+            "dft/simd/sse2/**/*.c",
+            "rdft/simd/sse2/**/*/c",
+            "dft/**/*.h",
+            "kernel/**/*.h",
+            "simd-support/**/*.h",
+        ],
+    ) + ["config.h"],
+    copts = ["-DHAVE_SSE2"],
+    includes = [
+        ".",
+        "dft",
+        "dft/simd",
+        "kernel",
+        "simd-support",
+    ],
+    textual_hdrs = glob([
+        "dft/simd/common/**/*",
+        "rdft/simd/common/**/*",
+    ]),
 )
 
 cc_library(
