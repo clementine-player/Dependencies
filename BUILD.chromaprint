@@ -1,0 +1,16 @@
+cc_library(
+    name = "chromaprint-lib",
+    srcs = glob(["src/**/*.cpp", "src/**/*.h"],
+        exclude = [
+            "src/sox_audio_source.cpp",
+            "src/sox_audio_source.h",
+            "src/fft_lib_vdsp.h",
+            "src/fft_lib_vdsp.cpp",
+            "src/ext/image_utils.cpp",
+        ],
+    ),
+    defines = [
+        "HAVE_ROUND",
+        "WITH_FFTW3",
+    ],
+)

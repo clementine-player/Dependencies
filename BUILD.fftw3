@@ -1,0 +1,77 @@
+cc_library(
+    name = "fftw3-lib",
+    srcs = glob(
+        [
+            "**/*.c",
+            "**/*.h",
+        ],
+        exclude = [
+            "dft/simd/altivec/**/*",
+            "dft/simd/avx/**/*",
+            "dft/simd/common/**/*",
+            "dft/simd/neon/**/*",
+            "libbench2/main.c",
+            "rdft/simd/altivec/**/*",
+            "rdft/simd/avx/**/*",
+            "rdft/simd/common/**/*",
+            "rdft/simd/neon/**/*",
+            "mpi/**/*",
+            "support/addchain.c",
+            "tests/**/*",
+            "tools/**/*",
+            "threads/openmp.c",
+        ],
+    ) + [
+        "config.h",
+    ],
+    copts = [
+        "-DSIMD_HEADER=\\\"simd-support/simd-sse2.h\\\"",
+        "-DHAVE_CONFIG_H",
+        "-DHAVE_SSE2",
+        "-DUSING_POSIX_THREADS",
+    ],
+    includes = [
+        ".",
+        "api",
+        "dft",
+        "dft/scalar",
+        "dft/simd",
+        "dft/simd/avx",
+        "dft/simd/common",
+        "dft/simd/sse2",
+        "kernel",
+        "libbench2",
+        "rdft",
+        "rdft/scalar",
+        "rdft/simd",
+        "reodft",
+        "simd-support",
+    ],
+    textual_hdrs = glob([
+        "dft/simd/common/**/*",
+        "rdft/simd/common/**/*",
+    ]),
+)
+
+cc_library(
+    name = "fftw3-simd-sse2",
+    srcs = glob(
+        ["dft/simd/sse2/**/*.c"],
+    ),
+    deps = [":fftw-simd-common"],
+)
+
+cc_library(
+    name = "fftw-simd-common",
+    hdrs = glob(["dft/simd/common/**/*"]),
+)
+
+genrule(
+    name = "configure_gen",
+    srcs = glob(["**/*"]),
+    outs = ["config.h"],
+    cmd = """
+        $(location configure) --srcdir $$(dirname $(location config.h.in))
+        cp config.h $@
+    """,
+)
