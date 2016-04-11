@@ -1,0 +1,19 @@
+package(default_visibility = ["//visibility:private"])
+
+cc_library(
+    name = "gnutls-lib",
+    srcs = glob([
+        "**/*.c",
+        "**/*.h",
+    ]) + ["config.h"],
+)
+
+genrule(
+    name = "configure_gen",
+    srcs = glob(["**/*"]),
+    outs = ["config.h"],
+    cmd = """
+        $(location configure) --srcdir $$(dirname $(location config.h.in))
+        cp config.h $@
+    """,
+)

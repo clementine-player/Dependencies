@@ -23,6 +23,22 @@ new_http_archive(
 )
 
 new_http_archive(
+    name = "gmp",
+    build_file = "BUILD.gmp",
+    sha256 = "dee2eda37f4ff541f30019932db0c37f6f77a30ba3609234933b1818f9b07071",
+    strip_prefix = "gmp-5.1.3",
+    url = "https://googledrive.com/host/0Byds9jlkR0IxbXVUa1Flb3h6bjQ/gmp-5.1.3.tar.xz",
+)
+
+new_http_archive(
+    name = "gnutls",
+    build_file = "BUILD.gnutls",
+    sha256 = "74c1698a7f6c5ef4938f86285e4fb3929e5f9c6826521b5f2df8ebac22b52505",
+    strip_prefix = "gnutls-3.2.12",
+    url = "https://googledrive.com/host/0Byds9jlkR0IxbXVUa1Flb3h6bjQ/gnutls-3.2.12.tar.xz",
+)
+
+new_http_archive(
     name = "orc",
     build_file = "BUILD.orc",
     sha256 = "700e4edba20a0ed42164b645da26ce515b883d4c4633b222302f1e541f2a58ab",

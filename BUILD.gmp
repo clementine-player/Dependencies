@@ -1,0 +1,450 @@
+cc_library(
+    name = "gmp-lib",
+    srcs = glob(
+        [
+            "**/*.c",
+            "**/*.h",
+        ],
+        exclude = [
+            "demos/**/*",
+            "bootstrap.c",
+            "gen-bases.c",
+            "gen-fac.c",
+            "gen-fib.c",
+            "gen-psqr.c",
+            "gen-trialdivtab.c",
+            "mini-gmp/**/*",
+            "mpn/**/*",
+            "tal-debug.c",
+            "tal-notreent.c",
+            "tal-reent.c",
+            "tests/**/*",
+            "tune/**/*",
+        ],
+    ),
+    includes = [
+        ".",
+        "mpn/generic",
+    ],
+    deps = [
+        ":headers",
+        ":mpn-c",
+    ],
+)
+
+MPN_C_SRCS = [
+    "mpn/generic/add_1.c",
+    "mpn/generic/add.c",
+    "mpn/generic/addcnd_n.c",
+    "mpn/generic/add_err1_n.c",
+    "mpn/generic/add_err2_n.c",
+    "mpn/generic/add_err3_n.c",
+    "mpn/generic/addmul_1.c",
+    "mpn/generic/add_n.c",
+    "mpn/generic/add_n_sub_n.c",
+    "mpn/generic/bdiv_dbm1c.c",
+    "mpn/generic/bdiv_q_1.c",
+    "mpn/generic/bdiv_q.c",
+    "mpn/generic/bdiv_qr.c",
+    "mpn/generic/binvert.c",
+    "mpn/generic/broot.c",
+    "mpn/generic/brootinv.c",
+    "mpn/generic/bsqrt.c",
+    "mpn/generic/bsqrtinv.c",
+    "mpn/generic/cmp.c",
+    "mpn/generic/comb_tables.c",
+    "mpn/generic/com.c",
+    "mpn/generic/copyd.c",
+    "mpn/generic/copyi.c",
+    "mpn/generic/dcpi1_bdiv_q.c",
+    "mpn/generic/dcpi1_bdiv_qr.c",
+    "mpn/generic/dcpi1_divappr_q.c",
+    "mpn/generic/dcpi1_div_q.c",
+    "mpn/generic/dcpi1_div_qr.c",
+    "mpn/generic/dive_1.c",
+    "mpn/generic/diveby3.c",
+    "mpn/generic/divexact.c",
+    "mpn/generic/divis.c",
+    "mpn/generic/div_q.c",
+    "mpn/generic/div_qr_2.c",
+    "mpn/generic/div_qr_2n_pi1.c",
+    "mpn/generic/div_qr_2u_pi1.c",
+    "mpn/generic/divrem_1.c",
+    "mpn/generic/divrem_2.c",
+    "mpn/generic/divrem.c",
+    "mpn/generic/dump.c",
+    "mpn/generic/fib2_ui.c",
+    "mpn/generic/gcd_1.c",
+    "mpn/generic/gcd.c",
+    "mpn/generic/gcdext_1.c",
+    "mpn/generic/gcdext.c",
+    "mpn/generic/gcdext_lehmer.c",
+    "mpn/generic/gcd_subdiv_step.c",
+    "mpn/generic/get_d.c",
+    "mpn/generic/get_str.c",
+    "mpn/generic/hgcd2.c",
+    "mpn/generic/hgcd2_jacobi.c",
+    "mpn/generic/hgcd_appr.c",
+    "mpn/generic/hgcd.c",
+    "mpn/generic/hgcd_jacobi.c",
+    "mpn/generic/hgcd_matrix.c",
+    "mpn/generic/hgcd_reduce.c",
+    "mpn/generic/hgcd_step.c",
+    "mpn/generic/invertappr.c",
+    "mpn/generic/invert.c",
+    "mpn/generic/jacbase.c",
+    "mpn/generic/jacobi_2.c",
+    "mpn/generic/jacobi.c",
+    "mpn/generic/lshift.c",
+    "mpn/generic/lshiftc.c",
+    "mpn/generic/matrix22_mul1_inverse_vector.c",
+    "mpn/generic/matrix22_mul.c",
+    "mpn/generic/mod_1_1.c",
+    "mpn/generic/mod_1_2.c",
+    "mpn/generic/mod_1_3.c",
+    "mpn/generic/mod_1_4.c",
+    "mpn/generic/mod_1.c",
+    "mpn/generic/mod_34lsub1.c",
+    "mpn/generic/mode1o.c",
+    "mpn/generic/mu_bdiv_q.c",
+    "mpn/generic/mu_bdiv_qr.c",
+    "mpn/generic/mu_divappr_q.c",
+    "mpn/generic/mu_div_q.c",
+    "mpn/generic/mu_div_qr.c",
+    "mpn/generic/mul_1.c",
+    "mpn/generic/mul_basecase.c",
+    "mpn/generic/mul.c",
+    "mpn/generic/mul_fft.c",
+    "mpn/generic/mullo_basecase.c",
+    "mpn/generic/mullo_n.c",
+    "mpn/generic/mulmid_basecase.c",
+    "mpn/generic/mulmid.c",
+    "mpn/generic/mulmid_n.c",
+    "mpn/generic/mulmod_bnm1.c",
+    "mpn/generic/mul_n.c",
+    "mpn/generic/neg.c",
+    "mpn/generic/nussbaumer_mul.c",
+    "mpn/generic/perfpow.c",
+    "mpn/generic/perfsqr.c",
+    "mpn/generic/pow_1.c",
+    "mpn/generic/powlo.c",
+    "mpn/generic/powm.c",
+    "mpn/generic/powm_sec.c",
+    "mpn/generic/pre_divrem_1.c",
+    "mpn/generic/pre_mod_1.c",
+    "mpn/generic/random2.c",
+    "mpn/generic/random.c",
+    "mpn/generic/redc_1.c",
+    "mpn/generic/redc_2.c",
+    "mpn/generic/redc_n.c",
+    "mpn/generic/remove.c",
+    "mpn/generic/rootrem.c",
+    "mpn/generic/rshift.c",
+    "mpn/generic/sbpi1_bdiv_q.c",
+    "mpn/generic/sbpi1_bdiv_qr.c",
+    "mpn/generic/sbpi1_divappr_q.c",
+    "mpn/generic/sbpi1_div_q.c",
+    "mpn/generic/sbpi1_div_qr.c",
+    "mpn/generic/scan0.c",
+    "mpn/generic/scan1.c",
+    "mpn/generic/set_str.c",
+    "mpn/generic/sqr_basecase.c",
+    "mpn/generic/sqr.c",
+    "mpn/generic/sqrmod_bnm1.c",
+    "mpn/generic/sqrtrem.c",
+    "mpn/generic/sub_1.c",
+    "mpn/generic/sub.c",
+    "mpn/generic/subcnd_n.c",
+    "mpn/generic/sub_err1_n.c",
+    "mpn/generic/sub_err2_n.c",
+    "mpn/generic/sub_err3_n.c",
+    "mpn/generic/submul_1.c",
+    "mpn/generic/sub_n.c",
+    "mpn/generic/tabselect.c",
+    "mpn/generic/tdiv_qr.c",
+    "mpn/generic/toom22_mul.c",
+    "mpn/generic/toom2_sqr.c",
+    "mpn/generic/toom32_mul.c",
+    "mpn/generic/toom33_mul.c",
+    "mpn/generic/toom3_sqr.c",
+    "mpn/generic/toom42_mul.c",
+    "mpn/generic/toom42_mulmid.c",
+    "mpn/generic/toom43_mul.c",
+    "mpn/generic/toom44_mul.c",
+    "mpn/generic/toom4_sqr.c",
+    "mpn/generic/toom52_mul.c",
+    "mpn/generic/toom53_mul.c",
+    "mpn/generic/toom54_mul.c",
+    "mpn/generic/toom62_mul.c",
+    "mpn/generic/toom63_mul.c",
+    "mpn/generic/toom6h_mul.c",
+    "mpn/generic/toom6_sqr.c",
+    "mpn/generic/toom8h_mul.c",
+    "mpn/generic/toom8_sqr.c",
+    "mpn/generic/toom_couple_handling.c",
+    "mpn/generic/toom_eval_dgr3_pm1.c",
+    "mpn/generic/toom_eval_dgr3_pm2.c",
+    "mpn/generic/toom_eval_pm1.c",
+    "mpn/generic/toom_eval_pm2.c",
+    "mpn/generic/toom_eval_pm2exp.c",
+    "mpn/generic/toom_eval_pm2rexp.c",
+    "mpn/generic/toom_interpolate_12pts.c",
+    "mpn/generic/toom_interpolate_16pts.c",
+    "mpn/generic/toom_interpolate_5pts.c",
+    "mpn/generic/toom_interpolate_6pts.c",
+    "mpn/generic/toom_interpolate_7pts.c",
+    "mpn/generic/toom_interpolate_8pts.c",
+    "mpn/generic/trialdiv.c",
+    "mpn/generic/zero.c",
+]
+
+genrule(
+    name = "configure_gen",
+    srcs = glob(["**/*"]),
+    outs = [
+        "config.h",
+        "config.m4",
+        "gmp.h",
+        "gmp-mparam.h",
+    ],
+    cmd = """
+        $(location configure) \
+            --srcdir $$(dirname $(location config.in)) \
+            --disable-assembly
+        for i in $(OUTS); do
+          cp $${i#$(GENDIR)/external/gmp/} $$i
+        done
+    """,
+)
+
+# TODO: Support appropriate ASM versions.
+cc_library(
+    name = "mpn-c",
+    srcs = MPN_C_SRCS,
+    deps = [
+        ":headers",
+        ":logops_n",
+        ":popham",
+        ":sb_div_sec",
+        ":sbpi1_div_sec",
+    ],
+)
+
+load("/gmp_operation", "gmp_operation")
+
+gmp_operation(
+    name = "logops_n",
+    src = "mpn/generic/logops_n.c",
+    function_names = [
+        "and_n",
+        "andn_n",
+        "nand_n",
+        "ior_n",
+        "iorn_n",
+        "nior_n",
+        "xor_n",
+        "xnor_n",
+    ],
+    deps = [":headers"],
+)
+
+gmp_operation(
+    name = "popham",
+    src = "mpn/generic/popham.c",
+    function_names = [
+        "hamdist",
+        "popcount",
+    ],
+    deps = [":headers"],
+)
+
+gmp_operation(
+    name = "sb_div_sec",
+    src = "mpn/generic/sb_div_sec.c",
+    function_names = [
+        "sb_div_qr_sec",
+        "sb_div_r_sec",
+    ],
+    deps = [":headers"],
+)
+
+gmp_operation(
+    name = "sbpi1_div_sec",
+    src = "mpn/generic/sbpi1_div_sec.c",
+    function_names = [
+        "sbpi1_div_qr_sec",
+        "sbpi1_div_r_sec",
+    ],
+    deps = [":headers"],
+)
+
+cc_library(
+    name = "headers",
+    hdrs = [
+        "config.h",
+        "fac_table.h",
+        "fib_table.h",
+        "gmp.h",
+        "gmp-impl.h",
+        "gmp-mparam.h",
+        "jacobitab.h",
+        "longlong.h",
+        "mp_bases.h",
+        "perfsqr.h",
+        "trialdivtab.h",
+    ],
+)
+
+cc_library(
+    name = "mini-gmp",
+    srcs = [
+        "mini-gmp/mini-gmp.c",
+        "mini-gmp/mini-gmp.h",
+    ],
+)
+
+cc_library(
+    name = "gen-fib_lib",
+    srcs = [
+        "gen-fib.c",
+        "mini-gmp/mini-gmp.h",
+    ],
+    textual_hdrs = [
+        "bootstrap.c",
+        "mini-gmp/mini-gmp.c",
+    ],
+)
+
+cc_binary(
+    name = "gen-fib",
+    deps = [":gen-fib_lib"],
+)
+
+genrule(
+    name = "fib_table_header_gen",
+    outs = ["fib_table.h"],
+    cmd = "$(location :gen-fib) header 64 0 > $@",
+    tools = [":gen-fib"],
+)
+
+genrule(
+    name = "fib_table_source_gen",
+    outs = ["fib_table.c"],
+    cmd = "$(location :gen-fib) table 64 0 > $@",
+    tools = [":gen-fib"],
+)
+
+cc_library(
+    name = "gen-bases_lib",
+    srcs = [
+        "gen-bases.c",
+        "mini-gmp/mini-gmp.h",
+    ],
+    textual_hdrs = [
+        "bootstrap.c",
+        "mini-gmp/mini-gmp.c",
+    ],
+)
+
+cc_binary(
+    name = "gen-bases",
+    deps = [":gen-bases_lib"],
+)
+
+genrule(
+    name = "gen_bases_header",
+    outs = ["mp_bases.h"],
+    cmd = "$(location :gen-bases) header 64 0 > $@",
+    tools = [":gen-bases"],
+)
+
+genrule(
+    name = "gen_bases_source",
+    outs = ["mp_bases.c"],
+    cmd = "$(location :gen-bases) table 64 0 > $@",
+    tools = [":gen-bases"],
+)
+
+cc_library(
+    name = "gen-fac_lib",
+    srcs = [
+        "gen-fac.c",
+        "mini-gmp/mini-gmp.h",
+    ],
+    textual_hdrs = [
+        "bootstrap.c",
+        "mini-gmp/mini-gmp.c",
+    ],
+)
+
+cc_binary(
+    name = "gen-fac",
+    deps = [":gen-fac_lib"],
+)
+
+genrule(
+    name = "fac_table_gen",
+    outs = ["fac_table.h"],
+    cmd = "$(location :gen-fac) 64 0 > $@",
+    tools = [":gen-fac"],
+)
+
+cc_library(
+    name = "gen-trialdivtab_lib",
+    srcs = [
+        "gen-trialdivtab.c",
+        "mini-gmp/mini-gmp.h",
+    ],
+    textual_hdrs = [
+        "bootstrap.c",
+        "mini-gmp/mini-gmp.c",
+    ],
+)
+
+cc_binary(
+    name = "gen-trialdivtab",
+    deps = [":gen-trialdivtab_lib"],
+)
+
+genrule(
+    name = "trialdivtab_gen",
+    outs = ["trialdivtab.h"],
+    cmd = "$(location :gen-trialdivtab) 64 8000 >$@",
+    tools = [":gen-trialdivtab"],
+)
+
+cc_binary(
+    name = "gen-jacobitab",
+    srcs = ["gen-jacobitab.c"],
+)
+
+genrule(
+    name = "jacobitab_gen",
+    outs = ["jacobitab.h"],
+    cmd = "$(location :gen-jacobitab) > $@",
+    tools = [":gen-jacobitab"],
+)
+
+cc_library(
+    name = "gen-psqr_lib",
+    srcs = [
+        "gen-psqr.c",
+        "mini-gmp/mini-gmp.h",
+    ],
+    textual_hdrs = [
+        "bootstrap.c",
+        "mini-gmp/mini-gmp.c",
+    ],
+)
+
+cc_binary(
+    name = "gen-psqr",
+    deps = [":gen-psqr_lib"],
+)
+
+genrule(
+    name = "perfsqr_gen",
+    outs = ["perfsqr.h"],
+    cmd = "$(location :gen-psqr) 64 0 >$@",
+    tools = [":gen-psqr"],
+)
