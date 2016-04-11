@@ -1,0 +1,135 @@
+package(default_visibility = ["//visibility:private"])
+
+cc_library(
+    name = "glib-lib",
+    srcs = glob(
+        [
+            "**/*.c",
+            "**/*.h",
+        ],
+        exclude = [
+            "build/win32/**/*",
+            "gio/fam/**/*",
+            "gio/fen/**/*",
+            "gio/gapplication-tool.c",
+            "gio/gcontenttype-win32.c",
+            "gio/gdbus-tool.c",
+            "gio/glib-compile-resources.c",
+            "gio/glib-compile-schemas.c",
+            "gio/gnextstepsettingsbackend.c",
+            "gio/gregistrysettingsbackend.c",
+            "gio/gresource-tool.c",
+            "gio/gsettings-tool.c",
+            "gio/gwin32appinfo.c",
+            "gio/gwin32inputstream.c",
+            "gio/gwin32mount.c",
+            "gio/gwin32outputstream.c",
+            "gio/gwin32volumemonitor.c",
+            "gio/kqueue/**/*",
+            "gio/tests/**/*",
+            "gio/win32/**/*",
+            "glib/giowin32.c",
+            "glib/glib-mirroring-tab/gen-mirroring-tab.c",
+            "glib/gspawn-win32.c",
+            "glib/gspawn-win32-helper.c",
+            "glib/gspawn-win32-helper-console.c",
+            "glib/gspawn-win64-helper.c",
+            "glib/gspawn-win64-helper-console.c",
+            "glib/gtester.c",
+            "glib/gthread-win32.c",
+            "glib/gwin32.c",
+            "glib/pcre/**/*.c",
+            "glib/tests/**/*",
+            "glib/win_iconv.c",
+            "gmodule/gmodule-ar.c",
+            "gmodule/gmodule-dl.c",
+            "gmodule/gmodule-dyld.c",
+            "gmodule/gmodule-win32.c",
+            "gobject/glib-genmarshal.c",
+            "gobject/gobject-query.c",
+            "gobject/tests/**/*",
+            "tests/**/*",
+        ],
+    ) + [
+        "config.h",
+        "gio/gnetworking.h",
+        "glib/glibconfig.h",
+        "gmodule/gmoduleconf.h",
+    ],
+    copts = [
+        "-DGIO_COMPILATION",
+        "-DGLIB_COMPILATION",
+        "-DGOBJECT_COMPILATION",
+        "-DGIO_MODULE_DIR=\\\"gio/modules\\\"",
+        "-DLIBDIR=\\\".\\\"",
+    ],
+    includes = [
+        ".",
+        "gio",
+        "glib",
+        "gmodule",
+        "gobject",
+    ],
+    textual_hdrs = [
+        "gio/strinfo.c",
+        "gmodule/gmodule-dl.c",
+        "gobject/gmarshal.strings",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [":glib-pcre"],
+)
+
+genrule(
+    name = "configure_gen",
+    srcs = glob(["**/*"]),
+    outs = [
+        "config.h",
+        "glib/glibconfig.h",
+        "gio/gnetworking.h",
+        "gmodule/gmoduleconf.h",
+    ],
+    cmd = """
+        $(location configure) --srcdir $$(dirname $(location config.h.in))
+        cp config.h $(location config.h)
+        cp glib/glibconfig.h $(location glib/glibconfig.h)
+        cp gio/gnetworking.h $(location gio/gnetworking.h)
+        cp gmodule/gmoduleconf.h $(location gmodule/gmoduleconf.h)
+    """,
+)
+
+cc_library(
+    name = "glib-pcre",
+    srcs = glob([
+        "glib/pcre/**/*.c",
+        "glib/pcre/**/*.h",
+        "glib/**/*.h",
+    ]) + [
+        "config.h",
+        "glib/glibconfig.h",
+    ],
+    copts = [
+        "-DGLIB_COMPILATION",
+        "-DG_LOG_DOMAIN=\\\"GLib-GRegex\\\"",
+        "-DHAVE_CONFIG_H",
+        "-DHAVE_MEMMOVE",
+        "-DLINK_SIZE=2",
+        "-DMATCH_LIMIT=10000000",
+        "-DMATCH_LIMIT_RECURSION=8192",
+        "-DMAX_DUPLENGTH=30000",
+        "-DMAX_NAME_COUNT=10000",
+        "-DMAX_NAME_SIZE=32",
+        "-DNEWLINE=-1",
+        "-DPCRE_STATIC",
+        "-DPOSIX_MALLOC_THRESHOLD=10",
+        "-DSUPPORT_UCP",
+        "-DSUPPORT_UTF",
+        "-DSUPPORT_UTF8",
+        "-UBSR_ANYCRLF",
+        "-UEBCDIC",
+    ],
+    includes = [
+        ".",
+        "glib",
+        "glib/pcre",
+    ],
+)
