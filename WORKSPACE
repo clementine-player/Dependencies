@@ -39,6 +39,14 @@ new_http_archive(
 )
 
 new_http_archive(
+    name = "nettle",
+    build_file = "BUILD.nettle",
+    sha256 = "c294ea133c05382cc2effb1734d49f4abeb1ad8515543a333de49a11422cd4d6",
+    strip_prefix = "nettle-2.7",
+    url = "https://googledrive.com/host/0Byds9jlkR0IxbXVUa1Flb3h6bjQ/nettle-2.7.tar.gz",
+)
+
+new_http_archive(
     name = "orc",
     build_file = "BUILD.orc",
     sha256 = "700e4edba20a0ed42164b645da26ce515b883d4c4633b222302f1e541f2a58ab",

@@ -6,6 +6,7 @@ cc_library(
         "**/*.c",
         "**/*.h",
     ]) + ["config.h"],
+    deps = ["@gmp//:gmp-lib"],
 )
 
 genrule(

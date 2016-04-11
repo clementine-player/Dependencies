@@ -1,0 +1,111 @@
+cc_library(
+    name = "nettle-lib",
+    srcs = glob(
+        [
+            "**/*.c",
+            "**/*.h",
+        ],
+        exclude = [
+            "aesdata.c",
+            "arm/**/*",
+            "desdata.c",
+            "eccdata.c",
+            "examples/**/*",
+            "gcmdata.c",
+            "mini-gmp.c",
+            "shadata.c",
+            "sha-example.c",
+            "sparc32/**/*",
+            "sparc64/**/*",
+            "testsuite/**/*",
+            "tools/**/*",
+            "twofishdata.c",
+        ],
+    ) + [
+        "nettle-stdint.h",
+        "config.h",
+        "ecc-224.h",
+        "ecc-192.h",
+        "ecc-256.h",
+        "ecc-384.h",
+        "ecc-521.h",
+    ],
+    copts = ["-DHAVE_CONFIG_H"],
+    includes = ["."],
+    deps = ["@gmp//:gmp-lib"],
+)
+
+genrule(
+    name = "configure_gen",
+    srcs = glob(["**/*"]),
+    outs = [
+        "config.h",
+        "nettle-stdint.h",
+    ],
+    cmd = """
+        $(location configure) \
+            --srcdir $$(dirname $(location configure)) \
+            --disable-assembler
+        for i in $(OUTS); do
+          cp $${i#$(GENDIR)/external/nettle/} $$i
+        done
+    """,
+)
+
+cc_library(
+    name = "eccdata_lib",
+    srcs = [
+        "eccdata.c",
+        "mini-gmp.h",
+    ],
+    textual_hdrs = [
+        "mini-gmp.c",
+    ],
+)
+
+cc_binary(
+    name = "eccdata",
+    deps = [":eccdata_lib"],
+)
+
+load("/nettle_ecc", "nettle_ecc_data")
+
+nettle_ecc_data(
+    name = "eccdata_192",
+    bits_per_limb = 64,
+    c = 6,
+    curve_bits = 192,
+    k = 7,
+)
+
+nettle_ecc_data(
+    name = "eccdata_224",
+    bits_per_limb = 64,
+    c = 6,
+    curve_bits = 224,
+    k = 12,
+)
+
+nettle_ecc_data(
+    name = "eccdata_256",
+    bits_per_limb = 64,
+    c = 6,
+    curve_bits = 256,
+    k = 14,
+)
+
+nettle_ecc_data(
+    name = "eccdata_384",
+    bits_per_limb = 64,
+    c = 6,
+    curve_bits = 384,
+    k = 41,
+)
+
+nettle_ecc_data(
+    name = "eccdata_521",
+    bits_per_limb = 64,
+    c = 6,
+    curve_bits = 521,
+    k = 56,
+)

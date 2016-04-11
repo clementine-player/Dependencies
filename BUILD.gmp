@@ -1,3 +1,5 @@
+package(default_visibility = ["//visibility:private"])
+
 cc_library(
     name = "gmp-lib",
     srcs = glob(
@@ -24,8 +26,8 @@ cc_library(
     ),
     includes = [
         ".",
-        "mpn/generic",
     ],
+    visibility = ["//visibility:public"],
     deps = [
         ":headers",
         ":mpn-c",
