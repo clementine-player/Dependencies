@@ -73,7 +73,7 @@ FILES = [
     ('sparsehash-2.0.2.tar.gz', '1db92ed7f257d9b5f14a309d75e8a1d4'),
     ('speex-1.2rc1.tar.gz', 'c4438b22c08e5811ff10e2b06ee9b9ae'),
     ('sqlite-amalgamation-3.7.0.tar.gz', '61b85f108760f91b79afc7833e6e6cb4'),
-    ('taglib-1.10.tar.gz', '5b4441a15423b046dd92a096e09ea22c'),
+    ('taglib-1.11.tar.gz', 'be39fa2054df40664cb557126ad7cf7c'),
     ('wavpack-4.60.1.tar.bz2', '7bb1528f910e4d0003426c02db856063'),
     ('zlib-1.2.8.tar.gz', '44d667c142d7cda120332623eab69f40'),
 ]
