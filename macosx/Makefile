@@ -1,5 +1,5 @@
 # How many source files to build in parallel within each package
-jobs=-j2
+jobs=-j1
 
 # Source and binary directories
 src=/src
@@ -135,7 +135,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-wavpack .done-libsoup
 	$(call extractpkg,$(gstgoodtgz))
 	cd $(gstgood) && patch -p1 < ../patches/gst-plugins-good-01-equalizer-writeable-buffers.patch
-	cd $(gstgood) && SOUP_CFLAGS=-I$(prefix)/include/libsoup-2.4 $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace --disable-osx_video --disable-aalib --disable-libdv --disable-libpng --disable-cairo --disable-esd --disable-libcaca
+	cd $(gstgood) && CFLAGS="-I/usr/local/opt/zlib/include" LDFLAGS="-L/usr/local/opt/zlib/lib" SOUP_CFLAGS=-I$(prefix)/include/libsoup-2.4 $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace --disable-osx_video --disable-aalib --disable-libdv --disable-libpng --disable-cairo --disable-libcaca --disable-fatal-warnings
 	cd $(gstgood) && $(make)
 	$(call installpkg,$(gstgood))
 
@@ -224,7 +224,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
 
-	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON
+	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON -DBUILD_SHARED_LIBS=ON -DZLIB_ROOT=/usr/local/opt/zlib
 	cd $(taglib)/build && $(make)
 	$(call installpkgcmake,$(taglib))
 
@@ -301,7 +301,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-libsoup: .done-glib .done-gnutls .done-glib-networking  .done-gettext
 	$(call extractpkg,$(souptgz))
-	cd $(soup) && patch -p0 < ../patches/libsoup-01-sym.patch
+	#cd $(soup) && patch -p0 < ../patches/libsoup-01-sym.patch
 	cd $(soup) && $(configure) --without-gnome
 	cd $(soup) && $(make)
 	$(call installpkg,$(soup))
