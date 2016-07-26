@@ -156,7 +156,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 					--disable-examples \
 					--disable-mpeg2dec \
 					--disable-x264 \
-					--enable-mad
+					--enable-mad \
+					--disable-fatal-warnings
 	cd $(gstugly) && $(make)
 	$(call installpkg,$(gstugly))
 
@@ -189,7 +190,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 				--disable-modplug \
 				--disable-ofa \
 				--disable-rtmp \
-				--disable-zbar
+				--disable-zbar \
+				--disable-fatal-warnings
 	cd $(gstbad) && $(make)
 	$(call installpkg,$(gstbad))
 
