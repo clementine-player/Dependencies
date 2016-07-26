@@ -1,5 +1,5 @@
 # How many source files to build in parallel within each package
-jobs=-j8
+jobs=-j1
 
 # Source and binary directories
 src=/src
@@ -318,7 +318,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-sparsehash:
 	$(call extractpkg,$(sparsehashtgz))
-	cd $(sparsehash) && patch -p1 < ../patches/sparsehash-01-allocator.patch
+	cd $(sparsehash) 
 	$(call buildpkg,$(sparsehash))
 	$(call installpkg,$(sparsehash))
 
