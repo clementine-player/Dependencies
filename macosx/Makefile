@@ -1,5 +1,5 @@
 # How many source files to build in parallel within each package
-jobs=-j1
+jobs=-j4
 
 # Source and binary directories
 src=/src
