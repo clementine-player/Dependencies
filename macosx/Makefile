@@ -1,5 +1,5 @@
 # How many source files to build in parallel within each package
-jobs=-j1
+jobs=-j2
 
 # Source and binary directories
 src=/src
@@ -275,7 +275,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkg,$(gnutls))
 
 .done-libtasn1:
-	$(call extractandbuild,$(tasn1tgz),$(tasn1))
+	$(call extractpkg,$(tasn1tgz))
+	cd $(tasn1) && $(configure) --disable-gcc-warnings
+	cd $(tasn1) && $(make)
+	$(call installpkg,$(tasn1))
 
 .done-libgpgerror:
 	$(call extractandbuild,$(gpgerrortgz),$(gpgerror))
