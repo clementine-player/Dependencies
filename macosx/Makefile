@@ -326,6 +326,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
 	patch -d $(qt) -p1 < patches/qt-02-yosemite.patch
+	patch -d $(qt) -p1 < patches/qt-03-elcapitan.patch
 	cd $(qt) && ./configure \
 		-release \
 		-opensource -confirm-license \
