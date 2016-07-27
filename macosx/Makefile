@@ -9,6 +9,14 @@ stow=$(prefix)/stow
 
 include ../makefile.common
 
+# Use bison installed via homebrew, even Sierra only provides < 3.x
+PATH := /usr/local/opt/bison/bin:$(PATH)
+
+# Uncomment if you have ccache installed via homebrew
+#PATH := /usr/local/opt/ccache/libexec:$(PATH)
+
+export PATH 
+
 qt=qt-everywhere-opensource-src-4.8.7
 qttgz=$(downloads)/$(qt).tar.gz
 
@@ -77,7 +85,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-gettext:
 	$(call extractpkg,$(gettexttgz))
 	#cd $(gettext) && patch -p0 < ../patches/gettext-02-examples.patch
-	cd $(gettext) && $(configure) --without-git
+	cd $(gettext) && $(configure) --without-git --disable-java
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
@@ -352,8 +360,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		-no-exceptions \
 		-no-sql-sqlite \
 		-openssl-linked \
-		-I$(prefix)/include \
-		-v
+		-I$(prefix)/include
 	cd $(qt) && $(make)
 	cd $(qt) && make install
 	cd $(stow) && stow -R $(qt)
