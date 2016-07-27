@@ -12,8 +12,8 @@ include ../makefile.common
 # Use bison installed via homebrew, even Sierra only provides < 3.x
 PATH := /usr/local/opt/bison/bin:$(PATH)
 
-# Uncomment if you have ccache installed via homebrew
-#PATH := /usr/local/opt/ccache/libexec:$(PATH)
+# If you have ccache installed via homebrew, we will support it
+PATH := /usr/local/opt/ccache/libexec:$(PATH)
 
 export PATH 
 
