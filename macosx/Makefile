@@ -102,11 +102,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-libplist: .done-glib
 	$(call extractpkg,$(plisttgz))
-	cd $(plist) && patch -p0 < ../patches/libplist-02-iterator.patch
-	-mkdir $(plist)/build
-	cd $(plist)/build && $(cmake) -DENABLE_CYTHON=OFF -DENABLE_SWIG=OFF
-	cd $(plist)/build && $(slowmake)
-	$(call installpkgcmake,$(plist))
+	cd $(plist) && $(configure) --without-cython
+	cd $(plist) && $(slowmake)
+	$(call installpkg,$(plist))
 
 .done-libgpod: .done-sqlite .done-libplist
 	$(call extractandbuildcmake,$(gpodtgz),$(gpod))
@@ -287,7 +285,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-libproxy:
 	$(call extractpkg,$(proxytgz))
-	patch -d $(proxy) -p0 < patches/libproxy-03-build.patch
 	patch -d $(proxy) -p0 < patches/libproxy-04-darwin.patch
 	-mkdir $(proxy)/build
 	cd $(proxy)/build && $(cmake) -DWITH_PYTHON=OFF -DWITH_PERL=OFF -DBUILD_TESTING=OFF
@@ -303,7 +300,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-libsoup: .done-glib .done-gnutls .done-glib-networking  .done-gettext
 	$(call extractpkg,$(souptgz))
-	#cd $(soup) && patch -p0 < ../patches/libsoup-01-sym.patch
 	cd $(soup) && $(configure) --without-gnome
 	cd $(soup) && $(make)
 	$(call installpkg,$(soup))
@@ -332,10 +328,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(openssl) && ./Configure \
 		  --prefix=$(stow)/$(openssl) \
 		  no-ssl2 \
-	          zlib-dynamic \
-	          shared \
-	          enable-cms \
-	          darwin64-x86_64-cc
+		   zlib-dynamic \
+		   shared \
+		   enable-cms \
+		   darwin64-x86_64-cc
 	cd $(openssl) && make
 	cd $(openssl) && make install
 	cd $(stow) && stow -R $(openssl)
@@ -371,6 +367,5 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-chromaprint: .done-fftw
 	$(call extractpkg,$(chromaprinttgz))
-	patch -d $(chromaprint) -p0 < patches/chromaprint-01-pkgconfig.patch
 	$(call buildpkgcmake,$(chromaprint))
 	$(call installpkgcmake,$(chromaprint))
