@@ -115,9 +115,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(gst) && $(make)
 	$(call installpkg,$(gst))
 
-.done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis
+.done-gst-plugins-base: .done-gstreamer .done-opus .done-ogg .done-vorbis
 	$(call extractpkg,$(gstbasetgz))
-	cd $(gstbase) && $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm --disable-theora
+	cd $(gstbase) && OPUS_CFLAGS="-I/target/include/opus" OPUS_LIBS="-L/target/lib -lopus" $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm --disable-theora
 	cd $(gstbase) && $(make)
 	$(call installpkg,$(gstbase))
 
@@ -174,7 +174,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-lame:
 	$(call extractandbuild,$(lametgz),$(lame))
 
-.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libquicktime .done-libmpcdec .done-opus
+.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libquicktime .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && $(configure) \
 				--disable-acm \
