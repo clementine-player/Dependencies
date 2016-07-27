@@ -1,5 +1,5 @@
 # How many source files to build in parallel within each package
-jobs=-j4
+jobs=-j2
 
 # Source and binary directories
 src=/src
@@ -9,7 +9,7 @@ stow=$(prefix)/stow
 
 include ../makefile.common
 
-qt=qt-everywhere-opensource-src-4.8.6
+qt=qt-everywhere-opensource-src-4.8.7
 qttgz=$(downloads)/$(qt).tar.gz
 
 # Useful macros for building packages
@@ -57,10 +57,10 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 # Top-level targets
 clementine-build-deps: boost liblastfm taglib libmtp \
-                       libgpod gstreamer glew qjson chromaprint \
-                       protobuf spotify fftw sparsehash qt echonest
+			  libgpod gstreamer glew qjson chromaprint \
+			  protobuf spotify fftw sparsehash qt echonest
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
-                        gst-plugins-ugly gst-libav
+			   gst-plugins-ugly gst-libav
 clementine-deps: clementine-build-deps clementine-gst-plugins
 
 # The actual commands for compiling each package follow
@@ -76,7 +76,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gettext:
 	$(call extractpkg,$(gettexttgz))
-	cd $(gettext) && patch -p0 < ../patches/gettext-02-examples.patch
+	#cd $(gettext) && patch -p0 < ../patches/gettext-02-examples.patch
 	cd $(gettext) && $(configure) --without-git
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
@@ -226,7 +226,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
 
-	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON -DBUILD_SHARED_LIBS=ON -DZLIB_ROOT=/usr/local/opt/zlib
+	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON -DBUILD_SHARED_LIBS=ON
 	cd $(taglib)/build && $(make)
 	$(call installpkgcmake,$(taglib))
 
@@ -327,12 +327,25 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call buildpkg,$(sparsehash))
 	$(call installpkg,$(sparsehash))
 
-.done-qt:
+.done-openssl:
+	$(call extractpkg,$(openssltgz))
+	cd $(openssl) && ./Configure \
+		  --prefix=$(stow)/$(openssl) \
+		  no-ssl2 \
+	          zlib-dynamic \
+	          shared \
+	          enable-cms \
+	          darwin64-x86_64-cc
+	cd $(openssl) && make
+	cd $(openssl) && make install
+	cd $(stow) && stow -R $(openssl)
+	touch $@
+
+.done-qt: .done-openssl
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
-	patch -d $(qt) -p1 < patches/qt-02-yosemite.patch
 	patch -d $(qt) -p1 < patches/qt-03-elcapitan.patch
-	cd $(qt) && ./configure \
+	cd $(qt) && OPENSSL_LIBS="-L$(prefix)/lib -lssl -lcrypto" ./configure \
 		-release \
 		-opensource -confirm-license \
 		-prefix $(stow)/$(qt) \
@@ -341,7 +354,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		-no-script -no-scripttools \
 		-nomake demos -nomake examples \
 		-no-exceptions \
-		-no-sql-sqlite
+		-no-sql-sqlite \
+		-openssl-linked \
+		-I$(prefix)/include \
+		-v
 	cd $(qt) && $(make)
 	cd $(qt) && make install
 	cd $(stow) && stow -R $(qt)
