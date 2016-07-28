@@ -1,4 +1,3 @@
-# Target compiler
 host=i686-w64-mingw32
 cc=$(host)-gcc
 cxx=$(host)-g++
@@ -314,7 +313,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-libsoup: .done-glib .done-libxml
 	$(call extractpkg,$(souptgz))
 	cd $(soup) && patch -p0 < ../patches/libsoup-01-winsock.patch
-	#cd $(soup) && patch -p1 < ../patches/libsoup-03-win32.patch
 	(cd $(soup) && $(configure) && $(make))
 	$(call installpkg,$(soup))
 	touch $@
@@ -340,7 +338,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis
 	$(call extractpkg,$(gstbasetgz))
-	#cd $(gstbase) && patch -p0 < ../patches/gst-plugins-base-01-format.patch
 	cd $(gstbase) && autoreconf
 	cd $(gstbase) && $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm
 	cd $(gstbase) && $(make)
