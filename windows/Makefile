@@ -8,7 +8,7 @@ ranlib=$(host)-ranlib
 build=i486-linux-gnu
 
 # How many source files to build in parallel within each package
-jobs=-j8
+jobs=-j2
 
 # Source and binary directories
 src=/src
@@ -16,125 +16,131 @@ prefix=/target
 work=$(src)/windows
 stow=$(prefix)/stow
 
+# Enable ccache if installed
+export PATH := /usr/lib/ccache:$(PATH)
+
 include ../makefile.common
+
+# ovveride some versions for windows
+gettext=gettext-0.18.3.2
 
 # List of dlls that get included in the final package for Clementine
 clementine_dlls=glew32.dll \
-                libcdio-16.dll \
-                libchromaprint.dll \
-                libeay32.dll \
-                libechonest.dll \
-                libfaac.dll \
-                libfaad.dll \
-                libffi-6.dll \
-                libfftw3-3.dll \
-                libFLAC.dll \
-                libgcrypt-20.dll \
-                libgio-2.0-0.dll \
-                libglib-2.0-0.dll \
-                libgmodule-2.0-0.dll \
-                libgmp-10.dll \
-                libgnutls-28.dll \
-                libgobject-2.0-0.dll \
-                libgpg-error-0.dll \
-                libgpod.dll \
-                libgstapp-1.0-0.dll \
-                libgstaudio-1.0-0.dll \
-                libgstbase-1.0-0.dll \
-                libgstcontroller-1.0-0.dll \
-                libgstfft-1.0-0.dll \
-                libgstnet-1.0-0.dll \
-                libgstpbutils-1.0-0.dll \
-                libgstreamer-1.0-0.dll \
-                libgstriff-1.0-0.dll \
-                libgstrtp-1.0-0.dll \
-                libgstrtsp-1.0-0.dll \
-                libgstsdp-1.0-0.dll \
-                libgsttag-1.0-0.dll \
-                libgstvideo-1.0-0.dll \
-                libgthread-2.0-0.dll \
-                libhogweed-2-4.dll \
-                libiconv-2.dll \
-                libid3tag.dll \
-                libintl-8.dll \
-                liblastfm.dll \
-                libmad.dll \
-                libmms-0.dll \
-                libmp3lame-0.dll \
-                libnettle-4-6.dll \
-                libogg-0.dll \
-                liboil-0.3-0.dll \
-                libopus-0.dll \
-                liborc-0.4-0.dll \
-                liborc-test-0.4-0.dll \
-                libplist.dll \
-                libprotobuf-8.dll \
-                libqjson.dll \
-                libspeex-1.dll \
-                libspotify.dll \
-                libsqlite3-0.dll \
-                libtag.dll \
-                libtasn1-6.dll \
-                libvorbis-0.dll \
-                libvorbisenc-2.dll \
-                libxml2-2.dll \
-                pthreadGC2.dll \
-                QtCore4.dll \
-                QtGui4.dll \
-                QtNetwork4.dll \
-                QtOpenGL4.dll \
-                QtSql4.dll \
-                QtSvg4.dll \
-                QtXml4.dll \
-                ssleay32.dll \
-                zlib1.dll
+		libcdio-16.dll \
+		libchromaprint.dll \
+		libeay32.dll \
+		libechonest.dll \
+		libfaac.dll \
+		libfaad.dll \
+		libffi-6.dll \
+		libfftw3-3.dll \
+		libFLAC.dll \
+		libgcrypt-20.dll \
+		libgio-2.0-0.dll \
+		libglib-2.0-0.dll \
+		libgmodule-2.0-0.dll \
+		libgmp-10.dll \
+		libgnutls-28.dll \
+		libgobject-2.0-0.dll \
+		libgpg-error-0.dll \
+		libgpod.dll \
+		libgstapp-1.0-0.dll \
+		libgstaudio-1.0-0.dll \
+		libgstbase-1.0-0.dll \
+		libgstcontroller-1.0-0.dll \
+		libgstfft-1.0-0.dll \
+		libgstnet-1.0-0.dll \
+		libgstpbutils-1.0-0.dll \
+		libgstreamer-1.0-0.dll \
+		libgstriff-1.0-0.dll \
+		libgstrtp-1.0-0.dll \
+		libgstrtsp-1.0-0.dll \
+		libgstsdp-1.0-0.dll \
+		libgsttag-1.0-0.dll \
+		libgstvideo-1.0-0.dll \
+		libgthread-2.0-0.dll \
+		libhogweed-2-4.dll \
+		libiconv-2.dll \
+		libid3tag.dll \
+		libintl-8.dll \
+		liblastfm.dll \
+		libmad.dll \
+		libmms-0.dll \
+		libmp3lame-0.dll \
+		libnettle-4-6.dll \
+		libogg-0.dll \
+		liboil-0.3-0.dll \
+		libopus-0.dll \
+		liborc-0.4-0.dll \
+		liborc-test-0.4-0.dll \
+		libplist.dll \
+		libprotobuf-8.dll \
+		libqjson.dll \
+		libspeex-1.dll \
+		libspotify.dll \
+		libsqlite3-0.dll \
+		libtag.dll \
+		libtasn1-6.dll \
+		libvorbis-0.dll \
+		libvorbisenc-2.dll \
+		libxml2-2.dll \
+		pthreadGC2.dll \
+		QtCore4.dll \
+		QtGui4.dll \
+		QtNetwork4.dll \
+		QtOpenGL4.dll \
+		QtSql4.dll \
+		QtSvg4.dll \
+		QtXml4.dll \
+		ssleay32.dll \
+		zlib1.dll
 clementine_gst_plugins=libgstapetag.dll \
-                       libgstapp.dll \
-                       libgstasf.dll \
-                       libgstaudioconvert.dll \
-                       libgstaudiofx.dll \
-                       libgstaudioparsers.dll \
-                       libgstaudioresample.dll \
-                       libgstaudiotestsrc.dll \
-                       libgstautodetect.dll \
-                       libgstcdio.dll \
-                       libgstcoreelements.dll \
-                       libgstdirectsoundsink.dll \
-                       libgstequalizer.dll \
-                       libgstfaac.dll \
-                       libgstfaad.dll \
-                       libgstflac.dll \
-                       libgstgdp.dll \
-                       libgstgio.dll \
-                       libgsticydemux.dll \
-                       libgstid3demux.dll \
-                       libgstisomp4.dll \
-                       libgstlame.dll \
-                       libgstlibav.dll \
-                       libgstmad.dll \
-                       libgstmms.dll \
-                       libgstogg.dll \
-                       libgstopus.dll \
-                       libgstplayback.dll \
-                       libgstreplaygain.dll \
-                       libgstsouphttpsrc.dll \
-                       libgstspectrum.dll \
-                       libgstspeex.dll \
-                       libgsttaglib.dll \
-                       libgsttcp.dll \
-                       libgsttypefindfunctions.dll \
-                       libgstudp.dll \
-                       libgstvolume.dll \
-                       libgstvorbis.dll \
-                       libgstwavpack.dll \
-                       libgstwavparse.dll
+		       libgstapp.dll \
+		       libgstasf.dll \
+		       libgstaudioconvert.dll \
+		       libgstaudiofx.dll \
+		       libgstaudioparsers.dll \
+		       libgstaudioresample.dll \
+		       libgstaudiotestsrc.dll \
+		       libgstautodetect.dll \
+		       libgstcdio.dll \
+		       libgstcoreelements.dll \
+		       libgstdirectsoundsink.dll \
+		       libgstequalizer.dll \
+		       libgstfaac.dll \
+		       libgstfaad.dll \
+		       libgstflac.dll \
+		       libgstgdp.dll \
+		       libgstgio.dll \
+		       libgsticydemux.dll \
+		       libgstid3demux.dll \
+		       libgstisomp4.dll \
+		       libgstlame.dll \
+		       libgstlibav.dll \
+		       libgstmad.dll \
+		       libgstmms.dll \
+		       libgstogg.dll \
+		       libgstopus.dll \
+		       libgstplayback.dll \
+		       libgstreplaygain.dll \
+		       libgstsouphttpsrc.dll \
+		       libgstspectrum.dll \
+		       libgstspeex.dll \
+		       libgsttaglib.dll \
+		       libgsttcp.dll \
+		       libgsttypefindfunctions.dll \
+		       libgstudp.dll \
+		       libgstvolume.dll \
+		       libgstvorbis.dll \
+		       libgstwavpack.dll \
+		       libgstwavparse.dll
 clementine_imageformats=qgif4.dll \
-                        qjpeg4.dll
+			qjpeg4.dll
 dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll \
-           -not -name ssleay32.dll -not -name libeay32.dll \
-           -not -name ShellExecAsUser.dll \
-           -not -name KillProc.dll \
-           -not -name AccessControl.dll
+	   -not -name ssleay32.dll -not -name libeay32.dll \
+	   -not -name ShellExecAsUser.dll \
+	   -not -name KillProc.dll \
+	   -not -name AccessControl.dll
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
@@ -170,10 +176,10 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 # Top-level targets
 clementine-build-deps: dlfcn boost liblastfm qt taglib \
-                       libgpod glew gstreamer win7sdk qtsparkle chromaprint \
-                       protobuf spotify qjson fftw sparsehash pthreads echonest
+		       libgpod glew gstreamer win7sdk qtsparkle chromaprint \
+		       protobuf spotify qjson fftw sparsehash pthreads echonest
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
-                        gst-plugins-ugly gst-libav
+			gst-plugins-ugly gst-libav
 
 clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetworking
 	-rm -rf clementine-deps
@@ -243,10 +249,14 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractpkg,$(gettexttgz))
 	patch -d $(gettext) -p1 < patches/gettext-01-woe32.patch
 	patch -d $(gettext) -p1 < patches/gettext-02-reloc.patch
+	cd $(gettext) && $(configure) --without-git --disable-java
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
-.done-glib: .done-zlib .done-gettext .done-ffi
+.done-pcre:
+	$(call extractandbuild,$(pcretgz),$(pcre))
+
+.done-glib: .done-zlib .done-pcre .done-gettext .done-ffi
 	$(call extractandbuild,$(glibtgz),$(glib))
 
 .done-gmp:
@@ -299,17 +309,17 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-libsoup: .done-glib .done-libxml
 	$(call extractpkg,$(souptgz))
 	cd $(soup) && patch -p0 < ../patches/libsoup-01-winsock.patch
+	#cd $(soup) && patch -p1 < ../patches/libsoup-03-win32.patch
 	(cd $(soup) && $(configure) && $(make))
 	$(call installpkg,$(soup))
 	touch $@
 
 .done-libplist: .done-libxml .done-glib
-	tar -xf $(plisttgz)
-	-mkdir $(plist)/build
-	cd $(plist)/build && $(cmake)
-	cd $(plist)/build && make
+	$(call extractpkg,$(plisttgz))
+	cd $(plist) && $(configure) --without-cython
+	cd $(plist) && $(make)
 	rm -rf $(stow)/$(plist)
-	cd $(plist)/build && make install DESTDIR=$(stow)/$(plist)
+	cd $(plist) && make install DESTDIR=$(stow)/$(plist)
 	mv -fv $(stow)/$(plist)$(prefix)/* $(stow)/$(plist)/
 	cd $(stow) && stow $(plist)
 	touch $@
@@ -325,7 +335,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis
 	$(call extractpkg,$(gstbasetgz))
-	cd $(gstbase) && patch -p0 < ../patches/gst-plugins-base-01-format.patch
+	#cd $(gstbase) && patch -p0 < ../patches/gst-plugins-base-01-format.patch
 	cd $(gstbase) && autoreconf
 	cd $(gstbase) && $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm
 	cd $(gstbase) && $(make)
@@ -342,9 +352,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-libsoup .done-wavpack
 	$(call extractpkg,$(gstgoodtgz))
-	cd $(gstgood) && patch -p1 < ../patches/gst-plugins-good-01-device-property.patch
 	cd $(gstgood) && patch -p1 < ../patches/gst-plugins-good-02-equalizer-writeable-buffers.patch
-	cd $(gstgood) && patch -p0 < ../patches/gst-plugins-good-03-c90.patch
 
 	cd $(gstgood) && $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace
 	sed -i.bak 's/$$ECHO "$$win32_libid_type"/$$ECHO "x86 DLL"/' $(gstgood)/libtool
@@ -379,23 +387,22 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-flac:
 	$(call extractpkg,$(flactgz))
-	cd $(flac) && patch -p0 < ../patches/flac-01-size-t-max.patch
-	cd $(flac) && patch -p0 < ../patches/flac-02-include.patch
 	cd $(flac) && $(configure)
 	cd $(flac) && $(make)
 
 	# libtool is retarded and doesn't link this dll properly
-	cd $(flac)/src/libFLAC && /bin/bash ../../libtool --mode=link $(host)-gcc \
-		--shared  -I/target/include -O3 -funroll-loops -finline-functions \
-		-Wall -W -Winline -g -O2 -o libFLAC.dll -rpath $(prefix)/lib \
-		-version-info 10:0:2 -lm -lws2_32 *.lo -L$(prefix)/lib -logg
+	#cd $(flac)/src/libFLAC && /bin/bash ../../libtool --mode=link $(host)-gcc \
+	#	--shared  -I/target/include -O3 -funroll-loops -finline-functions \
+	#	-Wall -W -Winline -g -O2 -o libFLAC.dll -rpath $(prefix)/lib \
+	#	-version-info 10:0:2 -lm -lws2_32 *.lo ../share/win_utf8_io/*.lo -L$(prefix)/lib -logg
 
 	rm -rf $(stow)/$(flac)
 	cd $(flac) && make install DESTDIR=$(stow)/$(flac)
 	mv -fv $(stow)/$(flac)$(prefix)/* $(stow)/$(flac)/
-	cp $(flac)/src/libFLAC/libFLAC.dll $(stow)/$(flac)/bin
-	rm -f $(stow)/$(flac)/lib/libFLAC.*
-	sed -i.bak -e's/\/lib/\/bin/' $(stow)/$(flac)/lib/pkgconfig/*.pc
+	#cp $(flac)/src/libFLAC/libFLAC.dll.exe $(stow)/$(flac)/bin
+	#cp $(flac)/src/libFLAC/libFLAC.dll.exe $(stow)/$(flac)/bin/libFLAC.dll
+	#rm -f $(stow)/$(flac)/lib/libFLAC.*
+	#sed -i.bak -e's/\/lib/\/bin/' $(stow)/$(flac)/lib/pkgconfig/*.pc
 	cd $(stow) && stow -R $(flac)
 	touch $@
 
@@ -579,7 +586,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
 
-	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON
+	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON -DBUILD_SHARED_LIBS=ON
 	cd $(taglib)/build && $(make)
 	rm -rf $(stow)/$(taglib)
 	cd $(taglib)/build && make install DESTDIR=$(stow)/$(taglib)
@@ -591,7 +598,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p0 < patches/qt-01-codecs.patch
 	patch -d $(qt) -p0 < patches/qt-02-dir.patch
-	patch -d $(qt) -p1 < patches/qt-03-config.patch
 	cd $(qt) && OPENSSL_LIBS="-llibeay32 -lssleay32" ./configure \
 		-opensource -confirm-license \
 		-platform linux-g++-32 \

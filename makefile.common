@@ -42,7 +42,7 @@ qjson=qjson-0.8.1
 qtsparkle=davidsansome-qtsparkle-28721b5
 quicktime=libquicktime-1.2.4
 sip=sip-4.12.2
-soup=libsoup-2.54.1
+soup=libsoup-2.49.1
 sparsehash=sparsehash-2.0.3
 speex=speex-1.2rc1
 sqlite=sqlite-3.7.0
@@ -55,6 +55,7 @@ xml=libxml2-2.9.1
 # Windows only packages
 glew=glew-1.5.5
 mmswin32=libmms-win32
+pcre=pcre-8.39
 pthreads=pthreads-win32-2.8.0
 qt=qt-everywhere-opensource-src-4.8.7
 spotifywin32=libspotify-12.1.45-win32-release
@@ -79,7 +80,8 @@ allpackages=$(boost) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
 		$(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
 		$(gcrypt) $(spotifymac) $(gstlibav) $(mtp) $(mpcdec) \
 		$(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(cdio) \
-		$(opensslwin32) $(glibnetworking) $(echonest)
+		$(opensslwin32) $(glibnetworking) $(echonest) $(sparsehash) \
+		$(openssl)
 
 downloads=$(src)/downloads
 
@@ -127,6 +129,7 @@ oiltgz=$(downloads)/$(oil).tar.gz
 openssltgz=$(downloads)/$(openssl).tar.gz
 opustgz=$(downloads)/$(opus).tar.gz
 orctgz=$(downloads)/$(orc).tar.xz
+pcretgz=$(downloads)/$(pcre).tar.bz2
 plisttgz=$(downloads)/$(plist).tar.bz2
 pthreadstgz=$(downloads)/$(pthreads).tar.gz
 protobuftgz=$(downloads)/$(protobuf).tar.gz
