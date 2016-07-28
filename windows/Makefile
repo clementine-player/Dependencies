@@ -40,7 +40,7 @@ clementine_dlls=glew32.dll \
 		libglib-2.0-0.dll \
 		libgmodule-2.0-0.dll \
 		libgmp-10.dll \
-		libgnutls-28.dll \
+		libgnutls-30.dll \
 		libgobject-2.0-0.dll \
 		libgpg-error-0.dll \
 		libgpod.dll \
@@ -59,7 +59,7 @@ clementine_dlls=glew32.dll \
 		libgsttag-1.0-0.dll \
 		libgstvideo-1.0-0.dll \
 		libgthread-2.0-0.dll \
-		libhogweed-2-4.dll \
+		libhogweed-4-2.dll \
 		libiconv-2.dll \
 		libid3tag.dll \
 		libintl-8.dll \
@@ -67,14 +67,14 @@ clementine_dlls=glew32.dll \
 		libmad.dll \
 		libmms-0.dll \
 		libmp3lame-0.dll \
-		libnettle-4-6.dll \
+		libnettle-6-2.dll \
 		libogg-0.dll \
 		liboil-0.3-0.dll \
 		libopus-0.dll \
 		liborc-0.4-0.dll \
 		liborc-test-0.4-0.dll \
 		libplist.dll \
-		libprotobuf-8.dll \
+		libprotobuf-9.dll \
 		libqjson.dll \
 		libspeex-1.dll \
 		libspotify.dll \
@@ -120,7 +120,7 @@ clementine_gst_plugins=libgstapetag.dll \
 		       libgstmad.dll \
 		       libgstmms.dll \
 		       libgstogg.dll \
-		       libgstopus.dll \
+		       libgstopusparse.dll \
 		       libgstplayback.dll \
 		       libgstreplaygain.dll \
 		       libgstsouphttpsrc.dll \
@@ -198,8 +198,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	done
 	cp -v $(prefix)/lib/gio/modules/libgiognutls.dll clementine-deps/gio-modules/
 	cp -vr $(src)/mingwm10.dll $(src)/nsisplugins clementine-deps/
-	cp -vr /mingw/$(host)/*/libgcc_s_sjlj-1.dll clementine-deps/
-	cp -vr /mingw/$(host)/lib/libstdc++-6.dll clementine-deps/
+	cp -vr /usr/lib/gcc/$(host)/*win32/libgcc_s_sjlj-1.dll clementine-deps/
+	cp -vr /usr/lib/gcc/$(host)/*win32/libstdc++-6.dll clementine-deps/
 	for f in `find clementine-deps/ -name '*.dll' $(dont_strip)`; do \
 		$(host)-strip -v $$f; \
 	done
@@ -268,8 +268,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-nettle: .done-gmp
 	$(call extractpkg,$(nettletgz))
 	cd $(nettle) && $(configure)
-	cd $(nettle) && $(make) libnettle-4-6.dll
-	cd $(nettle) && $(make) libhogweed-2-4.dll
+	cd $(nettle) && $(make)
 	$(call installpkg,$(nettle))
 
 .done-libgpgerror:
@@ -282,10 +281,16 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call installpkg,$(gcrypt))
 
 .done-libtasn1:
-	$(call extractandbuild,$(tasn1tgz),$(tasn1))
+	$(call extractpkg,$(tasn1tgz))
+	cd $(tasn1) && $(configure) --disable-gcc-warnings
+	cd $(tasn1) && $(make)
+	$(call installpkg,$(tasn1))
 
-.done-libgnutls: .done-gcrypt .done-libtasn1 .done-nettle
-	$(call extractandbuild,$(gnutlstgz),$(gnutls))
+.done-gnutls: .done-gcrypt .done-libtasn1 .done-nettle
+	$(call extractpkg,$(gnutlstgz))
+	cd $(gnutls) && $(configure) --with-libgcrypt --disable-cxx --without-p11-kit
+	cd $(gnutls) && $(make)
+	$(call installpkg,$(gnutls))
 
 .done-win7sdk:
 	cp -r $(src)/$(win7sdk) $(stow)/
@@ -303,7 +308,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(xml) && $(make)
 	$(call installpkg,$(xml))
 
-.done-glibnetworking: .done-glib .done-libgnutls
+.done-glibnetworking: .done-glib .done-gnutls
 	$(call extractandbuild,$(glibnetworkingtgz),$(glibnetworking))
 
 .done-libsoup: .done-glib .done-libxml
@@ -396,14 +401,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	#	-Wall -W -Winline -g -O2 -o libFLAC.dll -rpath $(prefix)/lib \
 	#	-version-info 10:0:2 -lm -lws2_32 *.lo ../share/win_utf8_io/*.lo -L$(prefix)/lib -logg
 
-	rm -rf $(stow)/$(flac)
+	#rm -rf $(stow)/$(flac)
 	cd $(flac) && make install DESTDIR=$(stow)/$(flac)
-	mv -fv $(stow)/$(flac)$(prefix)/* $(stow)/$(flac)/
-	#cp $(flac)/src/libFLAC/libFLAC.dll.exe $(stow)/$(flac)/bin
-	#cp $(flac)/src/libFLAC/libFLAC.dll.exe $(stow)/$(flac)/bin/libFLAC.dll
-	#rm -f $(stow)/$(flac)/lib/libFLAC.*
-	#sed -i.bak -e's/\/lib/\/bin/' $(stow)/$(flac)/lib/pkgconfig/*.pc
 	cd $(stow) && stow -R $(flac)
+	mv $(prefix)/bin/libFLAC-8.dll $(prefix)/bin/libFLAC.dll
 	touch $@
 
 .done-speex: .done-ogg
@@ -459,7 +460,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 	# libtool is retarded and doesn't link this dll properly
 	cd $(mad) && /bin/bash ./libtool --mode=link $(host)-gcc \
-		-Wall -march=i486 -g -O -fforce-addr -fthread-jumps \
+		-Wall -march=pentium -g -O -fforce-addr -fthread-jumps \
 		-fcse-follow-jumps -fcse-skip-blocks -fexpensive-optimizations \
 		-fregmove -fschedule-insns2 -fstrength-reduce --shared  \
 		-o libmad.dll -rpath /target/lib -version-info 2:1:2 *.lo
@@ -474,7 +475,15 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	touch $@
 
 .done-lame:
-	$(call extractandbuild,$(lametgz),$(lame))
+	$(call extractpkg,$(lametgz),$(lame))
+	cd $(lame) && patch -p1 < ../patches/lame-01-no-sse2.patch
+	cd $(lame) && autoconf
+	cd $(lame) && $(configure) --disable-frontend --disable-cpml
+	#cd $(lame) && $(make) -f Makefile.unix UNAME='MSDOS' NOUNIXCMD=NO HAVE_NASM=NO \
+	#	CC_OPTS="-I$(prefix)/include -Wall -pipe -O3 -march=pentium -march=pentium -mfancy-math-387" \
+	#	CC=i686-w64-mingw32-gcc DESTDIR=$(prefix) install
+	#touch $@
+	$(call installpkg,$(lame))
 
 .done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec .done-opus
 	$(call extractpkg,$(gstbadtgz))

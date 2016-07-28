@@ -199,7 +199,6 @@ gstreamer: .done-gstreamer
 id3tag: .done-id3tag
 lame: .done-lame
 libarchive: .done-libarchive
-libgnutls: .done-libgnutls
 libgpgerror: .done-libgpgerror
 libgpod: .done-libgpod
 liblastfm: .done-liblastfm
