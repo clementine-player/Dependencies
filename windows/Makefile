@@ -7,7 +7,7 @@ ranlib=$(host)-ranlib
 build=i486-linux-gnu
 
 # How many source files to build in parallel within each package
-jobs=-j2
+jobs=-j4
 
 # Source and binary directories
 src=/src
@@ -33,7 +33,7 @@ clementine_dlls=glew32.dll \
 		libfaad.dll \
 		libffi-6.dll \
 		libfftw3-3.dll \
-		libFLAC.dll \
+		libFLAC-8.dll \
 		libgcrypt-20.dll \
 		libgio-2.0-0.dll \
 		libglib-2.0-0.dll \
@@ -224,8 +224,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-zlib:
 	$(call extractpkg,$(zlibtgz))
 	cd $(zlib) && PREFIX="$(host)-" CC=$(cc) CXX=$(cxx) RANLIB=$(ranlib) ./configure --prefix=$(prefix)
-	cd $(zlib) && make -f win32/Makefile.gcc PREFIX="$(host)-" CC=$(cc) CXX=$(cxx) LDSHAREDLIBC="" SHARED_MODE=1
-	cd $(zlib) && make -f win32/Makefile.gcc \
+	cd $(zlib) && $(make) -j1 -f win32/Makefile.gcc PREFIX="$(host)-" CC=$(cc) CXX=$(cxx) LDSHAREDLIBC="" SHARED_MODE=1
+	cd $(zlib) && $(make) -j1 -f win32/Makefile.gcc \
 		PREFIX="$(host)-" CC=$(cc) CXX=$(cxx) \
 		BINARY_PATH=$(stow)/$(zlib)/bin \
 		INCLUDE_PATH=$(stow)/$(zlib)/include \
@@ -256,7 +256,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractandbuild,$(pcretgz),$(pcre))
 
 .done-glib: .done-zlib .done-pcre .done-gettext .done-ffi
-	$(call extractandbuild,$(glibtgz),$(glib))
+	$(call extractpkg,$(glibtgz))
+	cd $(glib) && $(configure) --with-libiconv=native --disable-compile-warnings
+	cd $(glib) && $(make)
+	$(call installpkg,$(glib))
 
 .done-gmp:
 	$(call extractpkg,$(gmptgz))
@@ -387,22 +390,12 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(wavpack) && $(make)
 	$(call installpkg,$(wavpack))
 
-.done-flac:
+.done-flac: .done-ogg
 	$(call extractpkg,$(flactgz))
-	cd $(flac) && $(configure)
+	cd $(flac) && $(configure) --disable-xmms-plugin --disable-asm-optimizations
 	cd $(flac) && $(make)
-
-	# libtool is retarded and doesn't link this dll properly
-	#cd $(flac)/src/libFLAC && /bin/bash ../../libtool --mode=link $(host)-gcc \
-	#	--shared  -I/target/include -O3 -funroll-loops -finline-functions \
-	#	-Wall -W -Winline -g -O2 -o libFLAC.dll -rpath $(prefix)/lib \
-	#	-version-info 10:0:2 -lm -lws2_32 *.lo ../share/win_utf8_io/*.lo -L$(prefix)/lib -logg
-
-	#rm -rf $(stow)/$(flac)
-	cd $(flac) && make install DESTDIR=$(stow)/$(flac)
-	cd $(stow) && stow -R $(flac)
-	mv $(prefix)/bin/libFLAC-8.dll $(prefix)/bin/libFLAC.dll
-	touch $@
+	cd $(flac)/src/libFLAC && $(make) DESTDIR=$(stow)/$(flac) install
+	$(call installpkg,$(flac))
 
 .done-speex: .done-ogg
 	$(call extractpkg,$(speextgz))
@@ -588,7 +581,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(pthreads)
 	touch $@
 
-.done-taglib: .done-glib
+.done-taglib: .done-glib .done-opus
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
 
@@ -613,7 +606,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-no-declarative -no-audio-backend \
 		-no-script -no-scripttools \
 		-nomake demos -nomake examples \
-		-no-exceptions \
+		-nomake docs -no-exceptions \
 		-qt-sql-sqlite -system-sqlite \
 		-openssl-linked
 	cd $(qt) && $(make)
