@@ -633,17 +633,16 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-glew:
 	$(call extractpkg,$(glewtgz))
-	mkdir -p $(glew)/{bin,lib}
+	mkdir -p $(glew)/bin $(glew)/lib
 	cd $(glew) && $(host)-gcc -DGLEW_NO_GLU -O2 -Wall -W -Iinclude  -DGLEW_BUILD -o src/glew.o -c src/glew.c
 	cd $(glew) && $(host)-gcc -nostartfiles -shared -Wl,-soname,libglew32.dll -Wl,--out-implib,lib/libglew32.dll.a    -o bin/glew32.dll src/glew.o -L/mingw/lib -lglu32 -lopengl32 -lgdi32 -luser32
 	cd $(glew) && $(host)-ar cr lib/libglew32.a src/glew.o
-	mkdir -p $(stow)/$(glew)/{bin,include/GL,lib}
-	install -m644 $(glew)/bin/glew32.dll $(stow)/$(glew)/bin/glew32.dll
-	install -m644 $(glew)/lib/libglew32.dll.a $(stow)/$(glew)/lib/libglew32.dll.a
-	install -m644 $(glew)/include/GL/eglew.h $(stow)/$(glew)/include/GL/eglew.h
-	install -m644 $(glew)/include/GL/glew.h $(stow)/$(glew)/include/GL/glew.h
-	install -m644 $(glew)/include/GL/glxew.h $(stow)/$(glew)/include/GL/glxew.h
-	install -m644 $(glew)/include/GL/wglew.h $(stow)/$(glew)/include/GL/wglew.h
+	install -D -m644 $(glew)/bin/glew32.dll $(stow)/$(glew)/bin/glew32.dll
+	install -D -m644 $(glew)/lib/libglew32.dll.a $(stow)/$(glew)/lib/libglew32.dll.a
+	install -D -m644 $(glew)/include/GL/eglew.h $(stow)/$(glew)/include/GL/eglew.h
+	install -D -m644 $(glew)/include/GL/glew.h $(stow)/$(glew)/include/GL/glew.h
+	install -D -m644 $(glew)/include/GL/glxew.h $(stow)/$(glew)/include/GL/glxew.h
+	install -D -m644 $(glew)/include/GL/wglew.h $(stow)/$(glew)/include/GL/wglew.h
 	cd $(stow) && stow -R $(glew)
 	touch $@
 
