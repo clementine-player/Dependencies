@@ -54,7 +54,7 @@ FILES = [
     ('libplist-1.12.tar.bz2', '8b04b0f09f2398022dcd4fba75012997'),
     ('libproxy-0.4.13.tar.gz', 'de293bb311f185a2ffa3492700a694c2'),
     ('libquicktime-1.2.4.tar.gz', '81cfcebad9b7ee7e7cfbefc861d6d61b'),
-    ('libsoup-2.54.1.tar.xz', '73b1fb774de16c29b380f87016f9f9dd'),
+    ('libsoup-2.49.1.tar.xz', '60f3b57efbaa48a0375c3e61fd3f5c3b'),
     ('libspotify-12.1.51-Darwin-universal.zip', '41d019fd85c83ca4c28b823f825a9311'),
     ('libspotify-12.1.51-win32-release.zip', '6f62c551be9d28290fc5adcef7b01496'),
     ('libtasn1-4.9.tar.gz', '3018d0f466a32b66dde41bb122e6cab6'),
