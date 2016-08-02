@@ -7,7 +7,7 @@ ranlib=$(host)-ranlib
 build=i486-linux-gnu
 
 # How many source files to build in parallel within each package
-jobs=-j4
+jobs=-j2
 
 # Source and binary directories
 src=/src
@@ -73,6 +73,7 @@ clementine_dlls=glew32.dll \
 		liborc-0.4-0.dll \
 		liborc-test-0.4-0.dll \
 		libplist.dll \
+		libpcre-1.dll \
 		libprotobuf-9.dll \
 		libqjson.dll \
 		libspeex-1.dll \
@@ -174,9 +175,9 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 
 # Top-level targets
-clementine-build-deps: dlfcn boost liblastfm qt taglib \
+clementine-build-deps: pthreads dlfcn boost liblastfm qt taglib \
 		       libgpod glew gstreamer win7sdk qtsparkle chromaprint \
-		       protobuf spotify qjson fftw sparsehash pthreads echonest
+		       protobuf spotify qjson fftw sparsehash echonest
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
 			gst-plugins-ugly gst-libav
 
@@ -248,7 +249,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractpkg,$(gettexttgz))
 	patch -d $(gettext) -p1 < patches/gettext-01-woe32.patch
 	patch -d $(gettext) -p1 < patches/gettext-02-reloc.patch
-	cd $(gettext) && $(configure) --without-git --disable-java
+	cd $(gettext) && $(configure) --disable-threads --without-git --disable-java
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
@@ -257,7 +258,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-glib: .done-zlib .done-pcre .done-gettext .done-ffi
 	$(call extractpkg,$(glibtgz))
-	cd $(glib) && $(configure) --with-libiconv=native --disable-compile-warnings
+	cd $(glib) && $(configure) --with-threads=win32 --with-libiconv=native --disable-compile-warnings
 	cd $(glib) && $(make)
 	$(call installpkg,$(glib))
 
@@ -597,6 +598,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p0 < patches/qt-01-codecs.patch
 	patch -d $(qt) -p0 < patches/qt-02-dir.patch
+	patch -d $(qt) -p1 < patches/qt-03-disable-sslv3.patch
+	patch -d $(qt) -p1 < patches/qt-04-widget.patch
 	cd $(qt) && OPENSSL_LIBS="-llibeay32 -lssleay32" ./configure \
 		-opensource -confirm-license \
 		-platform linux-g++-32 \
@@ -607,7 +610,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-no-script -no-scripttools \
 		-nomake demos -nomake examples \
 		-nomake docs -no-exceptions \
-		-qt-sql-sqlite -system-sqlite \
+		-qt-sql-sqlite \
 		-openssl-linked
 	cd $(qt) && $(make)
 	cd $(qt) && make install
@@ -629,8 +632,18 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	touch $@
 
 .done-glew:
-	unzip -o -d $(stow)/ $(glewwin32zip)
-	-rm $(stow)/$(glew)/*.txt
+	$(call extractpkg,$(glewtgz))
+	mkdir -p $(glew)/{bin,lib}
+	cd $(glew) && $(host)-gcc -DGLEW_NO_GLU -O2 -Wall -W -Iinclude  -DGLEW_BUILD -o src/glew.o -c src/glew.c
+	cd $(glew) && $(host)-gcc -nostartfiles -shared -Wl,-soname,libglew32.dll -Wl,--out-implib,lib/libglew32.dll.a    -o bin/glew32.dll src/glew.o -L/mingw/lib -lglu32 -lopengl32 -lgdi32 -luser32
+	cd $(glew) && $(host)-ar cr lib/libglew32.a src/glew.o
+	mkdir -p $(stow)/$(glew)/{bin,include/GL,lib}
+	install -m644 $(glew)/bin/glew32.dll $(stow)/$(glew)/bin/glew32.dll
+	install -m644 $(glew)/lib/libglew32.dll.a $(stow)/$(glew)/lib/libglew32.dll.a
+	install -m644 $(glew)/include/GL/eglew.h $(stow)/$(glew)/include/GL/eglew.h
+	install -m644 $(glew)/include/GL/glew.h $(stow)/$(glew)/include/GL/glew.h
+	install -m644 $(glew)/include/GL/glxew.h $(stow)/$(glew)/include/GL/glxew.h
+	install -m644 $(glew)/include/GL/wglew.h $(stow)/$(glew)/include/GL/wglew.h
 	cd $(stow) && stow -R $(glew)
 	touch $@
 
