@@ -1,5 +1,5 @@
 # How many source files to build in parallel within each package
-jobs=-j8
+jobs=-j2
 
 # Source and binary directories
 src=/src
@@ -345,11 +345,12 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(stow) && stow -R $(openssl)
 	touch $@
 
-.done-qt: .done-openssl
+.done-qt: .done-openssl .done-sqlite
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
 	patch -d $(qt) -p1 < patches/qt-03-elcapitan.patch
-	cd $(qt) && OPENSSL_LIBS="-L$(prefix)/lib -lssl -lcrypto" ./configure \
+	#cd $(qt) && OPENSSL_LIBS="-L$(prefix)/lib -lssl -lcrypto" ./configure
+	cd $(qt) && ./configure \
 		-release \
 		-opensource -confirm-license \
 		-prefix $(stow)/$(qt) \
@@ -358,7 +359,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		-no-script -no-scripttools \
 		-nomake demos -nomake examples \
 		-no-exceptions \
-		-no-sql-sqlite \
+		-system-sqlite \
 		-openssl-linked \
 		-I$(prefix)/include
 	cd $(qt) && $(make)
