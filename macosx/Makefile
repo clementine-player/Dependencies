@@ -1,5 +1,5 @@
 # How many source files to build in parallel within each package
-jobs=-j2
+jobs=-j4
 
 # Source and binary directories
 src=/src
@@ -115,7 +115,11 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkg,$(plist))
 
 .done-libgpod: .done-sqlite .done-libplist
-	$(call extractandbuildcmake,$(gpodtgz),$(gpod))
+	$(call extractpkg,$(gpodtgz))
+	cd $(gpod) && patch -Np0 -i ../patches/libgpod-01-osx.patch
+	cd $(gpod) && $(configure) --disable-more-warnings
+	cd $(gpod) && $(make)
+	$(call installpkg,$(gpod))
 
 .done-gstreamer: .done-glib .done-orc .done-gettext
 	$(call extractpkg,$(gsttgz))
