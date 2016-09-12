@@ -4,10 +4,10 @@ cxx=$(host)-g++
 ranlib=$(host)-ranlib
 
 # Local compiler
-build=i486-linux-gnu
+build=i686-linux-gnu
 
 # How many source files to build in parallel within each package
-jobs=-j2
+jobs=-j1
 
 # Source and binary directories
 src=/src
@@ -22,6 +22,8 @@ include ../makefile.common
 
 # ovveride some versions for windows
 gettext=gettext-0.18.3.2
+gpod=libgpod-0.8.0.3
+gpodtgz=$(downloads)/$(gpod).tar.gz
 
 # List of dlls that get included in the final package for Clementine
 clementine_dlls=glew32.dll \
@@ -159,12 +161,14 @@ installpkg=rm -rf $(stow)/$(1) && \
 	cd $(1) && \
 	make install DESTDIR=$(stow)/$(1) && \
 	mv -fv $(stow)/$(1)$(prefix)/* $(stow)/$(1)/ && \
+	rm -rfv $(stow)/$(1)/share/info/dir && \
 	cd $(stow) && \
 	stow -R $(1) && \
 	touch $(work)/$@
 installpkgcmake=rm -rf $(stow)/$(1) && \
 	cd $(1)/build && \
 	make install DESTDIR=$(stow)/$(1) && \
+	rm -rfv $(stow)/$(1)/share/info/dir && \
 	mv -fv $(stow)/$(1)$(prefix)/* $(stow)/$(1)/ && \
 	cd $(stow) && \
 	stow -R $(1) && \
@@ -336,6 +340,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gstreamer: .done-glib .done-libxml .done-orc
 	$(call extractpkg,$(gsttgz))
+	cd $(gst) && patch -Np0 -i ../patches/gst-01-clockid_t.patch
 	cd $(gst) && $(configure) --disable-examples --disable-tests
 	cd $(gst) && $(make)
 	$(call installpkg,$(gst))
@@ -599,7 +604,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	patch -d $(qt) -p0 < patches/qt-01-codecs.patch
 	patch -d $(qt) -p0 < patches/qt-02-dir.patch
 	patch -d $(qt) -p1 < patches/qt-03-disable-sslv3.patch
-	patch -d $(qt) -p1 < patches/qt-04-widget.patch
+	#patch -d $(qt) -p1 < patches/qt-04-widget.patch
 	cd $(qt) && OPENSSL_LIBS="-llibeay32 -lssleay32" ./configure \
 		-opensource -confirm-license \
 		-platform linux-g++-32 \
@@ -610,6 +615,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-no-script -no-scripttools \
 		-nomake demos -nomake examples \
 		-nomake docs -no-exceptions \
+		-system-sqlite \
 		-qt-sql-sqlite \
 		-openssl-linked
 	cd $(qt) && $(make)
