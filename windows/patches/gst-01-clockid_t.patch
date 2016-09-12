@@ -1,0 +1,12 @@
+--- config.h.in.orig	2016-09-12 13:06:07.614883590 +0800
++++ config.h.in	2016-09-12 13:06:19.426803964 +0800
+@@ -535,9 +535,6 @@
+ /* We need at least WinXP SP2 for __stat64 */
+ #undef __MSVCRT_VERSION__
+ 
+-/* clockid_t */
+-#undef clockid_t
+-
+ /* Define to the widest signed integer type if <stdint.h> and <inttypes.h> do
+    not define. */
+ #undef intmax_t

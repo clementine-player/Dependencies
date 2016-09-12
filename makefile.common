@@ -1,73 +1,75 @@
 # Package version numbers
-archive=libarchive-2.8.4
+archive=libarchive-3.2.1
 boost=boost-1.50
 cdio=libcdio-0.93
-chromaprint=chromaprint-1.1
-dlfcn=dlfcn-r19
-echonest=libechonest-2.3.0
+chromaprint=chromaprint-1.3.2
+dlfcn=dlfcn-1.0.0
+echonest=libechonest-2.3.1
 faac=faac-1.28
 faad=faad2-2.7
-ffi=libffi-3.0.11
-fftw=fftw-3.3.2
-flac=flac-1.2.1
-gcrypt=libgcrypt-1.6.1
-gettext=gettext-0.18.3.1
-glib=glib-2.42.0
-glibnetworking=glib-networking-2.42.0
-gmp=gmp-5.1.3
-gnutls=gnutls-3.2.12
-gpgerror=libgpg-error-1.12
-gpod=libgpod-0.8.0.3
-gst=gstreamer-1.5.2
-gstbad=gst-plugins-bad-1.5.2
-gstbase=gst-plugins-base-1.5.2
-gstgood=gst-plugins-good-1.5.2
-gstlibav=gst-libav-1.5.2
-gstugly=gst-plugins-ugly-1.5.2
+ffi=libffi-3.2.1
+fftw=fftw-3.3.5
+flac=flac-1.3.1
+gcrypt=libgcrypt-1.7.3
+gettext=gettext-0.19.8.1
+glib=glib-2.48.2
+glibnetworking=glib-networking-2.48.2
+gmp=gmp-6.1.1
+gnutls=gnutls-3.4.15
+gpgerror=libgpg-error-1.24
+gpod=libgpod-0.8.3
+gst=gstreamer-1.8.3
+gstbad=gst-plugins-bad-1.8.3
+gstbase=gst-plugins-base-1.8.3
+gstgood=gst-plugins-good-1.8.3
+gstlibav=gst-libav-1.8.3
+gstugly=gst-plugins-ugly-1.8.3
 id3tag=libid3tag-0.15.1b
-lame=lame-3.98.4
+lame=lame-3.99.5
 lastfm=davidsansome-liblastfm-6748fcf
 libiconv=libiconv-1.14
 mad=libmad-0.15.1b
 mpcdec=libmpcdec-1.2.6
-ogg=libogg-1.2.0
+ogg=libogg-1.3.2
 oil=liboil-0.3.17
-opus=opus-1.0.2
-orc=orc-0.4.16
-plist=libplist-1.10
-protobuf=protobuf-2.5.0
-proxy=libproxy-0.4.11
+openssl=openssl-1.0.2h
+opus=opus-1.1.3
+orc=orc-0.4.25
+plist=libplist-1.12
+protobuf=protobuf-2.6.1
+proxy=libproxy-0.4.13
 qjson=qjson-0.8.1
 qtsparkle=davidsansome-qtsparkle-28721b5
-quicktime=libquicktime-1.1.5
+quicktime=libquicktime-1.2.4
 sip=sip-4.12.2
-soup=libsoup-2.48.0
-sparsehash=sparsehash-2.0.2
+soup=libsoup-2.49.1
+sparsehash=sparsehash-2.0.3
 speex=speex-1.2rc1
-sqlite=sqlite-3.7.0
+#sqlite=sqlite-3.7.0
+sqlite=sqlite-3.14.0
 taglib=taglib-1.11
 tls=gnutls-2.10.1
-vorbis=libvorbis-1.3.1
-wavpack=wavpack-4.60.1
+vorbis=libvorbis-1.3.5
+wavpack=wavpack-4.80.0
 xml=libxml2-2.9.1
 
 # Windows only packages
-glew=glew-1.5.5
+glew=glew-2.0.0
 mmswin32=libmms-win32
-openssl=openssl-1.0.1m
+pcre=pcre-8.39
 pthreads=pthreads-win32-2.8.0
-qt=qt-everywhere-opensource-src-4.8.3
-spotifywin32=libspotify-12.1.45-win32-release
+qt=qt-everywhere-opensource-src-4.8.7
+spotifywin32=libspotify-12.1.51-win32-release
 usbwin32=libusb-win32-bin-1.2.0.0
 win7sdk=win7-sdk
 zlib=zlib-1.2.8
 
 # OSX only packages
-mms=libmms-0.6.2
-mtp=libmtp-1.1.8
-nettle=nettle-2.7
-spotifymac=libspotify-12.1.45-Darwin-universal
-tasn1=libtasn1-3.4
+mms=libmms-0.6.4
+mtp=libmtp-1.1.11
+nettle=nettle-3.2
+spotifymac=libspotify-12.1.51-Darwin-universal
+tasn1=libtasn1-4.9
 usb=libusb-1.0.8
 
 allpackages=$(boost) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
@@ -79,7 +81,9 @@ allpackages=$(boost) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
 		$(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
 		$(gcrypt) $(spotifymac) $(gstlibav) $(mtp) $(mpcdec) \
 		$(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(cdio) \
-		$(opensslwin32) $(glibnetworking) $(echonest)
+		$(opensslwin32) $(glibnetworking) $(echonest) $(sparsehash) \
+		$(openssl) $(pcre) $(ffi) $(gmp) $(libiconv) \
+		$(opus) $(nettle) $(zlib) $(chromaprint) $(proxy)
 
 downloads=$(src)/downloads
 
@@ -88,23 +92,22 @@ archivetgz=$(downloads)/$(archive).tar.gz
 boosttgz=$(downloads)/$(boost).tar.bz2
 cdiotgz=$(downloads)/$(cdio).tar.gz
 chromaprinttgz=$(downloads)/$(chromaprint).tar.gz
-dlfcntgz=$(downloads)/dlfcn-win32-static-r19.tar.bz2
+dlfcntgz=$(downloads)/dlfcn-win32-static-1.0.0.tar.gz
 echonesttgz=$(downloads)/$(echonest).tar.gz
 faactgz=$(downloads)/$(faac).tar.gz
 faadtgz=$(downloads)/$(faad).tar.gz
 ffitgz=$(downloads)/$(ffi).tar.gz
 fftwtgz=$(downloads)/$(fftw).tar.gz
-flactgz=$(downloads)/$(flac).tar.gz
+flactgz=$(downloads)/$(flac).tar.xz
 gcrypttgz=$(downloads)/$(gcrypt).tar.bz2
 gettexttgz=$(downloads)/$(gettext).tar.gz
-glewtgz=$(downloads)/$(glew).tar.bz2
-glewwin32zip=$(downloads)/$(glew)-win32.zip
+glewtgz=$(downloads)/$(glew).tgz
 glibtgz=$(downloads)/$(glib).tar.xz
 glibnetworkingtgz=$(downloads)/$(glibnetworking).tar.xz
 gmptgz=$(downloads)/$(gmp).tar.xz
 gnutlstgz=$(downloads)/$(gnutls).tar.xz
 gpgerrortgz=$(downloads)/$(gpgerror).tar.bz2
-gpodtgz=$(downloads)/$(gpod).tar.gz
+gpodtgz=$(downloads)/$(gpod).tar.bz2
 gstbadtgz=$(downloads)/$(gstbad).tar.xz
 gstbasetgz=$(downloads)/$(gstbase).tar.xz
 gstlibavtgz=$(downloads)/$(gstlibav).tar.xz
@@ -126,10 +129,11 @@ oggtgz=$(downloads)/$(ogg).tar.gz
 oiltgz=$(downloads)/$(oil).tar.gz
 openssltgz=$(downloads)/$(openssl).tar.gz
 opustgz=$(downloads)/$(opus).tar.gz
-orctgz=$(downloads)/$(orc).tar.gz
+orctgz=$(downloads)/$(orc).tar.xz
+pcretgz=$(downloads)/$(pcre).tar.bz2
 plisttgz=$(downloads)/$(plist).tar.bz2
 pthreadstgz=$(downloads)/$(pthreads).tar.gz
-protobuftgz=$(downloads)/$(protobuf).tar.bz2
+protobuftgz=$(downloads)/$(protobuf).tar.gz
 proxytgz=$(downloads)/$(proxy).tar.gz
 qjsontgz=$(downloads)/$(qjson).tar.gz
 qttgz=$(downloads)/$(qt).tar.gz
@@ -140,7 +144,7 @@ sparsehashtgz=$(downloads)/$(sparsehash).tar.gz
 speextgz=$(downloads)/$(speex).tar.gz
 spotifymactgz=$(downloads)/$(spotifymac).zip
 spotifywin32zip=$(downloads)/$(spotifywin32).zip
-sqlitetgz=$(downloads)/sqlite-amalgamation-3.7.0.tar.gz
+sqlitetgz=$(downloads)/sqlite-3.14.0.tar.gz
 taglibtgz=$(downloads)/$(taglib).tar.gz
 tasn1tgz=$(downloads)/$(tasn1).tar.gz
 tlszip=$(downloads)/$(tls).zip
@@ -165,7 +169,7 @@ clean:
 	for package in $(allpackages); do \
 		rm -rf $$package; \
 	done
-	-rm .done-*
+	-rm -f .done-*
 
 all-downloads:
 	python $(src)/downloader/downloader.py --output "$(downloads)"
@@ -196,7 +200,6 @@ gstreamer: .done-gstreamer
 id3tag: .done-id3tag
 lame: .done-lame
 libarchive: .done-libarchive
-libgnutls: .done-libgnutls
 libgpgerror: .done-libgpgerror
 libgpod: .done-libgpod
 liblastfm: .done-liblastfm
@@ -215,6 +218,7 @@ oil: .done-oil
 openssl: .done-openssl
 opus: .done-opus
 orc: .done-orc
+pcre: .done-pcre
 protobuf: .done-protobuf
 pthreads: .done-pthreads
 pyqt: .done-pyqt

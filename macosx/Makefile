@@ -1,5 +1,5 @@
 # How many source files to build in parallel within each package
-jobs=-j8
+jobs=-j4
 
 # Source and binary directories
 src=/src
@@ -9,7 +9,15 @@ stow=$(prefix)/stow
 
 include ../makefile.common
 
-qt=qt-everywhere-opensource-src-4.8.6
+# Use bison installed via homebrew, even Sierra only provides < 3.x
+PATH := /usr/local/opt/bison/bin:$(PATH)
+
+# If you have ccache installed via homebrew, we will support it
+PATH := /usr/local/opt/ccache/libexec:$(PATH)
+
+export PATH 
+
+qt=qt-everywhere-opensource-src-4.8.7
 qttgz=$(downloads)/$(qt).tar.gz
 
 # Useful macros for building packages
@@ -57,10 +65,10 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 # Top-level targets
 clementine-build-deps: boost liblastfm taglib libmtp \
-                       libgpod gstreamer glew qjson chromaprint \
-                       protobuf spotify fftw sparsehash qt echonest
+			  libgpod gstreamer glew qjson chromaprint \
+			  protobuf spotify fftw sparsehash qt echonest
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
-                        gst-plugins-ugly gst-libav
+			   gst-plugins-ugly gst-libav
 clementine-deps: clementine-build-deps clementine-gst-plugins
 
 # The actual commands for compiling each package follow
@@ -76,8 +84,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gettext:
 	$(call extractpkg,$(gettexttgz))
-	cd $(gettext) && patch -p0 < ../patches/gettext-02-examples.patch
-	cd $(gettext) && $(configure) --without-git
+	#cd $(gettext) && patch -p0 < ../patches/gettext-02-examples.patch
+	cd $(gettext) && $(configure) --without-git --disable-java
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
@@ -102,14 +110,16 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-libplist: .done-glib
 	$(call extractpkg,$(plisttgz))
-	cd $(plist) && patch -p0 < ../patches/libplist-02-iterator.patch
-	-mkdir $(plist)/build
-	cd $(plist)/build && $(cmake) -DENABLE_CYTHON=OFF -DENABLE_SWIG=OFF
-	cd $(plist)/build && $(slowmake)
-	$(call installpkgcmake,$(plist))
+	cd $(plist) && $(configure) --without-cython
+	cd $(plist) && $(slowmake)
+	$(call installpkg,$(plist))
 
 .done-libgpod: .done-sqlite .done-libplist
-	$(call extractandbuildcmake,$(gpodtgz),$(gpod))
+	$(call extractpkg,$(gpodtgz))
+	cd $(gpod) && patch -Np0 -i ../patches/libgpod-01-osx.patch
+	cd $(gpod) && $(configure) --disable-more-warnings
+	cd $(gpod) && $(make)
+	$(call installpkg,$(gpod))
 
 .done-gstreamer: .done-glib .done-orc .done-gettext
 	$(call extractpkg,$(gsttgz))
@@ -117,9 +127,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(gst) && $(make)
 	$(call installpkg,$(gst))
 
-.done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis
+.done-gst-plugins-base: .done-gstreamer .done-opus .done-ogg .done-vorbis
 	$(call extractpkg,$(gstbasetgz))
-	cd $(gstbase) && $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm --disable-theora
+	cd $(gstbase) && OPUS_CFLAGS="-I/target/include/opus" OPUS_LIBS="-L/target/lib -lopus" $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm --disable-theora
 	cd $(gstbase) && $(make)
 	$(call installpkg,$(gstbase))
 
@@ -135,7 +145,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-wavpack .done-libsoup
 	$(call extractpkg,$(gstgoodtgz))
 	cd $(gstgood) && patch -p1 < ../patches/gst-plugins-good-01-equalizer-writeable-buffers.patch
-	cd $(gstgood) && SOUP_CFLAGS=-I$(prefix)/include/libsoup-2.4 $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace --disable-osx_video --disable-aalib --disable-libdv --disable-libpng --disable-cairo --disable-esd --disable-libcaca
+	cd $(gstgood) && CFLAGS="-I/usr/local/opt/zlib/include" LDFLAGS="-L/usr/local/opt/zlib/lib" SOUP_CFLAGS=-I$(prefix)/include/libsoup-2.4 $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace --disable-osx_video --disable-aalib --disable-libdv --disable-libpng --disable-cairo --disable-libcaca --disable-fatal-warnings
 	cd $(gstgood) && $(make)
 	$(call installpkg,$(gstgood))
 
@@ -156,7 +166,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 					--disable-examples \
 					--disable-mpeg2dec \
 					--disable-x264 \
-					--enable-mad
+					--enable-mad \
+					--disable-fatal-warnings
 	cd $(gstugly) && $(make)
 	$(call installpkg,$(gstugly))
 
@@ -175,7 +186,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-lame:
 	$(call extractandbuild,$(lametgz),$(lame))
 
-.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libquicktime .done-libmpcdec .done-opus
+.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libquicktime .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && $(configure) \
 				--disable-acm \
@@ -189,7 +200,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 				--disable-modplug \
 				--disable-ofa \
 				--disable-rtmp \
-				--disable-zbar
+				--disable-zbar \
+				--disable-fatal-warnings
 	cd $(gstbad) && $(make)
 	$(call installpkg,$(gstbad))
 
@@ -224,7 +236,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
 
-	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON
+	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON -DBUILD_SHARED_LIBS=ON
 	cd $(taglib)/build && $(make)
 	$(call installpkgcmake,$(taglib))
 
@@ -269,20 +281,22 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gnutls: .done-gcrypt .done-libtasn1 .done-nettle
 	$(call extractpkg,$(gnutlstgz))
-	cd $(gnutls) && $(configure) --with-libgcrypt --disable-cxx
+	cd $(gnutls) && $(configure) --with-libgcrypt --disable-cxx --without-p11-kit
 	cd $(gnutls) && $(make)
 #	sed -e 's/ *, *zlib//' -i "" $(gnutls)/lib/gnutls.pc
 	$(call installpkg,$(gnutls))
 
 .done-libtasn1:
-	$(call extractandbuild,$(tasn1tgz),$(tasn1))
+	$(call extractpkg,$(tasn1tgz))
+	cd $(tasn1) && $(configure) --disable-gcc-warnings
+	cd $(tasn1) && $(make)
+	$(call installpkg,$(tasn1))
 
 .done-libgpgerror:
 	$(call extractandbuild,$(gpgerrortgz),$(gpgerror))
 
 .done-libproxy:
 	$(call extractpkg,$(proxytgz))
-	patch -d $(proxy) -p0 < patches/libproxy-03-build.patch
 	patch -d $(proxy) -p0 < patches/libproxy-04-darwin.patch
 	-mkdir $(proxy)/build
 	cd $(proxy)/build && $(cmake) -DWITH_PYTHON=OFF -DWITH_PERL=OFF -DBUILD_TESTING=OFF
@@ -298,7 +312,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-libsoup: .done-glib .done-gnutls .done-glib-networking  .done-gettext
 	$(call extractpkg,$(souptgz))
-	cd $(soup) && patch -p0 < ../patches/libsoup-01-sym.patch
 	cd $(soup) && $(configure) --without-gnome
 	cd $(soup) && $(make)
 	$(call installpkg,$(soup))
@@ -318,14 +331,29 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-sparsehash:
 	$(call extractpkg,$(sparsehashtgz))
-	cd $(sparsehash) && patch -p1 < ../patches/sparsehash-01-allocator.patch
+	cd $(sparsehash) 
 	$(call buildpkg,$(sparsehash))
 	$(call installpkg,$(sparsehash))
 
-.done-qt:
+.done-openssl:
+	$(call extractpkg,$(openssltgz))
+	cd $(openssl) && ./Configure \
+		  --prefix=$(stow)/$(openssl) \
+		  no-ssl2 \
+		   zlib-dynamic \
+		   shared \
+		   enable-cms \
+		   darwin64-x86_64-cc
+	cd $(openssl) && make
+	cd $(openssl) && make install
+	cd $(stow) && stow -R $(openssl)
+	touch $@
+
+.done-qt: .done-openssl .done-sqlite
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
-	patch -d $(qt) -p1 < patches/qt-02-yosemite.patch
+	patch -d $(qt) -p1 < patches/qt-03-elcapitan.patch
+	#cd $(qt) && OPENSSL_LIBS="-L$(prefix)/lib -lssl -lcrypto" ./configure
 	cd $(qt) && ./configure \
 		-release \
 		-opensource -confirm-license \
@@ -335,7 +363,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		-no-script -no-scripttools \
 		-nomake demos -nomake examples \
 		-no-exceptions \
-		-no-sql-sqlite
+		-system-sqlite \
+		-openssl-linked \
+		-I$(prefix)/include
 	cd $(qt) && $(make)
 	cd $(qt) && make install
 	cd $(stow) && stow -R $(qt)
@@ -349,6 +379,5 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-chromaprint: .done-fftw
 	$(call extractpkg,$(chromaprinttgz))
-	patch -d $(chromaprint) -p0 < patches/chromaprint-01-pkgconfig.patch
 	$(call buildpkgcmake,$(chromaprint))
 	$(call installpkgcmake,$(chromaprint))
