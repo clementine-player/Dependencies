@@ -325,7 +325,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis
 	$(call extractpkg,$(gstbasetgz))
-	cd $(gstbase) && patch -p0 < ../patches/gst-plugins-base-01-format.patch
 	cd $(gstbase) && autoreconf
 	cd $(gstbase) && $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm
 	cd $(gstbase) && $(make)
