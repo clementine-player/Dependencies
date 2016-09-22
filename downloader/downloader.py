@@ -78,6 +78,14 @@ FILES = [
     ('zlib-1.2.8.tar.gz', '44d667c142d7cda120332623eab69f40'),
 ]
 
+# Sometimes download will fail because Google Drive server can't handle the
+# request and reply with the following message:
+# "The server encountered a temporary error and could not complete your request"
+# As a workaround, if we encounter the md5 corresponding to this HTML page
+# error, we try again, up to NB_RETRY_FAIL times
+GOOGLEDRIVE_ERROR_MD5 = "04ec10b0d8ad81a96bf495e247c36137"
+NB_RETRY_FAIL = 5
+
 
 def Md5File(path):
   """Returns the MD5 checksum of a file, or None if it doesn't exist."""
@@ -110,12 +118,15 @@ def DownloadFiles(flags):
     actual_md5_checksum = Md5File(path)
 
     # Download it if the file doesn't exist or if the checksum doesn't match.
-    if actual_md5_checksum != md5_checksum:
+    nb_retry = 0
+    while actual_md5_checksum != md5_checksum or \
+        (actual_md5_checksum == GOOGLEDRIVE_ERROR_MD5 and nb_retry < NB_RETRY_FAIL):
       url = DOWNLOAD_URL % (FOLDER_ID, name)
 
       print 'Downloading %s...' % name
       urllib.urlretrieve(url, path)
       actual_md5_checksum = Md5File(path)
+      nb_retry = nb_retry + 1
 
     # If the checksum still didn't match the download must have failed.
     if actual_md5_checksum != md5_checksum:
