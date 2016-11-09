@@ -576,7 +576,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
 
-	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON
+	cd $(taglib)/build && $(cmake) -DWITH_ASF=ON -DWITH_MP4=ON -DBUILD_SHARED_LIBS=ON
 	cd $(taglib)/build && $(make)
 	rm -rf $(stow)/$(taglib)
 	cd $(taglib)/build && make install DESTDIR=$(stow)/$(taglib)
