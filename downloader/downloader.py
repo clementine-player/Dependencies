@@ -5,8 +5,8 @@ import sys
 import urllib
 
 
-DOWNLOAD_URL = 'https://googledrive.com/host/%s/%s'
-FOLDER_ID = '0Byds9jlkR0IxbXVUa1Flb3h6bjQ'
+DOWNLOAD_URL = 'https://storage.googleapis.com/clementine-data.appspot.com/Build%20dependencies/'
+
 FILES = [
     # filename, md5sum
     ('boost-1.50.tar.bz2', '5c0fdd406d965855e77f435d63a5d729'),
@@ -111,7 +111,7 @@ def DownloadFiles(flags):
 
     # Download it if the file doesn't exist or if the checksum doesn't match.
     if actual_md5_checksum != md5_checksum:
-      url = DOWNLOAD_URL % (FOLDER_ID, name)
+      url = DOWNLOAD_URL + name
 
       print 'Downloading %s...' % name
       urllib.urlretrieve(url, path)
