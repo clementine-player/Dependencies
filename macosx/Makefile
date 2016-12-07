@@ -19,7 +19,7 @@ qttgz=$(downloads)/$(qt).tar.gz
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
 cflags=-m64 -I$(prefix)/include --stdlib=libc++ -Qunused-arguments -isysroot /Developer/SDKs/MacOSX10.10.sdk
-ldflags=-m64 -L$(prefix)/lib -lc++ -Wl,-headerpad_max_install_names
+ldflags=-Wl,-syslibroot,/Developer/SDKs/MacOSX10.10.sdk -m64 -L$(prefix)/lib -lc++ -Wl,-headerpad_max_install_names
 flagsm64=CC=$(cc) CXX=$(cxx) CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
 path=PATH=$(prefix)/bin:$$PATH
 configure=$(pkgconfig) $(flagsm64) $(path) ./configure --prefix=$(prefix) --build=$(build) --host=$(host)
