@@ -1,3 +1,9 @@
+host=x86_64-apple-darwin
+cc=clang
+cxx=clang++
+ranlib=$(host-ranlib)
+build=x86_64-linux-gnu
+
 # How many source files to build in parallel within each package
 jobs=-j8
 
@@ -14,11 +20,11 @@ qttgz=$(downloads)/$(qt).tar.gz
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
-cflags=-m64 -I$(prefix)/include --stdlib=libc++ -Qunused-arguments
+cflags=-m64 -I$(prefix)/include --stdlib=libc++ -Qunused-arguments -target x86_64-apple-darwin -isysroot /Developer/SDKs/MacOSX10.10.sdk
 ldflags=-m64 -L$(prefix)/lib -lc++ -Wl,-headerpad_max_install_names
-flagsm64=CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
+flagsm64=CC=$(cc) CXX=$(cxx) CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
 path=PATH=$(prefix)/bin:$$PATH
-configure=$(pkgconfig) $(flagsm64) $(path) ./configure --prefix=$(prefix) --build=x86_64-apple-darwin10.6.0
+configure=LD="x86_64-apple-darwin-ld" $(pkgconfig) $(flagsm64) $(path) ./configure --prefix=$(prefix) --build=$(build) --host=$(host)
 cmake=$(pkgconfig) cmake .. \
 	-DCMAKE_OSX_ARCHITECTURES=x86_64 \
 	-DCMAKE_INSTALL_PREFIX=$(prefix) \
@@ -326,8 +332,12 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
 	patch -d $(qt) -p1 < patches/qt-02-yosemite.patch
+	patch -d $(qt) -p0 < patches/qt-03-cfstrings.patch
 	cd $(qt) && ./configure \
 		-release \
+		-platform linux-g++-64 \
+		-xplatform macx-llvm -device-option CROSS_COMPILE=x86_64-apple-darwin- \
+		-little-endian \
 		-opensource -confirm-license \
 		-prefix $(stow)/$(qt) \
 		-no-phonon -no-webkit -no-xmlpatterns -no-qt3support \
