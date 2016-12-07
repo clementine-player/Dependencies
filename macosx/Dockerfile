@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 RUN apt-get update
-RUN apt-get install -y curl xz-utils build-essential gobjc++ git python stow
+RUN apt-get install -y curl xz-utils build-essential gobjc++ git python stow pkg-config libglib2.0-dev
 RUN curl -SL https://github.com/tpoechtrager/osxcross/raw/master/tarballs/cctools-886-ld64-264.3.102_db1f8d9.tar.xz | tar -xJ
 RUN cd cctools-886-ld64-264.3.102_db1f8d9/cctools && ./configure --prefix=/usr --target=x86_64-apple-darwin && make && make install
 RUN mkdir -p /Developer/SDKs
@@ -17,3 +17,6 @@ RUN mkdir -p /target/lib
 RUN mkdir -p /target/bin
 RUN cd /src/macosx && make all-downloads
 RUN cd /src/macosx && make opus
+ADD glib.cache /src/macosx/
+RUN chmod -w /src/macosx/glib.cache
+RUN cd /src/macosx && make glib

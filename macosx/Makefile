@@ -87,7 +87,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-glib: .done-gettext  .done-ffi
 	$(call extractpkg,$(glibtgz))
-	cd $(glib) && $(configure) --with-libiconv=native
+	cd $(glib) && $(configure) --with-libiconv=native --cache-file=../glib.cache
 	cd $(glib) && $(make)
 	rm -fv
 	$(call installpkg,$(glib))
