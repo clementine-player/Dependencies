@@ -64,7 +64,7 @@ FILES = [
     ('libusb-win32-bin-1.2.0.0.zip', 'd8e940655e8c43235de9cf979c041bad'),
     ('libvorbis-1.3.1.tar.gz', '016e523fac70bdd786258a9d15fd36e9'),
     ('libxml2-2.9.1.tar.gz', '9c0cfef285d5c4a5c80d00904ddab380'),
-    ('nettle-2.7.tar.gz', '2caa1bd667c35db71becb93c5d89737f'),
+    ('nettle-3.3.tar.gz', '10f969f78a463704ae73529978148dbe'),
     ('openssl-1.0.1m.tar.gz', 'd143d1555d842a069cb7cc34ba745a06'),
     ('opus-1.0.2.tar.gz', 'c503ad05a59ddb44deab96204401be03'),
     ('orc-0.4.16.tar.gz', 'e482932e544c847761449b106ecbc483'),
