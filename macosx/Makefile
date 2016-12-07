@@ -330,11 +330,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
 	patch -d $(qt) -p1 < patches/qt-02-yosemite.patch
-	patch -d $(qt) -p0 < patches/qt-03-cfstrings.patch
 	cd $(qt) && ./configure \
 		-release \
 		-platform linux-g++-64 \
-		-xplatform macx-llvm -device-option CROSS_COMPILE=x86_64-apple-darwin- \
+		-xplatform unsupported/macx-clang-libc++ -device-option CROSS_COMPILE=x86_64-apple-darwin- \
 		-little-endian \
 		-opensource -confirm-license \
 		-prefix $(stow)/$(qt) \
