@@ -19,5 +19,5 @@ RUN cd /src/macosx && make all-downloads
 RUN cd /src/macosx && make opus
 ADD glib.cache /src/macosx/
 RUN chmod -w /src/macosx/glib.cache
-RUN cd /src/macosx && make qt
+ENV GLIB_GENMARSHAL /usr/bin/glib-genmarshal
 RUN cd /src/macosx && make gst-plugins-good
