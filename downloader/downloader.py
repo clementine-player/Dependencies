@@ -58,7 +58,7 @@ FILES = [
      '255ae97cb6a108575c66f6fad37a5990'),
     ('libspotify-12.1.45-win32-release.zip',
      '27651f4d0139c8683dd047a25095fc5e'),
-    ('libtasn1-3.4.tar.gz', '21ec021c534b0f30b2834ce233c70f15'),
+    ('libtasn1-4.9.tar.gz', '3018d0f466a32b66dde41bb122e6cab6'),
     ('libtunepimp-0.5.3.tar.gz', '09649f983acef679a548344ba7a9bb2f'),
     ('libusb-1.0.8.tar.bz2', '37d34e6eaa69a4b645a19ff4ca63ceef'),
     ('libusb-win32-bin-1.2.0.0.zip', 'd8e940655e8c43235de9cf979c041bad'),

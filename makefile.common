@@ -67,7 +67,7 @@ mms=libmms-0.6.2
 mtp=libmtp-1.1.8
 nettle=nettle-3.3
 spotifymac=libspotify-12.1.45-Darwin-universal
-tasn1=libtasn1-3.4
+tasn1=libtasn1-4.9
 usb=libusb-1.0.8
 
 allpackages=$(boost) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
