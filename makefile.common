@@ -66,6 +66,7 @@ zlib=zlib-1.2.8
 mms=libmms-0.6.2
 mtp=libmtp-1.1.8
 nettle=nettle-3.3
+p11kit=p11-kit-0.23.2
 spotifymac=libspotify-12.1.45-Darwin-universal
 tasn1=libtasn1-4.9
 usb=libusb-1.0.8
@@ -127,6 +128,7 @@ oiltgz=$(downloads)/$(oil).tar.gz
 openssltgz=$(downloads)/$(openssl).tar.gz
 opustgz=$(downloads)/$(opus).tar.gz
 orctgz=$(downloads)/$(orc).tar.gz
+p11kittgz=$(downloads)/$(p11kit).tar.gz
 plisttgz=$(downloads)/$(plist).tar.bz2
 pthreadstgz=$(downloads)/$(pthreads).tar.gz
 protobuftgz=$(downloads)/$(protobuf).tar.bz2
@@ -215,6 +217,7 @@ oil: .done-oil
 openssl: .done-openssl
 opus: .done-opus
 orc: .done-orc
+p11kit: .done-p11kit
 protobuf: .done-protobuf
 pthreads: .done-pthreads
 pyqt: .done-pyqt
