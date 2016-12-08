@@ -271,7 +271,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-nettle: .done-gmp
 	$(call extractandbuild,$(nettletgz),$(nettle))
 
-.done-gnutls: .done-gcrypt .done-libtasn1 .done-nettle
+.done-gnutls: .done-gcrypt .done-libtasn1 .done-nettle .done-p11kit
 	$(call extractpkg,$(gnutlstgz))
 	cd $(gnutls) && $(configure) --with-libgcrypt --disable-cxx
 	cd $(gnutls) && $(make)
@@ -359,3 +359,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	patch -d $(chromaprint) -p0 < patches/chromaprint-01-pkgconfig.patch
 	$(call buildpkgcmake,$(chromaprint))
 	$(call installpkgcmake,$(chromaprint))
+
+.done-p11kit:
+	$(call extractandbuild,$(p11kittgz)$(p11kit))
