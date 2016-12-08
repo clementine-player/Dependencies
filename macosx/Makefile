@@ -211,7 +211,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-libquicktime:
 	$(call extractpkg,$(quicktimetgz))
-	cd $(quicktime) && $(configure) --without-doxygen --without-ffmpeg
+	cd $(quicktime) && $(configure) --without-doxygen --without-ffmpeg --without-lame --without-alsa --without-gtk --without-opengl
 	cd $(quicktime) && $(make)
 	$(call installpkg,$(quicktime))
 

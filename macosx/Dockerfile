@@ -11,7 +11,6 @@ RUN ln -s /usr/bin/clang++ /usr/bin/x86_64-apple-darwin-clang++
 RUN ln -s /usr/bin/clang /usr/bin/x86_64-apple-darwin-gcc
 RUN ln -s /usr/bin/clang++ /usr/bin/x86_64-apple-darwin-g++
 RUN git clone --branch=docker https://github.com/clementine-player/Dependencies /src
-ADD Makefile /src/macosx/Makefile
 RUN mkdir -p /target/stow
 RUN mkdir -p /target/lib
 RUN mkdir -p /target/bin
@@ -20,4 +19,5 @@ ADD glib.cache /src/macosx/
 ADD oil.cache /src/macosx/
 RUN chmod -w /src/macosx/*.cache
 ENV GLIB_GENMARSHAL /usr/bin/glib-genmarshal
-RUN cd /src/macosx && make oil
+ADD Makefile /src/macosx/Makefile
+RUN cd /src/macosx && make gst-plugins-bad
