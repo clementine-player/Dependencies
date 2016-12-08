@@ -21,4 +21,4 @@ ADD oil.cache /src/macosx/
 RUN chmod -w /src/macosx/*.cache
 ENV GLIB_GENMARSHAL /usr/bin/glib-genmarshal
 ADD Makefile /src/macosx/Makefile
-RUN cd /src/macosx && make libmpcdec
+RUN cd /src/macosx && make gst-plugins-bad

@@ -184,14 +184,13 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(gstbad) && $(configure) \
 				--disable-acm \
 				--disable-apple_media \
-				--disable-cog \
 				--disable-curl \
-				--disable-dirac \
 				--disable-dtls \
 				--disable-examples \
-				--disable-gsettings \
+				--disable-gl \
 				--disable-modplug \
 				--disable-ofa \
+				--disable-opengl \
 				--disable-rtmp \
 				--disable-zbar
 	cd $(gstbad) && $(make)
