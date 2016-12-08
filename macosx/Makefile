@@ -260,7 +260,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkg,$(mtp))
 
 .done-libmpcdec:
-	$(call extractandbuild,$(mpcdectgz),$(mpcdec))
+	$(call extractpkg,$(mpcdectgz))
+	cd $(mpcdec) && $(configure) --cache-file=../mpcdec.cache
+	cd $(mpcdec) && $(make)
+	$(call installpkg,$(mpcdec))
 
 .done-wavpack:
 	$(call extractandbuild,$(wavpacktgz),$(wavpack))
