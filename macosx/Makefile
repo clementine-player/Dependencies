@@ -164,9 +164,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(gstugly) && $(make)
 	$(call installpkg,$(gstugly))
 
-.done-oil:
+.done-oil: .done-glib
 	$(call extractpkg,$(oiltgz))
-	cd $(oil) && $(pkgconfig) $(flagsm64) $(path) CFLAGS="$(cflags) -fheinous-gnu-extensions" ./configure --prefix=$(prefix) --build=x86_64-apple-darwin10.6.0
+	cd $(oil) && $(pkgconfig) $(flagsm64) $(path) CFLAGS="$(cflags) -fheinous-gnu-extensions" ./configure --prefix=$(prefix) --build=$(build) --host=$(host) --cache-file=../oil.cache
 	cd $(oil) && $(make)
 	$(call installpkg,$(oil))
 
@@ -279,7 +279,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkg,$(gnutls))
 
 .done-libtasn1:
-	$(call extractandbuild,$(tasn1tgz),$(tasn1))
+	$(call extractpkg,$(tasn1tgz))
+	cd $(tasn1) && $(configure) --disable-gcc-warnings
+	cd $(tasn1) && $(make)
+	$(call installpkg,$(tasn1))
 
 .done-libgpgerror:
 	$(call extractandbuild,$(gpgerrortgz),$(gpgerror))
@@ -360,5 +363,5 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call buildpkgcmake,$(chromaprint))
 	$(call installpkgcmake,$(chromaprint))
 
-.done-p11kit:
-	$(call extractandbuild,$(p11kittgz)$(p11kit))
+.done-p11kit: .done-libtasn1 .done-ffi
+	$(call extractandbuild,$(p11kittgz),$(p11kit))

@@ -16,8 +16,8 @@ RUN mkdir -p /target/stow
 RUN mkdir -p /target/lib
 RUN mkdir -p /target/bin
 RUN cd /src/macosx && make all-downloads
-RUN cd /src/macosx && make opus
 ADD glib.cache /src/macosx/
-RUN chmod -w /src/macosx/glib.cache
+ADD oil.cache /src/macosx/
+RUN chmod -w /src/macosx/*.cache
 ENV GLIB_GENMARSHAL /usr/bin/glib-genmarshal
-RUN cd /src/macosx && make gst-plugins-good
+RUN cd /src/macosx && make oil
