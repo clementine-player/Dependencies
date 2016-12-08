@@ -25,7 +25,7 @@ FILES = [
     ('glib-2.42.0.tar.xz', '71af99768063ac24033ac738e2832740'),
     ('glib-networking-2.42.0.tar.xz', 'd1935e6974da7f39d265303c87a8389b'),
     ('gmp-5.1.3.tar.xz', 'e5fe367801ff067b923d1e6a126448aa'),
-    ('gnutls-3.2.12.tar.xz', 'f507365940de8f095e1d867c6f0842f6'),
+    ('gnutls-3.4.17.tar.xz', '03ea7575a43f58964635a5064cce4dc0'),
     ('gst-libav-1.8.3.tar.xz', 'b51a736147bacb40f85827a4e0ae0d2c'),
     ('gst-plugins-bad-1.8.3.tar.xz', '955281a43e98c5464563fa049e0a0911'),
     ('gst-plugins-base-1.8.3.tar.xz', '4d03dd81828ea6b98a44c8f1ab7f4976'),
