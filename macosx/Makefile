@@ -240,7 +240,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	touch $@
 
 .done-protobuf:
-	$(call extractandbuild,$(protobuftgz),$(protobuf))
+	$(call extractpkg,$(protobuftgz))
+	cd $(protobuf) && $(configure) --with-protoc=/usr/bin/protoc
+	cd $(protobuf) && $(make)
+	$(call installpkg,$(protobuf))
 
 .done-spotify:
 	unzip -o $(spotifymactgz) -d $(stow)
@@ -345,7 +348,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		-no-phonon -no-webkit -no-xmlpatterns -no-qt3support \
 		-no-declarative -no-audio-backend \
 		-no-script -no-scripttools \
-		-nomake demos -nomake examples \
+		-nomake demos -nomake examples -nomake tools \
 		-no-exceptions \
 		-no-sql-sqlite
 	cd $(qt) && $(make)
