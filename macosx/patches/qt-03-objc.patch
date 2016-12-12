@@ -20,7 +20,7 @@
  QMAKE_LINK       = $$QMAKE_CXX
  QMAKE_LINK_SHLIB = $$QMAKE_CXX
 --- configure.orig	2016-12-12 15:39:24.432336723 +0000
-+++ configure	2016-12-12 16:36:53.665900373 +0000
++++ configure	2016-12-12 17:56:44.744686195 +0000
 @@ -905,6 +905,7 @@
  XPLATFORM_INTEGRITY=no  # Whether target platform is INTEGRITY (*integrity*)
  XPLATFORM_SYMBIAN=no    # Whether target platform is SYMBIAN (*symbian*)
@@ -41,7 +41,7 @@
  # freetype support
  [ "x$CFG_EMBEDDED" != "xno" ] && CFG_LIBFREETYPE="$CFG_QWS_FREETYPE"
  [ "x$PLATFORM_MAC" = "xyes" ] && CFG_LIBFREETYPE=no
-+[ "x$XPLATFORM_MAC" = "xyes" ] && CFG_LIBFREETYPE=no
++[ "x$XPLATFORM_MAC" = "xyes" ] && CFG_LIBFREETYPE=no CFG_FRAMEWORK=yes
  [ "$XPLATFORM_MINGW" = "yes" ] && [ "$CFG_LIBFREETYPE" = "auto" ] && CFG_LIBFREETYPE=no
  if [ "$CFG_LIBFREETYPE" = "auto" ]; then
      if compileTest unix/freetype "FreeType"; then

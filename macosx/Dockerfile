@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 RUN apt-get update
-RUN apt-get install -y curl xz-utils build-essential gobjc++ git python stow pkg-config libglib2.0-dev bison flex protobuf-compiler
+RUN apt-get install -y curl xz-utils build-essential gobjc++ git python stow pkg-config libglib2.0-dev bison flex protobuf-compiler cmake
 RUN curl -SL https://github.com/tpoechtrager/osxcross/raw/master/tarballs/cctools-886-ld64-264.3.102_db1f8d9.tar.xz | tar -xJ
 RUN cd cctools-886-ld64-264.3.102_db1f8d9/cctools && ./configure --prefix=/usr --target=x86_64-apple-darwin && make && make install
 RUN mkdir -p /Developer/SDKs
@@ -22,4 +22,7 @@ RUN chmod -w /src/macosx/*.cache
 ENV GLIB_GENMARSHAL /usr/bin/glib-genmarshal
 ADD Makefile /src/macosx/Makefile
 ADD patches/qt-03-objc.patch /src/macosx/patches
+ADD Toolchain-Darwin.cmake /src/macosx/Toolchain-Darwin.cmake
 RUN cd /src/macosx && make qt
+RUN find -L /target/lib
+RUN cd /src/macosx && make liblastfm

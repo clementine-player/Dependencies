@@ -24,17 +24,20 @@ flagsm64=CC=$(cc) CXX=$(cxx) CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(
 path=PATH=$(prefix)/bin:$$PATH
 configure=$(pkgconfig) $(flagsm64) $(path) ./configure --prefix=$(prefix) --build=$(build) --host=$(host)
 cmake=$(pkgconfig) cmake .. \
+	-DCMAKE_TOOLCHAIN_FILE=$(src)/macosx/Toolchain-Darwin.cmake \
 	-DCMAKE_OSX_ARCHITECTURES=x86_64 \
 	-DCMAKE_INSTALL_PREFIX=$(prefix) \
 	-DQT_HEADERS_DIR=$(prefix)/include/ \
-	-DQT_LIBRARY_DIR=$(prefix)/bin \
-	-DQT_QMAKE_EXECUTABLE=$(prefix)/bin/qmake \
+	-DQT_LIBRARY_DIR=$(prefix)/lib \
+	-DQT_BINARY_DIR=$(prefix)/bin \
+	-DQT_MKSPECS_DIR=$(prefix)/mkspecs \
+	-DQT_USE_FRAMEWORKS=ON
 	-DCMAKE_C_FLAGS="$(cflags)" \
 	-DCMAKE_CXX_FLAGS="$(cflags)" \
 	-DCMAKE_EXE_LINKER_FLAGS="$(ldflags)"
 make=$(path) make $(jobs)
 slowmake=$(path) make
-extractpkg=tar -xvf $(1)
+extractpkg=tar -xf $(1)
 buildpkg=(cd $(1) && $(configure) && $(make))
 buildpkgcmake=(cd $(1) && mkdir build ; cd build && $(cmake) && $(make))
 installpkg=rm -rf $(stow)/$(1) && \
@@ -355,9 +358,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		-no-script -no-scripttools \
 		-nomake demos -nomake examples -nomake tools \
 		-no-exceptions \
-		-no-sql-sqlite \
-		-verbose
-	cd $(qt) && $(path) make
+		-no-sql-sqlite
+	cd $(qt) && $(make)
 	cd $(qt) && make install
 	cd $(stow) && stow -R $(qt)
 	touch $(work)/$@
