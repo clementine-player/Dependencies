@@ -21,4 +21,5 @@ ADD oil.cache /src/macosx/
 RUN chmod -w /src/macosx/*.cache
 ENV GLIB_GENMARSHAL /usr/bin/glib-genmarshal
 ADD Makefile /src/macosx/Makefile
-RUN cd /src/macosx && make protobuf
+ADD patches/qt-03-objc.patch /src/macosx/patches
+RUN cd /src/macosx && make qt

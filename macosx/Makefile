@@ -338,10 +338,15 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call extractpkg,$(qttgz))
 	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
 	patch -d $(qt) -p1 < patches/qt-02-yosemite.patch
-	cd $(qt) && ./configure \
+	patch -d $(qt) -p0 < patches/qt-03-objc.patch
+	cd $(qt) && QMAKE_CFLAGS="$(cflags) -target x86_64-apple-darwin" QMAKE_CXXFLAGS="$(cflags) -target x86_64-apple-darwin" QMAKE_OBJECTIVE_CFLAGS="$(cflags)" ./configure \
 		-release \
 		-platform linux-g++-64 \
 		-xplatform unsupported/macx-clang-libc++ -device-option CROSS_COMPILE=x86_64-apple-darwin- \
+		-sysroot /Developer/SDKs/MacOSX10.10.sdk \
+		-no-pch \
+		-no-fontconfig \
+		-no-freetype \
 		-little-endian \
 		-opensource -confirm-license \
 		-prefix $(stow)/$(qt) \
@@ -350,8 +355,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		-no-script -no-scripttools \
 		-nomake demos -nomake examples -nomake tools \
 		-no-exceptions \
-		-no-sql-sqlite
-	cd $(qt) && $(make)
+		-no-sql-sqlite \
+		-verbose
+	cd $(qt) && $(path) make
 	cd $(qt) && make install
 	cd $(stow) && stow -R $(qt)
 	touch $(work)/$@

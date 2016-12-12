@@ -1,0 +1,45 @@
+--- mkspecs/unsupported/macx-clang-libc++/qmake.conf.orig	2016-12-12 14:44:58.028209886 +0000
++++ mkspecs/unsupported/macx-clang-libc++/qmake.conf	2016-12-12 14:45:57.496798498 +0000
+@@ -25,3 +25,5 @@
+ QMAKE_OBJCXXFLAGS_USE_PRECOMPILE = $$QMAKE_CFLAGS_USE_PRECOMPILE
+ 
+ load(qt_config)
++
++QMAKE_OBJECTIVE_CFLAGS += -stdlib=libc++ -isysroot /Developer/SDKs/MacOSX10.10.sdk
+--- mkspecs/common/clang.conf.orig	2016-12-12 15:16:32.378894101 +0000
++++ mkspecs/common/clang.conf	2016-12-12 15:16:45.487022910 +0000
+@@ -2,8 +2,8 @@
+ # Qmake configuration for Clang on Linux and Mac
+ #
+ 
+-QMAKE_CC  = clang
+-QMAKE_CXX = clang++
++QMAKE_CC  = x86_64-apple-darwin-clang
++QMAKE_CXX = x86_64-apple-darwin-clang++
+ 
+ QMAKE_LINK       = $$QMAKE_CXX
+ QMAKE_LINK_SHLIB = $$QMAKE_CXX
+--- configure.orig	2016-12-12 15:39:24.432336723 +0000
++++ configure	2016-12-12 15:54:28.525126658 +0000
+@@ -8359,7 +8359,7 @@
+ # if both carbon and cocoa are specified, enable the autodetection code.
+ if [ "$PLATFORM_MAC" = "yes" -a "$CFG_MAC_COCOA" = "yes" -a "$CFG_MAC_CARBON" = "yes" ]; then
+     echo "#define QT_AUTODETECT_COCOA 1" >>"$outpath/src/corelib/global/qconfig.h.new"
+-elif [ "$PLATFORM_MAC" = "yes" -a "$CFG_MAC_COCOA" = "yes" ]; then
++elif [ "$CFG_MAC_COCOA" = "yes" ]; then
+     echo "#define QT_MAC_USE_COCOA 1" >>"$outpath/src/corelib/global/qconfig.h.new"
+ fi
+ 
+@@ -8768,9 +8768,9 @@
+ 
+ # Ensure we can link to uninistalled libraries
+ QMAKE_COMPILER="`getQMakeConf QMAKE_CXX`"
+-if [ "$XPLATFORM_MINGW" != "yes" ] && [ "$CFG_EMBEDDED" != "nacl" ] && linkerSupportsFlag "$QMAKE_COMPILER" -rpath-link "$outpath/lib"; then
+-    echo "QMAKE_LFLAGS    = -Wl,-rpath-link,\$\$QT_BUILD_TREE/lib \$\$QMAKE_LFLAGS" >> "$CACHEFILE.tmp"
+-fi
++#if [ "$XPLATFORM_MINGW" != "yes" ] && [ "$CFG_EMBEDDED" != "nacl" ] && linkerSupportsFlag "$QMAKE_COMPILER" -rpath-link "$outpath/lib"; then
++#    echo "QMAKE_LFLAGS    = -Wl,-rpath-link,\$\$QT_BUILD_TREE/lib \$\$QMAKE_LFLAGS" >> "$CACHEFILE.tmp"
++#fi
+ if [ -n "$QT_CFLAGS_PSQL" ]; then
+     echo "QT_CFLAGS_PSQL   = $QT_CFLAGS_PSQL" >> "$CACHEFILE.tmp"
+ fi
