@@ -20,8 +20,32 @@
  QMAKE_LINK       = $$QMAKE_CXX
  QMAKE_LINK_SHLIB = $$QMAKE_CXX
 --- configure.orig	2016-12-12 15:39:24.432336723 +0000
-+++ configure	2016-12-12 15:54:28.525126658 +0000
-@@ -8359,7 +8359,7 @@
++++ configure	2016-12-12 16:36:53.665900373 +0000
+@@ -905,6 +905,7 @@
+ XPLATFORM_INTEGRITY=no  # Whether target platform is INTEGRITY (*integrity*)
+ XPLATFORM_SYMBIAN=no    # Whether target platform is SYMBIAN (*symbian*)
+ XPLATFORM_SYMBIAN_SBSV2=no # Whether target platform is SYMBIAN_SBSV2 (symbian-sbsv2)
++XPLATFORM_MAC=no
+ XPLATFORM_QNX=no
+ PLATFORM=$QMAKESPEC
+ QT_CROSS_COMPILE=no
+@@ -1709,6 +1710,7 @@
+         case "$XPLATFORM" in *symbian*) XPLATFORM_SYMBIAN=yes;; esac
+         case "$XPLATFORM" in symbian-sbsv2) XPLATFORM_SYMBIAN_SBSV2=yes;; esac
+         case "$XPLATFORM" in *qnx-*|*blackberry-*) XPLATFORM_QNX=yes;; esac
++        case "$XPLATFORM" in *mac*) XPLATFORM_MAC=yes;; esac
+         ;;
+     device-option)
+         DEV_VAR=`echo $VAL | sed "s,^\(.*\)=.*,\1,"`
+@@ -6733,6 +6735,7 @@
+ # freetype support
+ [ "x$CFG_EMBEDDED" != "xno" ] && CFG_LIBFREETYPE="$CFG_QWS_FREETYPE"
+ [ "x$PLATFORM_MAC" = "xyes" ] && CFG_LIBFREETYPE=no
++[ "x$XPLATFORM_MAC" = "xyes" ] && CFG_LIBFREETYPE=no
+ [ "$XPLATFORM_MINGW" = "yes" ] && [ "$CFG_LIBFREETYPE" = "auto" ] && CFG_LIBFREETYPE=no
+ if [ "$CFG_LIBFREETYPE" = "auto" ]; then
+     if compileTest unix/freetype "FreeType"; then
+@@ -8359,7 +8362,7 @@
  # if both carbon and cocoa are specified, enable the autodetection code.
  if [ "$PLATFORM_MAC" = "yes" -a "$CFG_MAC_COCOA" = "yes" -a "$CFG_MAC_CARBON" = "yes" ]; then
      echo "#define QT_AUTODETECT_COCOA 1" >>"$outpath/src/corelib/global/qconfig.h.new"
@@ -30,7 +54,7 @@
      echo "#define QT_MAC_USE_COCOA 1" >>"$outpath/src/corelib/global/qconfig.h.new"
  fi
  
-@@ -8768,9 +8768,9 @@
+@@ -8768,9 +8771,9 @@
  
  # Ensure we can link to uninistalled libraries
  QMAKE_COMPILER="`getQMakeConf QMAKE_CXX`"
