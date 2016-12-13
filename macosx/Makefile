@@ -63,8 +63,8 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 
 # Top-level targets
-clementine-build-deps: boost liblastfm taglib libmtp \
-                       libgpod gstreamer glew qjson chromaprint \
+clementine-build-deps: boost liblastfm taglib \
+                       libgpod gstreamer qjson chromaprint \
                        protobuf spotify fftw sparsehash qt echonest
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-libav
@@ -75,7 +75,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-qjson: .done-qt
 	$(call extractpkg,$(qjsontgz))
 	$(call buildpkgcmake,$(qjson))
-	sed -e 's/QtCore//' -i "" $(qjson)/build/QJson.pc
+	sed -e 's/QtCore//' -i $(qjson)/build/QJson.pc
 	$(call installpkgcmake,$(qjson))
 
 .done-sqlite:
@@ -332,10 +332,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkg,$(cdio))
 
 .done-sparsehash:
-	$(call extractpkg,$(sparsehashtgz))
-	cd $(sparsehash) && patch -p1 < ../patches/sparsehash-01-allocator.patch
-	$(call buildpkg,$(sparsehash))
-	$(call installpkg,$(sparsehash))
+	$(call extractandbuild,$(sparsehashtgz),$(sparsehash))
 
 .done-qt:
 	$(call extractpkg,$(qttgz))
@@ -361,13 +358,14 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		-no-sql-sqlite
 	cd $(qt) && $(make)
 	cd $(qt) && make install
+	mkdir $(stow)/$(qt)/include
 	cd $(stow) && stow -R $(qt)
 	touch $(work)/$@
 
 .done-opus:
 	$(call extractandbuild,$(opustgz),$(opus))
 
-.done-echonest: .done-qjson .done-qt
+.done-echonest: .done-qjson .done-qt .done-boost
 	$(call extractandbuildcmake,$(echonesttgz),$(echonest))
 
 .done-chromaprint: .done-fftw
