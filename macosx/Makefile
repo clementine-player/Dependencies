@@ -1,6 +1,7 @@
 host=x86_64-apple-darwin
 ranlib=$(host-ranlib)
 build=x86_64-linux-gnu
+sdk=/Developer/SDKs/MacOSX10.10.sdk
 
 # How many source files to build in parallel within each package
 jobs=-j8
@@ -18,8 +19,8 @@ qttgz=$(downloads)/$(qt).tar.gz
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
-cflags=-m64 -I$(prefix)/include --stdlib=libc++ -Qunused-arguments -isysroot /Developer/SDKs/MacOSX10.10.sdk
-ldflags=-Wl,-syslibroot,/Developer/SDKs/MacOSX10.10.sdk -m64 -L$(prefix)/lib -lc++ -Wl,-headerpad_max_install_names
+cflags=-m64 -I$(prefix)/include --stdlib=libc++ -Qunused-arguments -isysroot $(sdk)
+ldflags=-Wl,-syslibroot,$(sdk) -m64 -L$(prefix)/lib -lc++ -Wl,-headerpad_max_install_names
 flagsm64=CC=$(cc) CXX=$(cxx) CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
 path=PATH=$$PATH:$(prefix)/bin
 configure=$(pkgconfig) $(flagsm64) $(path) ./configure --prefix=$(prefix) --build=$(build) --host=$(host)
@@ -305,16 +306,16 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	$(call installpkgcmake,$(proxy))
 
 
-.done-glib-networking: .done-glib .done-gnutls .done-libproxy
+.done-glibnetworking: .done-glib .done-gnutls .done-libproxy
 	$(call extractpkg,$(glibnetworkingtgz))
 	cd $(glibnetworking) && $(configure) --without-ca-certificates
 	cd $(glibnetworking) && $(make)
 	$(call installpkg,$(glibnetworking))
 
-.done-libsoup: .done-glib .done-gnutls .done-glib-networking  .done-gettext
+.done-libsoup: .done-glib .done-gnutls .done-glibnetworking  .done-gettext .done-sqlite
 	$(call extractpkg,$(souptgz))
 	cd $(soup) && patch -p0 < ../patches/libsoup-01-sym.patch
-	cd $(soup) && $(configure) --without-gnome
+	cd $(soup) && XML_CFLAGS="-I$(sdk)/usr/include/libxml2" $(configure) --without-gnome
 	cd $(soup) && $(make)
 	$(call installpkg,$(soup))
 
@@ -343,7 +344,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 		-release \
 		-platform linux-g++-64 \
 		-xplatform unsupported/macx-clang-libc++ -device-option CROSS_COMPILE=x86_64-apple-darwin- \
-		-sysroot /Developer/SDKs/MacOSX10.10.sdk \
+		-sysroot $(sdk) \
 		-no-pch \
 		-no-fontconfig \
 		-no-freetype \
