@@ -21,7 +21,7 @@ qttgz=$(downloads)/$(qt).tar.gz
 pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
 cflags=-m64 -I$(prefix)/include --stdlib=libc++ -Qunused-arguments -isysroot $(sdk)
 ldflags=-Wl,-syslibroot,$(sdk) -m64 -L$(prefix)/lib -lc++ -Wl,-headerpad_max_install_names
-flagsm64=CC=$(cc) CXX=$(cxx) CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
+flagsm64=CC=$(cc) CXX=$(cxx) CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)" OBJCFLAGS="$(cflags)"
 path=PATH=$$PATH:$(prefix)/bin
 configure=$(pkgconfig) $(flagsm64) $(path) ./configure --prefix=$(prefix) --build=$(build) --host=$(host)
 cmake=$(pkgconfig) cmake .. \
@@ -185,7 +185,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libquicktime .done-libmpcdec .done-opus
 	$(call extractpkg,$(gstbadtgz))
-	cd $(gstbad) && $(configure) \
+	cd $(gstbad) && LIBXML2_CFLAGS="-I$(sdk)/usr/include/libxml2" $(configure) \
 				--disable-acm \
 				--disable-apple_media \
 				--disable-curl \
