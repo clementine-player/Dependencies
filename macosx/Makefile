@@ -21,7 +21,7 @@ pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/
 cflags=-m64 -I$(prefix)/include --stdlib=libc++ -Qunused-arguments -isysroot /Developer/SDKs/MacOSX10.10.sdk
 ldflags=-Wl,-syslibroot,/Developer/SDKs/MacOSX10.10.sdk -m64 -L$(prefix)/lib -lc++ -Wl,-headerpad_max_install_names
 flagsm64=CC=$(cc) CXX=$(cxx) CFLAGS="$(cflags)" CXXFLAGS="$(cflags)" LDFLAGS="$(ldflags)" LFLAGS="$(ldflags)"
-path=PATH=$(prefix)/bin:$$PATH
+path=PATH=$$PATH:$(prefix)/bin
 configure=$(pkgconfig) $(flagsm64) $(path) ./configure --prefix=$(prefix) --build=$(build) --host=$(host)
 cmake=$(pkgconfig) cmake .. \
 	-DCMAKE_TOOLCHAIN_FILE=$(src)/macosx/Toolchain-Darwin.cmake \
@@ -31,7 +31,7 @@ cmake=$(pkgconfig) cmake .. \
 	-DQT_LIBRARY_DIR=$(prefix)/lib \
 	-DQT_BINARY_DIR=$(prefix)/bin \
 	-DQT_MKSPECS_DIR=$(prefix)/mkspecs \
-	-DQT_USE_FRAMEWORKS=ON
+	-DQT_USE_FRAMEWORKS=ON \
 	-DCMAKE_C_FLAGS="$(cflags)" \
 	-DCMAKE_CXX_FLAGS="$(cflags)" \
 	-DCMAKE_EXE_LINKER_FLAGS="$(ldflags)"
