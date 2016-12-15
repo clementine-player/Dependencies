@@ -66,7 +66,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 # Top-level targets
 clementine-build-deps: boost liblastfm taglib \
                        libgpod gstreamer qjson chromaprint \
-                       protobuf spotify fftw sparsehash qt echonest
+                       protobuf spotify fftw sparsehash qt echonest glew
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-libav
 clementine-deps: clementine-build-deps clementine-gst-plugins
@@ -321,8 +321,24 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-glew:
 	$(call extractpkg,$(glewtgz))
-	cd $(glew) && $(make) CFLAGS.EXTRA=-m64 LDFLAGS.EXTRA=-m64 GLEW_DEST=$(stow)/$(glew)
-	cd $(glew) && make install GLEW_DEST=$(stow)/$(glew)
+	cd $(glew) && $(make) \
+			GLEW_DEST=$(stow)/$(glew) \
+			SYSTEM=darwin \
+			CC=$(host)-gcc \
+			CFLAGS="$(cflags) -I./include" \
+			LD=$(host)-gcc \
+			LDFLAGS.SO="-Wl,-syslibroot,$(sdk) -dynamiclib" \
+			STRIP=x86_64-apple-darwin-strip
+	cd $(glew) && make \
+			GLEW_DEST=$(stow)/$(glew) \
+			SYSTEM=darwin \
+			CC=$(host)-gcc \
+			CFLAGS="$(cflags) -I./include" \
+			LD=$(host)-gcc \
+			LDFLAGS.SO="-Wl,-syslibroot,$(sdk) -dynamiclib" \
+			STRIP=x86_64-apple-darwin-strip \
+			INSTALL="install --strip-program=x86_64-apple-darwin-strip" \
+			install
 	cd $(stow) && stow -R $(glew)
 	touch $(work)/$@
 
