@@ -77,7 +77,7 @@ FILES = [
     ('qt-everywhere-opensource-src-4.8.6.tar.gz',
      '2edbe4d6c2eff33ef91732602f3518eb'),
     ('sparsehash-sparsehash-2.0.3.tar.gz', 'd8d5e2538c1c25577b3f066d7a55e99e'),
-    ('speex-1.2rc1.tar.gz', 'c4438b22c08e5811ff10e2b06ee9b9ae'),
+    ('speex-1.2.0.tar.gz', '8ab7bb2589110dfaf0ed7fa7757dc49c'),
     ('sqlite-amalgamation-3.7.0.tar.gz', '61b85f108760f91b79afc7833e6e6cb4'),
     ('taglib-1.11.tar.gz', 'be39fa2054df40664cb557126ad7cf7c'),
     ('wavpack-4.60.1.tar.bz2', '7bb1528f910e4d0003426c02db856063'),
