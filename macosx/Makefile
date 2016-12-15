@@ -125,7 +125,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(gst) && $(make)
 	$(call installpkg,$(gst))
 
-.done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis
+.done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis .done-opus
 	$(call extractpkg,$(gstbasetgz))
 	cd $(gstbase) && $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm --disable-theora
 	cd $(gstbase) && $(make)
