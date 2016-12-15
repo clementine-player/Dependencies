@@ -140,10 +140,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-vorbis: .done-ogg
 	$(call extractandbuild,$(vorbistgz),$(vorbis))
 
-.done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-wavpack .done-libsoup
+.done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-wavpack .done-libsoup .done-speex .done-taglib
 	$(call extractpkg,$(gstgoodtgz))
 	cd $(gstgood) && patch -p1 < ../patches/gst-plugins-good-01-equalizer-writeable-buffers.patch
-	cd $(gstgood) && SOUP_CFLAGS=-I$(prefix)/include/libsoup-2.4 $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace --disable-osx_video --disable-aalib --disable-libdv --disable-libpng --disable-cairo --disable-esd --disable-libcaca --disable-speex --disable-taglib
+	cd $(gstgood) && TAGLIB_LIBS="-ltag -lz -L/target/lib" SOUP_CFLAGS=-I$(prefix)/include/libsoup-2.4 $(configure) --disable-shout2 --disable-examples --disable-x --disable-deinterlace --disable-osx_video --disable-aalib --disable-libdv --disable-libpng --disable-cairo --disable-esd --disable-libcaca
 	cd $(gstgood) && $(make)
 	$(call installpkg,$(gstgood))
 
