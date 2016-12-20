@@ -25,3 +25,7 @@ ADD patches/qt-03-objc.patch /src/macosx/patches
 ADD Toolchain-Darwin.cmake /src/macosx/Toolchain-Darwin.cmake
 ADD https://raw.githubusercontent.com/Homebrew/brew/bbed7246bc5c5b7acb8c1d427d10b43e090dfd39/Library/Homebrew/os/mac/pkgconfig/10.10/libxml-2.0.pc /target/lib/pkgconfig/libxml-2.0.pc
 RUN cd /src/macosx && make clementine-deps
+RUN apt-get install -y qt4-dev-tools
+RUN git clone https://github.com/clementine-player/libdmg-hfsplus
+RUN mkdir libdmg-hfsplus/bin
+RUN cd libdmg-hfsplus/bin && cmake .. -DCMAKE_INSTALL_PREFIX=/usr && make && make install
