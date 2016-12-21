@@ -34,7 +34,7 @@ clementine_dlls=glew32.dll \
                 libglib-2.0-0.dll \
                 libgmodule-2.0-0.dll \
                 libgmp-10.dll \
-                libgnutls-28.dll \
+                libgnutls-30.dll \
                 libgobject-2.0-0.dll \
                 libgpg-error-0.dll \
                 libgpod.dll \
@@ -68,7 +68,7 @@ clementine_dlls=glew32.dll \
                 liborc-0.4-0.dll \
                 liborc-test-0.4-0.dll \
                 libplist.dll \
-                libprotobuf-8.dll \
+                libprotobuf-9.dll \
                 libqjson.dll \
                 libspeex-1.dll \
                 libspotify.dll \
