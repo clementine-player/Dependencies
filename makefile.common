@@ -211,6 +211,7 @@ libtasn1: .done-libtasn1
 libxml: .done-libxml
 mad: .done-mad
 libmtp: .done-libmtp
+nettle: .done-nettle
 ofa: .done-ofa
 ogg: .done-ogg
 oil: .done-oil
