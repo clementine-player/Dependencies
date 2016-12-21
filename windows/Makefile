@@ -67,6 +67,7 @@ clementine_dlls=glew32.dll \
                 libopus-0.dll \
                 liborc-0.4-0.dll \
                 liborc-test-0.4-0.dll \
+                libp11-kit-0.dll \
                 libplist.dll \
                 libprotobuf-9.dll \
                 libqjson.dll \
