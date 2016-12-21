@@ -277,7 +277,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(tasn1) && $(make)
 	$(call installpkg,$(tasn1))
 
-.done-libgnutls: .done-gcrypt .done-libtasn1 .done-nettle
+.done-libgnutls: .done-gcrypt .done-libtasn1 .done-nettle .done-p11kit
 	$(call extractandbuild,$(gnutlstgz),$(gnutls))
 
 .done-win7sdk:
@@ -775,3 +775,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(chromaprint)/build && mv -fv $(stow)/$(chromaprint)$(prefix)/* $(stow)/$(chromaprint)
 	cd $(stow) && stow -R $(chromaprint)
 	touch $@
+
+.done-p11kit: .done-libtasn1 .done-ffi
+	$(call extractandbuild,$(p11kittgz),$(p11kit))
