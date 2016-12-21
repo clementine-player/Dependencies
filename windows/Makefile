@@ -272,7 +272,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call installpkg,$(gcrypt))
 
 .done-libtasn1:
-	$(call extractandbuild,$(tasn1tgz),$(tasn1))
+	$(call extractpkg,$(tasn1tgz))
+	cd $(tasn1) && $(configure) --disable-gcc-warnings
+	cd $(tasn1) && $(make)
+	$(call installpkg,$(tasn1))
 
 .done-libgnutls: .done-gcrypt .done-libtasn1 .done-nettle
 	$(call extractandbuild,$(gnutlstgz),$(gnutls))
