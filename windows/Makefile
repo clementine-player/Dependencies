@@ -53,7 +53,7 @@ clementine_dlls=glew32.dll \
                 libgsttag-1.0-0.dll \
                 libgstvideo-1.0-0.dll \
                 libgthread-2.0-0.dll \
-                libhogweed-2-4.dll \
+                libhogweed-4.dll \
                 libiconv-2.dll \
                 libid3tag.dll \
                 libintl-8.dll \
@@ -61,7 +61,7 @@ clementine_dlls=glew32.dll \
                 libmad.dll \
                 libmms-0.dll \
                 libmp3lame-0.dll \
-                libnettle-4-6.dll \
+                libnettle-6.dll \
                 libogg-0.dll \
                 liboil-0.3-0.dll \
                 libopus-0.dll \
@@ -258,8 +258,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-nettle: .done-gmp
 	$(call extractpkg,$(nettletgz))
 	cd $(nettle) && $(configure)
-	cd $(nettle) && $(make) libnettle-4-6.dll
-	cd $(nettle) && $(make) libhogweed-2-4.dll
+	cd $(nettle) && $(make) libnettle-6.dll
+	cd $(nettle) && $(make) libhogweed-4.dll
 	$(call installpkg,$(nettle))
 
 .done-libgpgerror:
