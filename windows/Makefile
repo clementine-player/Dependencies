@@ -681,20 +681,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	touch $@
 
 .done-protobuf:
-	# Compile a host version first for protoc
 	$(call extractpkg,$(protobuftgz))
-	-cd $(protobuf) && make clean
-	cd $(protobuf) && ./configure --prefix=$(prefix)
+	cd $(protobuf) && $(configure) --with-protoc=/usr/bin/protoc
 	cd $(protobuf) && $(make)
-	cd $(protobuf) && make install
-	-rm -fv $(prefix)/lib/libproto*.la
-	-rm -fv $(prefix)/lib/libproto*.a
-	-rm -rfv $(prefix)/include/google
-	-rm -rf $(prefix)/lib/pkgconfig/protobuf*.pc
-	cd $(protobuf) && make clean
-
-	# Now do the target build
-	$(call extractandbuild,$(protobuftgz),$(protobuf))
+	$(call installpkg,$(protobuf))
 
 .done-spotify:
 	-mkdir -p $(stow)/$(spotifywin32)
