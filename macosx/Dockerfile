@@ -10,7 +10,7 @@ RUN ln -s /usr/bin/clang /usr/bin/x86_64-apple-darwin-clang
 RUN ln -s /usr/bin/clang++ /usr/bin/x86_64-apple-darwin-clang++
 RUN ln -s /usr/bin/clang /usr/bin/x86_64-apple-darwin-gcc
 RUN ln -s /usr/bin/clang++ /usr/bin/x86_64-apple-darwin-g++
-RUN git clone --branch=docker https://github.com/clementine-player/Dependencies /src
+RUN git clone --branch=master https://github.com/clementine-player/Dependencies /src
 RUN mkdir -p /target/stow
 RUN mkdir -p /target/lib
 RUN mkdir -p /target/bin
