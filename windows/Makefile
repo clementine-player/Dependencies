@@ -28,7 +28,7 @@ clementine_dlls=glew32.dll \
                 libfaad.dll \
                 libffi-6.dll \
                 libfftw3-3.dll \
-                libFLAC.dll \
+                libFLAC-8.dll \
                 libgcrypt-20.dll \
                 libgio-2.0-0.dll \
                 libglib-2.0-0.dll \
