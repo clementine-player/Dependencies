@@ -378,27 +378,11 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(wavpack) && $(make)
 	$(call installpkg,$(wavpack))
 
-.done-flac:
+.done-flac: .done-ogg
 	$(call extractpkg,$(flactgz))
-	cd $(flac) && patch -p0 < ../patches/flac-01-size-t-max.patch
-	cd $(flac) && patch -p0 < ../patches/flac-02-include.patch
-	cd $(flac) && $(configure)
+	cd $(flac) && $(configure) --disable-sse --disable-avx --disable-asm-optimizations
 	cd $(flac) && $(make)
-
-	# libtool is retarded and doesn't link this dll properly
-	cd $(flac)/src/libFLAC && /bin/bash ../../libtool --mode=link $(host)-gcc \
-		--shared  -I/target/include -O3 -funroll-loops -finline-functions \
-		-Wall -W -Winline -g -O2 -o libFLAC.dll -rpath $(prefix)/lib \
-		-version-info 10:0:2 -lm -lws2_32 *.lo -L$(prefix)/lib -logg
-
-	rm -rf $(stow)/$(flac)
-	cd $(flac) && make install DESTDIR=$(stow)/$(flac)
-	mv -fv $(stow)/$(flac)$(prefix)/* $(stow)/$(flac)/
-	cp $(flac)/src/libFLAC/libFLAC.dll $(stow)/$(flac)/bin
-	rm -f $(stow)/$(flac)/lib/libFLAC.*
-	sed -i.bak -e's/\/lib/\/bin/' $(stow)/$(flac)/lib/pkgconfig/*.pc
-	cd $(stow) && stow -R $(flac)
-	touch $@
+	$(call installpkg,$(flac))
 
 .done-speex: .done-ogg
 	$(call extractpkg,$(speextgz))
