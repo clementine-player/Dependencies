@@ -62,7 +62,7 @@ FILES = [
     ('libtunepimp-0.5.3.tar.gz', '09649f983acef679a548344ba7a9bb2f'),
     ('libusb-1.0.8.tar.bz2', '37d34e6eaa69a4b645a19ff4ca63ceef'),
     ('libusb-win32-bin-1.2.0.0.zip', 'd8e940655e8c43235de9cf979c041bad'),
-    ('libvorbis-1.3.1.tar.gz', '016e523fac70bdd786258a9d15fd36e9'),
+    ('libvorbis-1.3.6.tar.gz', 'd3190649b26572d44cd1e4f553943b31'),
     ('libxml2-2.9.1.tar.gz', '9c0cfef285d5c4a5c80d00904ddab380'),
     ('nettle-3.3.tar.gz', '10f969f78a463704ae73529978148dbe'),
     ('openssl-1.0.1m.tar.gz', 'd143d1555d842a069cb7cc34ba745a06'),
