@@ -183,7 +183,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-lame:
 	$(call extractandbuild,$(lametgz),$(lame))
 
-.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libquicktime .done-libmpcdec
+.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-libmms .done-oil .done-libquicktime .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && LIBXML2_CFLAGS="-I$(sdk)/usr/include/libxml2" $(configure) \
 				--disable-acm \
@@ -205,9 +205,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 
 .done-faad:
 	$(call extractandbuild,$(faadtgz),$(faad))
-
-.done-faac:
-	$(call extractandbuild,$(faactgz),$(faac))
 
 .done-libmms: .done-glib  .done-gettext
 	$(call extractandbuild,$(mmstgz),$(mms))
