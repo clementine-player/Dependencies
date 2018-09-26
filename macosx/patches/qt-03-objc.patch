@@ -5,7 +5,7 @@
  
  load(qt_config)
 +
-+QMAKE_OBJECTIVE_CFLAGS += -stdlib=libc++ -isysroot /Developer/SDKs/MacOSX10.10.sdk
++QMAKE_OBJECTIVE_CFLAGS += -stdlib=libc++ -isysroot /Developer/SDKs/MacOSX10.13.sdk -Wno-c++11-narrowing
 --- mkspecs/common/clang.conf.orig	2016-12-12 15:16:32.378894101 +0000
 +++ mkspecs/common/clang.conf	2016-12-12 15:16:45.487022910 +0000
 @@ -2,8 +2,8 @@

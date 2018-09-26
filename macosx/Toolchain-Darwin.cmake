@@ -5,7 +5,7 @@ set(CMAKE_SYSTEM_NAME Darwin)
 set(CMAKE_C_COMPILER x86_64-apple-darwin-clang)
 set(CMAKE_CXX_COMPILER x86_64-apple-darwin-clang++)
 
-set(CMAKE_OSX_SYSROOT /Developer/SDKs/MacOSX10.10.sdk)
+set(CMAKE_OSX_SYSROOT /Developer/SDKs/MacOSX10.13.sdk)
 
 # here is the target environment located
 set(CMAKE_FIND_ROOT_PATH /target ${CMAKE_OSX_SYSROOT})

@@ -1,7 +1,7 @@
 host=x86_64-apple-darwin
 ranlib=$(host-ranlib)
 build=x86_64-linux-gnu
-sdk=/Developer/SDKs/MacOSX10.10.sdk
+sdk=/Developer/SDKs/MacOSX10.13.sdk
 
 # How many source files to build in parallel within each package
 jobs=-j8
@@ -356,6 +356,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
 	patch -d $(qt) -p1 < patches/qt-02-yosemite.patch
 	patch -d $(qt) -p0 < patches/qt-03-objc.patch
+	patch -d $(qt) -p0 < patches/qt-04-highsierra.patch
 	cd $(qt) && QMAKE_CFLAGS="$(cflags) -target x86_64-apple-darwin" QMAKE_CXXFLAGS="$(cflags) -target x86_64-apple-darwin" QMAKE_OBJECTIVE_CFLAGS="$(cflags)" ./configure \
 		-release \
 		-platform linux-g++-64 \
