@@ -4,7 +4,6 @@ boost=boost-1.50
 cdio=libcdio-0.93
 chromaprint=chromaprint-1.1
 dlfcn=dlfcn-r19
-echonest=libechonest-2.3.0
 faac=faac-1.28
 faad=faad2-2.7
 ffi=libffi-3.0.11
@@ -80,7 +79,7 @@ allpackages=$(boost) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
 		$(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
 		$(gcrypt) $(spotifymac) $(gstlibav) $(mtp) $(mpcdec) \
 		$(wavpack) $(gnutls) $(tasn1) $(gpgerror) $(cdio) \
-		$(opensslwin32) $(glibnetworking) $(echonest)
+		$(opensslwin32) $(glibnetworking)
 
 downloads=$(src)/downloads
 
@@ -90,7 +89,6 @@ boosttgz=$(downloads)/$(boost).tar.bz2
 cdiotgz=$(downloads)/$(cdio).tar.gz
 chromaprinttgz=$(downloads)/$(chromaprint).tar.gz
 dlfcntgz=$(downloads)/dlfcn-win32-static-r19.tar.bz2
-echonesttgz=$(downloads)/$(echonest).tar.gz
 faactgz=$(downloads)/$(faac).tar.gz
 faadtgz=$(downloads)/$(faad).tar.gz
 ffitgz=$(downloads)/$(ffi).tar.gz
@@ -177,7 +175,6 @@ cdio: .done-cdio
 chromaprint: .done-chromaprint
 curl: .done-curl
 dlfcn: .done-dlfcn
-echonest: .done-echonest
 faac: .done-faac
 faad: .done-faad
 ffi: .done-ffi

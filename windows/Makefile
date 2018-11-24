@@ -23,7 +23,6 @@ clementine_dlls=glew32.dll \
                 libcdio-16.dll \
                 libchromaprint.dll \
                 libeay32.dll \
-                libechonest.dll \
                 libfaac.dll \
                 libfaad.dll \
                 libffi-6.dll \
@@ -172,7 +171,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 # Top-level targets
 clementine-build-deps: dlfcn boost liblastfm qt taglib \
                        libgpod glew gstreamer win7sdk qtsparkle chromaprint \
-                       protobuf spotify qjson fftw sparsehash pthreads echonest
+                       protobuf spotify qjson fftw sparsehash pthreads
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-libav
 
@@ -722,20 +721,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-opus:
 	$(call extractandbuild,$(opustgz),$(opus))
-
-.done-echonest: .done-qt .done-qjson
-	$(call extractpkg,$(echonesttgz))
-	-mkdir $(echonest)/build
-	cd $(echonest)/build && $(cmake) \
-		-DQT_HEADERS_DIR=$(prefix)/include/ \
-		-DQT_LIBRARY_DIR=$(prefix)/bin \
-		-DCMAKE_BUILD_TYPE=Release
-	cd $(echonest)/build && $(make)
-	rm -rf $(stow)/$(echonest)
-	cd $(echonest)/build && make install DESTDIR=$(stow)/$(echonest)
-	cd $(echonest)/build && mv -fv $(stow)/$(echonest)$(prefix)/* $(stow)/$(echonest)
-	cd $(stow) && stow -R $(echonest)
-	touch $@
 
 .done-chromaprint: .done-fftw
 	$(call extractpkg,$(chromaprinttgz))
