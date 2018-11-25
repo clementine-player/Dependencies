@@ -69,7 +69,9 @@ clementine_dlls=glew32.dll \
                 libp11-kit-0.dll \
                 libplist.dll \
                 libprotobuf-9.dll \
+                libpsl-5.dll \
                 libqjson.dll \
+                libsoup-2.4-1.dll \
                 libspeex-1.dll \
                 libspotify.dll \
                 libsqlite3-0.dll \
