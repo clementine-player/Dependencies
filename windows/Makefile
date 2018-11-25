@@ -141,7 +141,7 @@ pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
 autoconf=ACLOCAL_PATH=$(prefix)/share/aclocal:/usr/share/aclocal
 ldflags=-L$(prefix)/lib
 # -O2 is required to work around link errors in gettext
-cflags=-I$(prefix)/include -O2
+cflags=-I$(prefix)/include -O2 -D__USE_MINGW_ANSI_STDIO
 cxxflags=$(cflags)
 configure=$(pkgconfig) LDFLAGS=$(ldflags) CFLAGS="$(cflags)" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 cmake=$(pkgconfig) cmake .. -DCMAKE_TOOLCHAIN_FILE=$(src)/Toolchain-mingw32.cmake -DCMAKE_INSTALL_PREFIX=$(prefix) -DCMAKE_C_FLAGS="$(cflags)" -DCMAKE_CXX_FLAGS="$(cxxflags)"
@@ -192,8 +192,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	done
 	cp -v $(prefix)/lib/gio/modules/libgiognutls.dll clementine-deps/gio-modules/
 	cp -vr $(src)/mingwm10.dll $(src)/nsisplugins clementine-deps/
-	cp -vr /mingw/$(host)/*/libgcc_s_sjlj-1.dll clementine-deps/
-	cp -vr /mingw/$(host)/lib/libstdc++-6.dll clementine-deps/
+	cp -vr /usr/lib/gcc/$(host)/*-posix/libgcc_s_sjlj-1.dll clementine-deps/
+	cp -vr /usr/lib/gcc/$(host)/*-posix/libstdc++-6.dll clementine-deps/
 	for f in `find clementine-deps/ -name '*.dll' $(dont_strip)`; do \
 		$(host)-strip -v $$f; \
 	done
@@ -299,7 +299,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-glibnetworking: .done-glib .done-libgnutls
 	$(call extractandbuild,$(glibnetworkingtgz),$(glibnetworking))
 
-.done-libsoup: .done-glib .done-libxml
+.done-libsoup: .done-glib .done-libxml .done-psl
 	$(call extractpkg,$(souptgz))
 	cd $(soup) && patch -p0 < ../patches/libsoup-01-winsock.patch
 	(cd $(soup) && $(configure) && $(make))
@@ -451,7 +451,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	touch $@
 
 .done-lame:
-	$(call extractandbuild,$(lametgz),$(lame))
+	$(call extractpkg,$(lametgz))
+	cd $(lame) && $(pkgconfig) LDFLAGS=$(ldflags) CFLAGS="$(cflags) -march=native" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
+	$(call installpkg,$(lame))
 
 .done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
@@ -584,6 +586,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-no-phonon -no-webkit -no-xmlpatterns -no-qt3support \
 		-no-declarative -no-audio-backend \
 		-no-script -no-scripttools \
+		-no-libtiff \
 		-nomake demos -nomake examples \
 		-no-exceptions \
 		-qt-sql-sqlite -system-sqlite \
@@ -738,3 +741,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-p11kit: .done-libtasn1 .done-ffi
 	$(call extractandbuild,$(p11kittgz),$(p11kit))
+
+.done-psl:
+	$(call extractpkg,$(psltgz))
+	cd $(psl) && LDFLAGS="$(ldflags) -lws2_32" CFLAGS="$(cflags)" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
+	cd $(psl) && $(make)
+	$(call installpkg,$(psl))
