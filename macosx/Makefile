@@ -14,8 +14,11 @@ stow=$(prefix)/stow
 
 include ../makefile.common
 
-qt=qt-everywhere-opensource-src-4.8.6
-qttgz=$(downloads)/$(qt).tar.gz
+qjson=qjson-0.9.0_1
+qjsontgz=$(downloads)/$(qjson).high_sierra.bottle.tar.gz
+
+liblastfm=liblastfm-1.0.9_2
+liblastfmtgz=$(liblastfm).high_sierra.bottle.tar.gz
 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(prefix)/lib/pkgconfig:/usr/local/Library/Homebrew/pkgconfig
@@ -66,18 +69,12 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 # Top-level targets
 clementine-build-deps: boost liblastfm taglib \
                        libgpod gstreamer qjson chromaprint \
-                       protobuf spotify fftw sparsehash qt glew
+                       protobuf spotify fftw sparsehash qt5 glew
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-libav
 clementine-deps: clementine-build-deps clementine-gst-plugins
 
 # The actual commands for compiling each package follow
-
-.done-qjson: .done-qt
-	$(call extractpkg,$(qjsontgz))
-	$(call buildpkgcmake,$(qjson))
-	sed -e 's/QtCore//' -i $(qjson)/build/QJson.pc
-	$(call installpkgcmake,$(qjson))
 
 .done-sqlite:
 	$(call extractandbuild,$(sqlitetgz),$(sqlite))
@@ -232,9 +229,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 	cd $(taglib)/build && $(make)
 	$(call installpkgcmake,$(taglib))
 
-.done-liblastfm: .done-qt
-	$(call extractandbuildcmake,$(lastfmtgz),$(lastfm))
-
 .done-boost:
 	tar -xf $(boosttgz) -C $(stow)
 	cd $(stow) && stow -R $(boost)
@@ -348,33 +342,33 @@ clementine-deps: clementine-build-deps clementine-gst-plugins
 .done-sparsehash:
 	$(call extractandbuild,$(sparsehashtgz),$(sparsehash))
 
-.done-qt:
-	$(call extractpkg,$(qttgz))
-	patch -d $(qt) -p1 -R < patches/qt-01-mousebuttons.patch
-	patch -d $(qt) -p1 < patches/qt-02-yosemite.patch
-	patch -d $(qt) -p0 < patches/qt-03-objc.patch
-	patch -d $(qt) -p0 < patches/qt-04-highsierra.patch
-	cd $(qt) && QMAKE_CFLAGS="$(cflags) -target x86_64-apple-darwin" QMAKE_CXXFLAGS="$(cflags) -target x86_64-apple-darwin" QMAKE_OBJECTIVE_CFLAGS="$(cflags)" ./configure \
-		-release \
-		-platform linux-g++-64 \
-		-xplatform unsupported/macx-clang-libc++ -device-option CROSS_COMPILE=x86_64-apple-darwin- \
-		-sysroot $(sdk) \
-		-no-pch \
-		-no-fontconfig \
-		-no-freetype \
-		-little-endian \
-		-opensource -confirm-license \
-		-prefix $(stow)/$(qt) \
-		-no-phonon -no-webkit -no-xmlpatterns -no-qt3support \
-		-no-declarative -no-audio-backend \
-		-no-script -no-scripttools \
-		-nomake demos -nomake examples -nomake tools \
-		-no-exceptions \
-		-no-sql-sqlite
-	cd $(qt) && $(make)
-	cd $(qt) && make install
-	mkdir $(stow)/$(qt)/include
-	cd $(stow) && stow -R $(qt)
+.done-qt5:
+	-mkdir $(stow)/$(qt5)
+	tar -xf $(qt5tgz) -C $(stow)/$(qt5) --strip-components=2 --exclude=INSTALL_RECEIPT.json
+
+	rm $(stow)/$(qt5)/bin/lconvert
+	rm $(stow)/$(qt5)/bin/moc
+	rm $(stow)/$(qt5)/bin/rcc
+	rm $(stow)/$(qt5)/bin/uic
+
+	ln -s /usr/bin/lconvert $(stow)/$(qt5)/bin/lconvert
+	ln -s /usr/bin/moc $(stow)/$(qt5)/bin/moc
+	ln -s /usr/bin/rcc $(stow)/$(qt5)/bin/rcc
+	ln -s /usr/bin/uic $(stow)/$(qt5)/bin/uic
+
+	cd $(stow) && stow -R $(qt5)
+	touch $(work)/$@
+
+.done-qjson: .done-qt5
+	-mkdir $(stow)/$(qjson)
+	tar -xf $(qjsontgz) -C $(stow)/$(qjson) --strip-components=2 --exclude=INSTALL_RECEIPT.json
+	cd $(stow) && stow -R $(qjson)
+	touch $(work)/$@
+
+.done-liblastfm: .done-qt5
+	-mkdir $(stow)/$(liblastfm)
+	tar -xf $(liblastfmtgz) -C $(stow)/$(liblastfm) --strip-components=2 --exclude=INSTALL_RECEIPT.json
+	cd $(stow) && stow -R $(liblastfm)
 	touch $(work)/$@
 
 .done-opus:

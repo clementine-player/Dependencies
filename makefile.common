@@ -62,6 +62,8 @@ usbwin32=libusb-win32-bin-1.2.0.0
 win7sdk=win7-sdk
 zlib=zlib-1.2.8
 
+qt5=qt5-5.8.0_1
+
 # OSX only packages
 mms=libmms-0.6.2
 mtp=libmtp-1.1.8
@@ -74,7 +76,7 @@ usb=libusb-1.0.8
 allpackages=$(boost) $(dlfcn) $(faac) $(faad) $(flac) $(glew) $(gpod) \
 		$(gstbad) $(gstbase) $(gstgood) $(gst) $(gstugly) $(id3tag) \
 		$(lame) $(lastfm) $(mad) $(mmswin32) $(ogg) $(oil) $(orc) $(plist) \
-		$(pthreads) $(qjson) $(qt) $(quicktime) $(soup) $(speex) $(sqlite) $(taglib) \
+		$(pthreads) $(qjson) $(qt5) $(quicktime) $(soup) $(speex) $(sqlite) $(taglib) \
 		$(tls) $(usb) $(usbmuxd) $(vorbis) $(wpd) $(xml) $(qtsparkle) \
 		$(pyqt) $(ofa) $(curl) $(fftw) $(archive) \
 		$(protobuf) $(spotifywin32) $(glib) $(gettext) $(mms) $(usbwin32) \
@@ -135,6 +137,7 @@ proxytgz=$(downloads)/$(proxy).tar.gz
 psltgz=$(downloads)/$(psl).tar.gz
 qjsontgz=$(downloads)/$(qjson).tar.gz
 qttgz=$(downloads)/$(qt).tar.gz
+qt5tgz=$(downloads)/qt5-5.8.0_1.sierra.bottle.tar.gz
 qtsparkletgz=$(downloads)/$(qtsparkle).tar.gz
 quicktimetgz=$(downloads)/$(quicktime).tar.gz
 souptgz=$(downloads)/$(soup).tar.xz
@@ -225,7 +228,7 @@ pyqt: .done-pyqt
 python: .done-python
 pythonwin32: .done-pythonwin32
 qjson: .done-qjson
-qt: .done-qt
+qt5: .done-qt5
 qtsparkle: .done-qtsparkle
 sip: .done-sip
 speex: .done-speex
