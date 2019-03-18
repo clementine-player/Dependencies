@@ -196,6 +196,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cp -vr $(src)/mingwm10.dll $(src)/nsisplugins clementine-deps/
 	cp -vr /usr/lib/gcc/$(host)/*-posix/libgcc_s_sjlj-1.dll clementine-deps/
 	cp -vr /usr/lib/gcc/$(host)/*-posix/libstdc++-6.dll clementine-deps/
+	cp -vr /usr/i686-w64-mingw32/lib/libwinpthread-1.dll clementine-deps/
 	for f in `find clementine-deps/ -name '*.dll' $(dont_strip)`; do \
 		$(host)-strip -v $$f; \
 	done
