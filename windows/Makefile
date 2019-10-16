@@ -244,8 +244,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gettext: .done-iconv
 	$(call extractpkg,$(gettexttgz))
-	patch -d $(gettext) -p1 < patches/gettext-01-woe32.patch
-	patch -d $(gettext) -p1 < patches/gettext-02-reloc.patch
+	patch -d $(gettext) -p1 < patches/0001-libasprintf-Avoid-compilation-error-on-mingw-with-D_.patch
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
