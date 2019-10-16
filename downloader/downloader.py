@@ -19,7 +19,7 @@ FILES = [
     ('faad2-2.7.tar.gz', 'ee1b4d67ea2d76ee52c5621bc6dbf61e'),
     ('fftw-3.3.2.tar.gz', '6977ee770ed68c85698c7168ffa6e178'),
     ('flac-1.3.2.tar.xz', '454f1bfa3f93cc708098d7890d0499bd'),
-    ('gettext-0.20.1.tar.gz', '6b29b549fc6bc5d9c88770473be0034b'),
+    ('gettext-0.20.1.tar.gz', 'bb5b0c0caa028105f3ca1905ddc306e2'),
     ('glew-1.5.5-win32.zip', '48c8c982644ba11dfe94aaf756217eec'),
     ('glew-1.5.5.tar.bz2', '25afa3ff4cff7b67add612e148a54240'),
     ('glib-2.42.0.tar.xz', '71af99768063ac24033ac738e2832740'),
