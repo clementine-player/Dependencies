@@ -242,7 +242,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(libiconv)
 	touch $@
 
-.done-gettext: .done-iconv
+.done-gettext: .done-iconv .done-pthreads
 	$(call extractpkg,$(gettexttgz))
 	patch -d $(gettext) -p1 < patches/0001-libasprintf-Avoid-compilation-error-on-mingw-with-D_.patch
 	$(call buildpkg,$(gettext))
