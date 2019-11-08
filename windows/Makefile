@@ -141,7 +141,7 @@ dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll 
 # Useful macros for building packages
 pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
 autoconf=ACLOCAL_PATH=$(prefix)/share/aclocal:/usr/share/aclocal
-ldflags=-L$(prefix)/lib -lpthread -lrt
+ldflags=-L$(prefix)/lib -lpthread
 # -O2 is required to work around link errors in gettext
 cflags=-I$(prefix)/include -O2 -D__USE_MINGW_ANSI_STDIO
 cxxflags=$(cflags)
