@@ -172,7 +172,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 # Top-level targets
 clementine-build-deps: dlfcn boost liblastfm qt taglib \
                        libgpod glew gstreamer win7sdk qtsparkle chromaprint \
-                       protobuf spotify fftw sparsehash pthreads
+                       protobuf spotify fftw sparsehash
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-libav
 
@@ -226,7 +226,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(libiconv)
 	touch $@
 
-.done-gettext: .done-iconv .done-pthreads
+.done-gettext: .done-iconv
 	$(call extractpkg,$(gettexttgz))
 	patch -d $(gettext) -p1 < patches/0001-libasprintf-Avoid-compilation-error-on-mingw-with-D_.patch
 	$(call buildpkg,$(gettext))
@@ -541,12 +541,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(usbwin32)
 	touch $@
 
-.done-pthreads:
-	tar -xzf $(pthreadstgz) -C $(stow)
-	patch -d $(stow)/$(pthreads) -p0 < patches/pthreads-01-timespec.patch
-	cd $(stow) && stow $(pthreads)
-	touch $@
-
 .done-taglib: .done-glib
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
@@ -569,6 +563,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-opensource \
 		-no-compile-examples \
 		-opengl desktop \
+		-no-dbus \
 		-skip qt3d \
 		-skip qtactiveqt \
 		-skip qtandroidextras \
