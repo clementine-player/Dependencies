@@ -148,7 +148,7 @@ cxxflags=$(cflags)
 configure=$(pkgconfig) LDFLAGS="$(ldflags)" CFLAGS="$(cflags)" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 cmake=$(pkgconfig) cmake .. -DCMAKE_TOOLCHAIN_FILE=$(src)/Toolchain-mingw32.cmake -DCMAKE_INSTALL_PREFIX=$(prefix) -DCMAKE_C_FLAGS="$(cflags)" -DCMAKE_CXX_FLAGS="$(cxxflags)"
 make=make $(jobs)
-extractpkg=tar -xvf $(1)
+extractpkg=tar -xvf --no-same-owner $(1)
 buildpkg=(cd $(1) && $(configure) && $(make))
 buildpkgcmake=(cd $(1) && mkdir build ; cd build && $(cmake) && $(make))
 installpkg=rm -rf $(stow)/$(1) && \
