@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: i386/ubuntu:bionic
+      - image: i386/ubuntu:disco
     steps:
       - run:
           name: Accept EULAs
@@ -25,6 +25,7 @@ jobs:
             nsis
             pkg-config
             protobuf-compiler
+            python
             qt4-dev-tools
             stow
             sudo
