@@ -324,7 +324,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gstreamer: .done-glib .done-libxml .done-orc
 	$(call extractpkg,$(gsttgz))
-	cd $(gst) && $(configure) --disable-examples --disable-tests
+	cd $(gst) && $(configure) CFLAGS="$(cflags) -DHAVE_PTHREAD" --disable-examples --disable-tests
 	cd $(gst) && $(make)
 	$(call installpkg,$(gst))
 
@@ -454,7 +454,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-lame:
 	$(call extractpkg,$(lametgz))
-	cd $(lame) && $(pkgconfig) LDFLAGS=$(ldflags) CFLAGS="$(cflags) -march=native" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
+	cd $(lame) && $(pkgconfig) LDFLAGS="$(ldflags)" CFLAGS="$(cflags) -march=native" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 	$(call installpkg,$(lame))
 
 .done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec
