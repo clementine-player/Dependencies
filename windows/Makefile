@@ -56,7 +56,6 @@ clementine_dlls=glew32.dll \
                 libiconv-2.dll \
                 libid3tag.dll \
                 libintl-8.dll \
-                liblastfm.dll \
                 libmad.dll \
                 libmms-0.dll \
                 libmp3lame-0.dll \
@@ -170,7 +169,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 
 # Top-level targets
-clementine-build-deps: dlfcn boost liblastfm qt taglib \
+clementine-build-deps: dlfcn boost qt taglib \
                        libgpod glew gstreamer win7sdk qtsparkle chromaprint \
                        protobuf spotify fftw sparsehash
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
@@ -602,21 +601,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-skip qtx11extras
 	cd $(qt) && $(make)
 	cd $(qt) && make install
-	mv -fv $(stow)/$(qt)/lib/*.dll $(stow)/$(qt)/bin/
 	cd $(stow) && stow -R $(qt)
-	touch $@
-
-.done-liblastfm: .done-qt
-	$(call extractpkg,$(lastfmtgz))
-	-mkdir $(lastfm)/build
-	cd $(lastfm)/build && $(cmake) \
-		-DQT_HEADERS_DIR=$(prefix)/include/ \
-		-DQT_LIBRARY_DIR=$(prefix)/bin
-	cd $(lastfm)/build && $(make)
-	rm -rf $(stow)/$(lastfm)
-	cd $(lastfm)/build && make install DESTDIR=$(stow)/$(lastfm)
-	cd $(lastfm)/build && mv -fv $(stow)/$(lastfm)$(prefix)/* $(stow)/$(lastfm)
-	cd $(stow) && stow -R $(lastfm)
 	touch $@
 
 .done-glew:
