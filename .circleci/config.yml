@@ -31,7 +31,7 @@ jobs:
             texinfo
             unzip
             wget
-            wine
+            wine-stable
             yasm
       - run:
           name: Configure Mingw for POSIX threads
