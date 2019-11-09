@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: i386/ubuntu:xenial
+      - image: i386/ubuntu:bionic
     steps:
       - run:
           name: Accept EULAs
