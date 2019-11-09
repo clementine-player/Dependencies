@@ -233,7 +233,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call installpkg,$(gettext))
 
 .done-glib: .done-zlib .done-gettext .done-ffi
-	$(call extractandbuild,$(glibtgz),$(glib))
+	$(call extractpkg,$(glibtgz))
+	cd $(glib) && $(configure) CFLAGS="$(cflags) -Wno-format-security -Wno-format-overflow -Wno-format-nonliteral"
+	cd $(glib) && $(make)
+	$(call installpkg,$(glib))
 
 .done-gmp:
 	$(call extractpkg,$(gmptgz))
