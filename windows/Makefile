@@ -23,7 +23,6 @@ clementine_dlls=glew32.dll \
                 libcdio-16.dll \
                 libchromaprint.dll \
                 libeay32.dll \
-                libfaac.dll \
                 libfaad.dll \
                 libffi-6.dll \
                 libfftw3-3.dll \
@@ -101,7 +100,6 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstcoreelements.dll \
                        libgstdirectsoundsink.dll \
                        libgstequalizer.dll \
-                       libgstfaac.dll \
                        libgstfaad.dll \
                        libgstflac.dll \
                        libgstgdp.dll \
@@ -443,7 +441,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(lame) && $(pkgconfig) LDFLAGS="$(ldflags)" CFLAGS="$(cflags) -march=native" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 	$(call installpkg,$(lame))
 
-.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec
+.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-libmms .done-oil .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && \
 		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)" \
@@ -487,25 +485,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cp $(faad)/libfaad/libfaad.dll $(stow)/$(faad)/bin/
 	rm -f $(stow)/$(faad)/lib/libfaad.*
 	cd $(stow) && stow -R $(faad)
-	touch $@
-
-.done-faac:
-	$(call extractpkg,$(faactgz))
-	cd $(faac) && patch -p0 < ../patches/faac-01-buildfixes.patch
-	$(call buildpkg,$(faac))
-
-	# libtool is retarded and doesn't link this dll properly
-	cd $(faac)/libfaac && /bin/bash ../libtool --mode=link $(host)-gcc \
-		-iquote ../include -g -O2 --shared -o libfaac.dll -rpath $(prefix)/bin \
-		-version-info 2:0:0 *.lo -lm
-
-	rm -rf $(stow)/$(faac)
-	cd $(faac) && make install DESTDIR=$(stow)/$(faac)
-	mv -fv $(stow)/$(faac)$(prefix)/* $(stow)/$(faac)/
-	-mkdir $(stow)/$(faac)/bin/
-	cp $(faac)/libfaac/libfaac.dll $(stow)/$(faac)/bin/
-	rm -f $(stow)/$(faac)/lib/libfaac.*
-	cd $(stow) && stow -R $(faac)
 	touch $@
 
 .done-libmms: .done-glib
