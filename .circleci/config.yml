@@ -36,6 +36,9 @@ jobs:
       - run:
           name: Configure Mingw for POSIX threads
           command: update-alternatives --set i686-w64-mingw32-gcc /usr/bin/i686-w64-mingw32-gcc-posix
+      - run:
+          name: Configure Mingw for POSIX threads
+          command: update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
       - checkout:
           path: /src
       - run:
