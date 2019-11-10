@@ -77,14 +77,13 @@ clementine_dlls=glew32.dll \
                 libvorbis-0.dll \
                 libvorbisenc-2.dll \
                 libxml2-2.dll \
-                pthreadGC2.dll \
-                QtCore4.dll \
-                QtGui4.dll \
-                QtNetwork4.dll \
-                QtOpenGL4.dll \
-                QtSql4.dll \
-                QtSvg4.dll \
-                QtXml4.dll \
+                Qt5Core.dll \
+                Qt5Gui.dll \
+                Qt5Network.dll \
+                Qt5OpenGL.dll \
+                Qt5Sql.dll \
+                Qt5Svg.dll \
+                Qt5Xml.dll \
                 ssleay32.dll \
                 zlib1.dll
 clementine_gst_plugins=libgstapetag.dll \
@@ -126,8 +125,8 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstvorbis.dll \
                        libgstwavpack.dll \
                        libgstwavparse.dll
-clementine_imageformats=qgif4.dll \
-                        qjpeg4.dll
+clementine_imageformats=qgif.dll \
+                        qjpeg.dll
 dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll \
            -not -name ssleay32.dll -not -name libeay32.dll \
            -not -name ShellExecAsUser.dll \
