@@ -170,7 +170,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 # Top-level targets
 clementine-build-deps: dlfcn boost qt taglib \
-                       libgpod glew gstreamer win7sdk qtsparkle chromaprint \
+                       libgpod glew gstreamer win7sdk chromaprint \
                        protobuf spotify fftw sparsehash
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-libav
@@ -613,20 +613,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-boost:
 	tar -xf $(boosttgz) -C $(stow)
 	cd $(stow) && stow -R $(boost)
-	touch $@
-
-.done-qtsparkle:
-	$(call extractpkg,$(qtsparkletgz))
-	-mkdir $(qtsparkle)/build
-	cd $(qtsparkle)/build && $(cmake) \
-		-DQT_HEADERS_DIR=$(prefix)/include/ \
-		-DQT_LIBRARY_DIR=$(prefix)/bin \
-		-DCMAKE_BUILD_TYPE=Release
-	cd $(qtsparkle)/build && $(make)
-	rm -rf $(stow)/$(qtsparkle)
-	cd $(qtsparkle)/build && make install DESTDIR=$(stow)/$(qtsparkle)
-	cd $(qtsparkle)/build && mv -fv $(stow)/$(qtsparkle)$(prefix)/* $(stow)/$(qtsparkle)
-	cd $(stow) && stow -R $(qtsparkle)
 	touch $@
 
 .done-curl:
