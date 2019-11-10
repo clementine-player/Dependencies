@@ -576,7 +576,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-skip qtwebglplugin \
 		-skip qtwebsockets \
 		-skip qtwebview \
-		-skip qtwinextras \
 		-skip qtx11extras
 	cd $(qt) && $(make)
 	cd $(qt) && make install
