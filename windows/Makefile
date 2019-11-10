@@ -558,6 +558,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-qt: .done-openssl .done-sqlite .done-glib
 	$(call extractpkg,$(qttgz))
 	cd $(qt) && ./configure \
+		-release \
 		-xplatform win32-g++ \
 		-device-option CROSS_COMPILE=/usr/bin/i686-w64-mingw32- \
 		-prefix $(stow)/$(qt) \
