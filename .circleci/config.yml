@@ -48,10 +48,20 @@ jobs:
           name: Build dependencies
           command: make
           working_directory: /src/windows
+  build_docker:
+    docker:
+      - image: ubuntu:bionic
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Build mingw docker image
+          command: docker build -t gcr.io/clementine-data/mingw-w64:$CIRCLE_BUILD_NUM -f windows.Dockerfile .
 
 workflows:
   version: 2
   all:
     jobs:
       - build
+      - build_docker
 
