@@ -54,6 +54,9 @@ jobs:
     steps:
       - setup_remote_docker:
           version: 18.06.0-ce
+      - run:
+          name: Install dependencies
+          command: apt-get update && apt-get install -y curl
       - checkout
       - run:
           name: Install docker client
