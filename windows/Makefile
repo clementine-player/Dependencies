@@ -23,7 +23,6 @@ clementine_dlls=glew32.dll \
                 libcdio-16.dll \
                 libchromaprint.dll \
                 libeay32.dll \
-                libfaac.dll \
                 libfaad.dll \
                 libffi-6.dll \
                 libfftw3-3.dll \
@@ -56,7 +55,6 @@ clementine_dlls=glew32.dll \
                 libiconv-2.dll \
                 libid3tag.dll \
                 libintl-8.dll \
-                liblastfm.dll \
                 libmad.dll \
                 libmms-0.dll \
                 libmp3lame-0.dll \
@@ -70,7 +68,6 @@ clementine_dlls=glew32.dll \
                 libplist.dll \
                 libprotobuf-9.dll \
                 libpsl-5.dll \
-                libqjson.dll \
                 libsoup-2.4-1.dll \
                 libspeex-1.dll \
                 libspotify.dll \
@@ -80,14 +77,13 @@ clementine_dlls=glew32.dll \
                 libvorbis-0.dll \
                 libvorbisenc-2.dll \
                 libxml2-2.dll \
-                pthreadGC2.dll \
-                QtCore4.dll \
-                QtGui4.dll \
-                QtNetwork4.dll \
-                QtOpenGL4.dll \
-                QtSql4.dll \
-                QtSvg4.dll \
-                QtXml4.dll \
+                Qt5Core.dll \
+                Qt5Gui.dll \
+                Qt5Network.dll \
+                Qt5OpenGL.dll \
+                Qt5Sql.dll \
+                Qt5Svg.dll \
+                Qt5Xml.dll \
                 ssleay32.dll \
                 zlib1.dll
 clementine_gst_plugins=libgstapetag.dll \
@@ -103,7 +99,6 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstcoreelements.dll \
                        libgstdirectsoundsink.dll \
                        libgstequalizer.dll \
-                       libgstfaac.dll \
                        libgstfaad.dll \
                        libgstflac.dll \
                        libgstgdp.dll \
@@ -130,8 +125,8 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstvorbis.dll \
                        libgstwavpack.dll \
                        libgstwavparse.dll
-clementine_imageformats=qgif4.dll \
-                        qjpeg4.dll
+clementine_imageformats=qgif.dll \
+                        qjpeg.dll
 dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll \
            -not -name ssleay32.dll -not -name libeay32.dll \
            -not -name ShellExecAsUser.dll \
@@ -171,9 +166,9 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 
 # Top-level targets
-clementine-build-deps: dlfcn boost liblastfm qt taglib \
-                       libgpod glew gstreamer win7sdk qtsparkle chromaprint \
-                       protobuf spotify qjson fftw sparsehash pthreads
+clementine-build-deps: dlfcn boost qt taglib \
+                       libgpod glew gstreamer win7sdk chromaprint \
+                       protobuf spotify fftw sparsehash
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-libav
 
@@ -204,21 +199,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 # The actual commands for compiling each package follow
 
-.done-qjson: .done-qt
-	$(call extractpkg,$(qjsontgz))
-	cd $(qjson) && patch -p0 < ../patches/qjson-01-pkgconfig.patch
-	mkdir -p $(qjson)/build
-	cd $(qjson)/build && $(cmake) \
-		-DQT_HEADERS_DIR=$(prefix)/include/ \
-		-DQT_LIBRARY_DIR=$(prefix)/bin
-	cd $(qjson)/build && $(make)
-	sed -e 's/QtCore//' -i $(qjson)/build/QJson.pc
-	rm -rf $(stow)/$(qjson)
-	cd $(qjson)/build && make install DESTDIR=$(stow)/$(qjson)
-	cd $(qjson)/build && mv -fv $(stow)/$(qjson)$(prefix)/* $(stow)/$(qjson)
-	cd $(stow) && stow -R $(qjson)
-	touch $@
-
 .done-zlib:
 	$(call extractpkg,$(zlibtgz))
 	cd $(zlib) && PREFIX="$(host)-" CC=$(cc) CXX=$(cxx) RANLIB=$(ranlib) ./configure --prefix=$(prefix)
@@ -242,14 +222,17 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(libiconv)
 	touch $@
 
-.done-gettext: .done-iconv .done-pthreads
+.done-gettext: .done-iconv
 	$(call extractpkg,$(gettexttgz))
 	patch -d $(gettext) -p1 < patches/0001-libasprintf-Avoid-compilation-error-on-mingw-with-D_.patch
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
 .done-glib: .done-zlib .done-gettext .done-ffi
-	$(call extractandbuild,$(glibtgz),$(glib))
+	$(call extractpkg,$(glibtgz))
+	cd $(glib) && $(configure) CFLAGS="$(cflags) -Wno-format-security -Wno-format-overflow -Wno-format-nonliteral"
+	cd $(glib) && $(make)
+	$(call installpkg,$(glib))
 
 .done-gmp:
 	$(call extractpkg,$(gmptgz))
@@ -457,7 +440,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(lame) && $(pkgconfig) LDFLAGS="$(ldflags)" CFLAGS="$(cflags) -march=native" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 	$(call installpkg,$(lame))
 
-.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-faac .done-libmms .done-oil .done-libmpcdec
+.done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-libmms .done-oil .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && \
 		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)" \
@@ -503,25 +486,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(faad)
 	touch $@
 
-.done-faac:
-	$(call extractpkg,$(faactgz))
-	cd $(faac) && patch -p0 < ../patches/faac-01-buildfixes.patch
-	$(call buildpkg,$(faac))
-
-	# libtool is retarded and doesn't link this dll properly
-	cd $(faac)/libfaac && /bin/bash ../libtool --mode=link $(host)-gcc \
-		-iquote ../include -g -O2 --shared -o libfaac.dll -rpath $(prefix)/bin \
-		-version-info 2:0:0 *.lo -lm
-
-	rm -rf $(stow)/$(faac)
-	cd $(faac) && make install DESTDIR=$(stow)/$(faac)
-	mv -fv $(stow)/$(faac)$(prefix)/* $(stow)/$(faac)/
-	-mkdir $(stow)/$(faac)/bin/
-	cp $(faac)/libfaac/libfaac.dll $(stow)/$(faac)/bin/
-	rm -f $(stow)/$(faac)/lib/libfaac.*
-	cd $(stow) && stow -R $(faac)
-	touch $@
-
 .done-libmms: .done-glib
 	$(call extractpkg,$(mmswin32tgz))
 	cd $(mmswin32) && $(autoconf) ./autogen.sh
@@ -557,12 +521,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(usbwin32)
 	touch $@
 
-.done-pthreads:
-	tar -xzf $(pthreadstgz) -C $(stow)
-	patch -d $(stow)/$(pthreads) -p0 < patches/pthreads-01-timespec.patch
-	cd $(stow) && stow $(pthreads)
-	touch $@
-
 .done-taglib: .done-glib
 	$(call extractpkg,$(taglibtgz))
 	-mkdir $(taglib)/build
@@ -577,39 +535,51 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-qt: .done-openssl .done-sqlite .done-glib
 	$(call extractpkg,$(qttgz))
-	patch -d $(qt) -p0 < patches/qt-01-codecs.patch
-	patch -d $(qt) -p0 < patches/qt-02-dir.patch
-	patch -d $(qt) -p1 < patches/qt-03-config.patch
-	cd $(qt) && OPENSSL_LIBS="-llibeay32 -lssleay32" ./configure \
-		-opensource -confirm-license \
-		-platform linux-g++-32 \
-		-xplatform win32-g++ -device-option CROSS_COMPILE=i686-w64-mingw32- \
+	cd $(qt) && ./configure \
+		-release \
+		-xplatform win32-g++ \
+		-device-option CROSS_COMPILE=/usr/bin/i686-w64-mingw32- \
 		-prefix $(stow)/$(qt) \
-		-no-phonon -no-webkit -no-xmlpatterns -no-qt3support \
-		-no-declarative -no-audio-backend \
-		-no-script -no-scripttools \
-		-no-libtiff \
-		-nomake demos -nomake examples \
-		-no-exceptions \
-		-qt-sql-sqlite -system-sqlite \
-		-openssl-linked
+		-confirm-license \
+		-opensource \
+		-no-compile-examples \
+		-opengl desktop \
+		-no-dbus \
+		-skip qt3d \
+		-skip qtactiveqt \
+		-skip qtandroidextras \
+		-skip qtcanvas3d \
+		-skip qtcharts \
+		-skip qtconnectivity \
+		-skip qtdatavis3d \
+		-skip qtdeclarative \
+		-skip qtdoc \
+		-skip qtgamepad \
+		-skip qtgraphicaleffects \
+		-skip qtlocation \
+		-skip qtmacextras \
+		-skip qtmultimedia \
+		-skip qtpurchasing \
+		-skip qtquickcontrols \
+		-skip qtquickcontrols2 \
+		-skip qtremoteobjects \
+		-skip qtscript \
+		-skip qtscxml \
+		-skip qtsensors \
+		-skip qtserialbus \
+		-skip qtspeech \
+		-skip qttranslations \
+		-skip qtvirtualkeyboard \
+		-skip qtwayland \
+		-skip qtwebchannel \
+		-skip qtwebengine \
+		-skip qtwebglplugin \
+		-skip qtwebsockets \
+		-skip qtwebview \
+		-skip qtx11extras
 	cd $(qt) && $(make)
 	cd $(qt) && make install
-	mv -fv $(stow)/$(qt)/lib/*.dll $(stow)/$(qt)/bin/
 	cd $(stow) && stow -R $(qt)
-	touch $@
-
-.done-liblastfm: .done-qt
-	$(call extractpkg,$(lastfmtgz))
-	-mkdir $(lastfm)/build
-	cd $(lastfm)/build && $(cmake) \
-		-DQT_HEADERS_DIR=$(prefix)/include/ \
-		-DQT_LIBRARY_DIR=$(prefix)/bin
-	cd $(lastfm)/build && $(make)
-	rm -rf $(stow)/$(lastfm)
-	cd $(lastfm)/build && make install DESTDIR=$(stow)/$(lastfm)
-	cd $(lastfm)/build && mv -fv $(stow)/$(lastfm)$(prefix)/* $(stow)/$(lastfm)
-	cd $(stow) && stow -R $(lastfm)
 	touch $@
 
 .done-glew:
@@ -621,20 +591,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-boost:
 	tar -xf $(boosttgz) -C $(stow)
 	cd $(stow) && stow -R $(boost)
-	touch $@
-
-.done-qtsparkle:
-	$(call extractpkg,$(qtsparkletgz))
-	-mkdir $(qtsparkle)/build
-	cd $(qtsparkle)/build && $(cmake) \
-		-DQT_HEADERS_DIR=$(prefix)/include/ \
-		-DQT_LIBRARY_DIR=$(prefix)/bin \
-		-DCMAKE_BUILD_TYPE=Release
-	cd $(qtsparkle)/build && $(make)
-	rm -rf $(stow)/$(qtsparkle)
-	cd $(qtsparkle)/build && make install DESTDIR=$(stow)/$(qtsparkle)
-	cd $(qtsparkle)/build && mv -fv $(stow)/$(qtsparkle)$(prefix)/* $(stow)/$(qtsparkle)
-	cd $(stow) && stow -R $(qtsparkle)
 	touch $@
 
 .done-curl:

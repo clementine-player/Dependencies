@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: i386/ubuntu:xenial
+      - image: i386/ubuntu:eoan
     steps:
       - run:
           name: Accept EULAs
@@ -25,13 +25,13 @@ jobs:
             nsis
             pkg-config
             protobuf-compiler
-            qt4-dev-tools
+            python
             stow
             sudo
             texinfo
             unzip
             wget
-            wine
+            wine-stable
             yasm
       - run:
           name: Configure Mingw for POSIX threads
