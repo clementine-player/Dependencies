@@ -544,6 +544,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-opensource \
 		-no-compile-examples \
 		-opengl desktop \
+		-openssl-runtime \
 		-no-dbus \
 		-skip qt3d \
 		-skip qtactiveqt \
