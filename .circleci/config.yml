@@ -71,7 +71,7 @@ jobs:
           tag: $CIRCLE_SHA1
       - gcp-gcr/push-image:
           image: mingw-w64
-          registry: eu.gcr.io
+          registry-url: eu.gcr.io
           tag: $CIRCLE_SHA1
 
 workflows:
