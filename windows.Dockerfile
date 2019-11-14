@@ -27,4 +27,4 @@ RUN apt-get update && apt-get install -y -q \
 
 RUN update-alternatives --set i686-w64-mingw32-gcc /usr/bin/i686-w64-mingw32-gcc-posix
 RUN update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
-COPY /target /target
+COPY target /target

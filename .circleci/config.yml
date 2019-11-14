@@ -71,7 +71,7 @@ jobs:
             tar -xz -C /tmp -f /tmp/docker-$VER.tgz
             mv /tmp/docker/* /usr/bin
       - attach_workspace:
-          at: /target
+          at: ./target
       - run:
           name: Build mingw docker image
           command: docker build -t gcr.io/clementine-data/mingw-w64:$CIRCLE_BUILD_NUM -f windows.Dockerfile .
