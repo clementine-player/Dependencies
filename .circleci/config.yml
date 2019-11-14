@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  gcp-gcr: circleci/gcp-gcr@0.6.1
 jobs:
   build:
     docker:
@@ -53,28 +55,24 @@ jobs:
           paths:
             - "*"
   build_docker:
-    docker:
-      - image: ubuntu:bionic
+    executor: gcp-gcr/default
     steps:
-      - setup_remote_docker:
-          version: 18.06.0-ce
       - run:
           name: Install dependencies
           command: apt-get update && apt-get install -y curl
       - checkout
-      - run:
-          name: Install docker client
-          command: |
-            set -x
-            VER="18.06.0-ce"
-            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            mv /tmp/docker/* /usr/bin
       - attach_workspace:
           at: ./target
-      - run:
-          name: Build mingw docker image
-          command: docker build -t gcr.io/clementine-data/mingw-w64:$CIRCLE_BUILD_NUM -f windows.Dockerfile .
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          dockerfile: windows.Dockerfile
+          image: mingw-w64
+          registry-url: eu.gcr.io
+          tag: $CIRCLE_SHA1
+      - gcp-gcr/push-image:
+          image: mingw-w64
+          registry: eu.gcr.io
+          tag: $CIRCLE_SHA1
 
 workflows:
   version: 2
@@ -82,6 +80,7 @@ workflows:
     jobs:
       - build
       - build_docker:
+          context: gcp
           requires:
             - build
 
