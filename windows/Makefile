@@ -66,7 +66,7 @@ clementine_dlls=glew32.dll \
                 liborc-test-0.4-0.dll \
                 libp11-kit-0.dll \
                 libplist.dll \
-                libprotobuf-9.dll \
+                libprotobuf-17.dll \
                 libpsl-5.dll \
                 libsoup-2.4-1.dll \
                 libspeex-1.dll \
@@ -143,7 +143,7 @@ cxxflags=$(cflags)
 configure=$(pkgconfig) LDFLAGS="$(ldflags)" CFLAGS="$(cflags)" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 cmake=$(pkgconfig) cmake .. -DCMAKE_TOOLCHAIN_FILE=$(src)/Toolchain-mingw32.cmake -DCMAKE_INSTALL_PREFIX=$(prefix) -DCMAKE_C_FLAGS="$(cflags)" -DCMAKE_CXX_FLAGS="$(cxxflags)"
 make=make $(jobs)
-extractpkg=tar -xvf $(1) --no-same-owner
+extractpkg=tar -xf $(1) --no-same-owner
 buildpkg=(cd $(1) && $(configure) && $(make))
 buildpkgcmake=(cd $(1) && mkdir build ; cd build && $(cmake) && $(make))
 installpkg=rm -rf $(stow)/$(1) && \
@@ -535,7 +535,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-qt: .done-openssl .done-sqlite .done-glib
 	$(call extractpkg,$(qttgz))
-	cd $(qt) && ./configure \
+	 cd $(qt) && ./configure \
+		-I/target/include \
 		-release \
 		-xplatform win32-g++ \
 		-device-option CROSS_COMPILE=/usr/bin/i686-w64-mingw32- \
@@ -544,7 +545,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-opensource \
 		-no-compile-examples \
 		-opengl desktop \
+		-openssl-runtime \
 		-no-dbus \
+		-openssl-runtime \
 		-skip qt3d \
 		-skip qtactiveqt \
 		-skip qtandroidextras \
@@ -626,7 +629,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-protobuf:
 	$(call extractpkg,$(protobuftgz))
-	cd $(protobuf) && $(configure) --with-protoc=/usr/bin/protoc
+	cd $(protobuf) && $(configure) --with-protoc=/usr/bin/protoc CXXFLAGS="$(cxxflags) --std=c++14"
 	cd $(protobuf) && $(make)
 	$(call installpkg,$(protobuf))
 

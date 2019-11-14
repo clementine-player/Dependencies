@@ -1,9 +1,16 @@
 version: 2.1
+orbs:
+  gcp-gcr: circleci/gcp-gcr@0.6.1
 jobs:
   build:
     docker:
       - image: i386/ubuntu:eoan
     steps:
+      - run:
+          name: Use AWS Ubuntu mirror
+          command: >
+            sed -i /etc/apt/sources.list
+            -e 's#archive.ubuntu.com#us-east-2.ec2.archive.ubuntu.com#'
       - run:
           name: Accept EULAs
           command: |
@@ -36,6 +43,9 @@ jobs:
       - run:
           name: Configure Mingw for POSIX threads
           command: update-alternatives --set i686-w64-mingw32-gcc /usr/bin/i686-w64-mingw32-gcc-posix
+      - run:
+          name: Configure Mingw for POSIX threads
+          command: update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
       - checkout:
           path: /src
       - run:
@@ -45,10 +55,45 @@ jobs:
           name: Build dependencies
           command: make
           working_directory: /src/windows
+      - persist_to_workspace:
+          root: /target
+          paths:
+            - "*"
+  build_docker:
+    executor: gcp-gcr/default
+    steps:
+      - run:
+          name: Install dependencies
+          command: sudo apt-get update && sudo apt-get install -y curl
+      - checkout
+      - attach_workspace:
+          at: ./target
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          dockerfile: windows.Dockerfile
+          image: mingw-w64
+          registry-url: eu.gcr.io
+          tag: $CIRCLE_SHA1
+      - gcp-gcr/push-image:
+          image: mingw-w64
+          registry-url: eu.gcr.io
+          tag: $CIRCLE_SHA1
+      - gcp-gcr/tag-image:
+          image: mingw-w64
+          registry-url: eu.gcr.io
+          source-tag: $CIRCLE_SHA1
+          target-tag: latest
 
 workflows:
   version: 2
   all:
     jobs:
       - build
+      - build_docker:
+          context: gcp
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
 
