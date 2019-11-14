@@ -78,6 +78,11 @@ jobs:
           image: mingw-w64
           registry-url: eu.gcr.io
           tag: $CIRCLE_SHA1
+      - gcp-gcr/tag-image:
+          image: mingw-w64
+          registry-url: eu.gcr.io
+          source-tag: $CIRCLE_SHA1
+          target-tag: latest
 
 workflows:
   version: 2
