@@ -55,6 +55,7 @@ clementine_dlls=glew32.dll \
                 libiconv-2.dll \
                 libid3tag.dll \
                 libintl-8.dll \
+                liblastfm5.dll \
                 libmad.dll \
                 libmms-0.dll \
                 libmp3lame-0.dll \
@@ -166,7 +167,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 
 # Top-level targets
-clementine-build-deps: dlfcn boost qt taglib \
+clementine-build-deps: dlfcn boost qt taglib liblastfm \
                        libgpod glew gstreamer win7sdk chromaprint \
                        protobuf spotify fftw sparsehash
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
@@ -198,6 +199,17 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 
 # The actual commands for compiling each package follow
+
+.done-liblastfm: .done-qt
+	$(call extractpkg,$(lastfmtgz))
+	-mkdir $(lastfm)/bin
+	cd $(lastfm)/bin && $(cmake) -DBUILD_WITH_QT4=OFF -DBUILD_FINGERPRINT=OFF -DBUILD_TESTS=OFF
+	cd $(lastfm)/bin && $(make)
+	cd $(lastfm)/bin && make install DESTDIR=$(stow)/$(lastfm)
+	cd $(lastfm)/bin && mv -fv $(stow)/$(lastfm)$(prefix)/* $(stow)/$(lastfm)
+	cd $(stow) && stow -R $(lastfm)
+	touch $@
+
 
 .done-zlib:
 	$(call extractpkg,$(zlibtgz))

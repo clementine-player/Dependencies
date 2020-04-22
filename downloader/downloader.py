@@ -10,8 +10,7 @@ FILES = [
     # filename, md5sum
     ('boost-1.50.tar.bz2', '5c0fdd406d965855e77f435d63a5d729'),
     ('chromaprint-1.1.tar.gz', '6db0b5240231b7d2e6628f49fc765b4a'),
-    ('davidsansome-liblastfm-0.3.1-18-gcce698d.tar.gz',
-     '09314a36fef950d5f6602fdca532b566'),
+    ('liblastfm-1.0.9.tar.gz', '8748f423f66f2fbc38c39f9153d01a71'),
     ('davidsansome-qtsparkle-28721b5.tar.gz',
      '5d41ff15aaa85f43b9611bbf654b519e'),
     ('dlfcn-win32-static-r19.tar.bz2', '2c8d5b7767c2e2e4a38bf6a22364cc00'),
