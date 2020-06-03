@@ -20,11 +20,11 @@ include ../makefile.common
 
 # List of dlls that get included in the final package for Clementine
 clementine_dlls=glew32.dll \
-                libcdio-16.dll \
+                libcdio-19.dll \
                 libchromaprint.dll \
-                libeay32.dll \
-                libfaad.dll \
-                libffi-6.dll \
+		libcrypto-1_1.dll \
+                libfaad-2.dll \
+                libffi-7.dll \
                 libfftw3-3.dll \
                 libFLAC-8.dll \
                 libgcrypt-20.dll \
@@ -39,7 +39,6 @@ clementine_dlls=glew32.dll \
                 libgstapp-1.0-0.dll \
                 libgstaudio-1.0-0.dll \
                 libgstbase-1.0-0.dll \
-                libgstcontroller-1.0-0.dll \
                 libgstfft-1.0-0.dll \
                 libgstnet-1.0-0.dll \
                 libgstpbutils-1.0-0.dll \
@@ -51,45 +50,50 @@ clementine_dlls=glew32.dll \
                 libgsttag-1.0-0.dll \
                 libgstvideo-1.0-0.dll \
                 libgthread-2.0-0.dll \
-                libhogweed-4.dll \
+                libhogweed-6.dll \
                 libiconv-2.dll \
-                libid3tag.dll \
                 libintl-8.dll \
                 liblastfm5.dll \
-                libmad.dll \
                 libmms-0.dll \
                 libmp3lame-0.dll \
-                libnettle-6.dll \
+                libnettle-8.dll \
                 libogg-0.dll \
                 liboil-0.3-0.dll \
                 libopus-0.dll \
                 liborc-0.4-0.dll \
                 liborc-test-0.4-0.dll \
                 libp11-kit-0.dll \
+                libpcre-1.dll \
                 libplist.dll \
                 libprotobuf-17.dll \
                 libpsl-5.dll \
+                libssl-1_1.dll \
                 libsoup-2.4-1.dll \
                 libspeex-1.dll \
                 libspotify.dll \
                 libsqlite3-0.dll \
                 libtag.dll \
                 libtasn1-6.dll \
+                libunistring-2.dll \
                 libvorbis-0.dll \
                 libvorbisenc-2.dll \
                 libxml2-2.dll \
+                libwavpack-1.dll \
+                Qt5Concurrent.dll \
                 Qt5Core.dll \
                 Qt5Gui.dll \
                 Qt5Network.dll \
                 Qt5OpenGL.dll \
                 Qt5Sql.dll \
-                Qt5Svg.dll \
+                Qt5Widgets.dll \
+                Qt5WinExtras.dll \
                 Qt5Xml.dll \
-                ssleay32.dll \
                 zlib1.dll
-clementine_gst_plugins=libgstapetag.dll \
+clementine_gst_plugins=libgstaiff.dll \
+                       libgstapetag.dll \
                        libgstapp.dll \
                        libgstasf.dll \
+                       libgstasfmux.dll \
                        libgstaudioconvert.dll \
                        libgstaudiofx.dll \
                        libgstaudioparsers.dll \
@@ -98,7 +102,7 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstautodetect.dll \
                        libgstcdio.dll \
                        libgstcoreelements.dll \
-                       libgstdirectsoundsink.dll \
+                       libgstdirectsound.dll \
                        libgstequalizer.dll \
                        libgstfaad.dll \
                        libgstflac.dll \
@@ -106,16 +110,20 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstgio.dll \
                        libgsticydemux.dll \
                        libgstid3demux.dll \
+                       libgstid3tag.dll \
                        libgstisomp4.dll \
                        libgstlame.dll \
                        libgstlibav.dll \
-                       libgstmad.dll \
                        libgstmms.dll \
                        libgstogg.dll \
                        libgstopus.dll \
+                       libgstopusparse.dll \
+                       libgstpbtypes.dll \
                        libgstplayback.dll \
                        libgstreplaygain.dll \
-                       libgstsouphttpsrc.dll \
+                       libgstrtp.dll \
+                       libgstrtsp.dll \
+                       libgstsoup.dll \
                        libgstspectrum.dll \
                        libgstspeex.dll \
                        libgsttaglib.dll \
@@ -126,10 +134,11 @@ clementine_gst_plugins=libgstapetag.dll \
                        libgstvorbis.dll \
                        libgstwavpack.dll \
                        libgstwavparse.dll
-clementine_imageformats=qgif.dll \
-                        qjpeg.dll
-dont_strip=-not -name glew32.dll -not -name zlib1.dll -not -name libspotify.dll \
-           -not -name ssleay32.dll -not -name libeay32.dll \
+
+clementine_imageformats=qgif.dll qjpeg.dll
+dont_strip=-not -name glew32.dll \
+           -not -name zlib1.dll \
+           -not -name libspotify.dll \
            -not -name ShellExecAsUser.dll \
            -not -name KillProc.dll \
            -not -name AccessControl.dll
@@ -175,10 +184,11 @@ clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
 
 clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetworking
 	-rm -rf clementine-deps
-	mkdir -p clementine-deps/gstreamer-plugins
-	mkdir -p clementine-deps/imageformats
+	mkdir -p clementine-deps/gio-modules clementine-deps/gstreamer-plugins
+	mkdir -p clementine-deps/platforms clementine-deps/styles clementine-deps/imageformats
 	mkdir -p clementine-deps/nsisplugins
-	mkdir -p clementine-deps/gio-modules
+	cp -v $(prefix)/plugins/platforms/qwindows.dll clementine-deps/platforms/ || exit 1
+	cp -v $(prefix)/plugins/styles/qwindowsvistastyle.dll clementine-deps/styles/ || exit 1
 	for f in $(clementine_dlls); do \
 		cp -v $(prefix)/bin/$$f clementine-deps/ || exit 1; \
 	done
@@ -188,11 +198,20 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	for f in $(clementine_imageformats); do \
 		cp -v $(prefix)/plugins/imageformats/$$f clementine-deps/imageformats || exit 1; \
 	done
+
 	cp -v $(prefix)/lib/gio/modules/libgiognutls.dll clementine-deps/gio-modules/
-	cp -vr $(src)/mingwm10.dll $(src)/nsisplugins clementine-deps/
-	cp -vr /usr/lib/gcc/$(host)/*-posix/libgcc_s_sjlj-1.dll clementine-deps/
+
 	cp -vr /usr/lib/gcc/$(host)/*-posix/libstdc++-6.dll clementine-deps/
-	cp -vr /usr/i686-w64-mingw32/lib/libwinpthread-1.dll clementine-deps/
+	cp -vr /usr/lib/gcc/$(host)/*-posix/libgcc_s_sjlj-1.dll clementine-deps/
+	cp -vr /usr/$(host)/lib/libwinpthread-1.dll clementine-deps/
+
+	# openSUSE
+	#cp -vr /usr/$(host)/sys-root/mingw/bin/libstdc++-6.dll clementine-deps/
+	#cp -vr /usr/$(host)/sys-root/mingw/bin/libgcc_s_sjlj-1.dll clementine-deps/
+	#cp -vr /usr/$(host)/sys-root/mingw/bin/libwinpthread-1.dll clementine-deps/
+
+	cp ../nsisplugins/* clementine-deps/nsisplugins/
+
 	for f in `find clementine-deps/ -name '*.dll' $(dont_strip)`; do \
 		$(host)-strip -v $$f; \
 	done
@@ -236,46 +255,64 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gettext: .done-iconv
 	$(call extractpkg,$(gettexttgz))
-	patch -d $(gettext) -p1 < patches/0001-libasprintf-Avoid-compilation-error-on-mingw-with-D_.patch
 	$(call buildpkg,$(gettext))
 	$(call installpkg,$(gettext))
 
-.done-glib: .done-zlib .done-gettext .done-ffi
+.done-pcre:
+	$(call extractpkg,$(pcretgz))
+	cd $(pcre) && $(configure) --enable-shared --disable-static --enable-pcre16 --enable-utf --enable-unicode-properties --enable-cpp --disable-pcregrep-libz --disable-pcregrep-libbz2 --disable-pcretest-libreadline
+	cd $(pcre) && $(make)
+	rm -rf $(stow)/$(pcre)
+	cd $(pcre) && make install DESTDIR=$(stow)/$(pcre)
+	mv -fv $(stow)/$(pcre)$(prefix)/* $(stow)/$(pcre)/
+	cd $(stow) && stow -R $(pcre) && touch $(work)/$@
+	touch $@
+
+.done-glib: .done-zlib .done-gettext .done-ffi .done-pcre
 	$(call extractpkg,$(glibtgz))
+	cd $(glib) && ./autogen.sh
 	cd $(glib) && $(configure) CFLAGS="$(cflags) -Wno-format-security -Wno-format-overflow -Wno-format-nonliteral"
 	cd $(glib) && $(make)
 	$(call installpkg,$(glib))
 
 .done-gmp:
+	rm -f $(prefix)/share/info/dir
 	$(call extractpkg,$(gmptgz))
 	cd $(gmp) && $(configure) --enable-shared --disable-static
 	cd $(gmp) && $(make)
 	$(call installpkg,$(gmp))
 
 .done-nettle: .done-gmp
+	rm -f $(prefix)/share/info/dir
 	$(call extractpkg,$(nettletgz))
 	cd $(nettle) && $(configure)
-	cd $(nettle) && $(make) libnettle-6.dll
-	cd $(nettle) && $(make) libhogweed-4.dll
+	cd $(nettle) && $(make)
 	$(call installpkg,$(nettle))
 
 .done-libgpgerror:
+	rm -f $(prefix)/share/info/dir
 	$(call extractandbuild,$(gpgerrortgz),$(gpgerror))
 
 .done-gcrypt: .done-libgpgerror .done-gettext
+	rm -f $(prefix)/share/info/dir
 	$(call extractpkg,$(gcrypttgz))
 	cd $(gcrypt) && $(configure) --with-gpg-error-prefix=$(prefix)
 	cd $(gcrypt) && $(make)
 	$(call installpkg,$(gcrypt))
 
 .done-libtasn1:
+	rm -f $(prefix)/share/info/dir
 	$(call extractpkg,$(tasn1tgz))
 	cd $(tasn1) && $(configure) --disable-gcc-warnings
 	cd $(tasn1) && $(make)
 	$(call installpkg,$(tasn1))
 
-.done-libgnutls: .done-gcrypt .done-libtasn1 .done-nettle .done-p11kit
-	$(call extractandbuild,$(gnutlstgz),$(gnutls))
+.done-libgnutls: .done-gcrypt .done-libtasn1 .done-nettle .done-unistring .done-gmp .done-p11kit
+	$(call extractpkg,$(gnutlstgz))
+	cd $(gnutls) && patch -p1 < ../patches/gnutls-1-fixes.patch
+	cd $(gnutls) && $(configure) --disable-rpath --disable-nls --disable-guile --disable-doc --disable-tests --disable-silent-rules --enable-local-libopts CFLAGS='$(cflags) -D_WIN32_WINNT=0x0600'
+	cd $(gnutls) && $(make)
+	$(call installpkg,$(gnutls))
 
 .done-win7sdk:
 	cp -r $(src)/$(win7sdk) $(stow)/
@@ -284,7 +321,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-sqlite:
 	$(call extractpkg,$(sqlitetgz),$(sqlite))
-	(cd $(sqlite) && $(configure) && $(make))
+	# libtool dont like "-L$(prefix)/lib".
+	cd $(sqlite) && $(pkgconfig) LDFLAGS="-lpthread" CFLAGS="$(cflags)" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix) --enable-shared --disable-static --enable-threadsafe --disable-readline
+	cd $(sqlite) && $(make)
 	$(call installpkg,$(sqlite))
 
 .done-libxml: .done-iconv
@@ -294,9 +333,12 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call installpkg,$(xml))
 
 .done-glibnetworking: .done-glib .done-libgnutls
-	$(call extractandbuild,$(glibnetworkingtgz),$(glibnetworking))
+	$(call extractpkg,$(glibnetworkingtgz),$(glibnetworking))
+	cd $(glibnetworking) && $(configure) --without-ca-certificates
+	cd $(glibnetworking) && $(make)
+	$(call installpkg,$(glibnetworking))
 
-.done-libsoup: .done-glib .done-libxml .done-psl
+.done-libsoup: .done-glib .done-libxml .done-psl .done-libgnutls
 	$(call extractpkg,$(souptgz))
 	cd $(soup) && patch -p0 < ../patches/libsoup-01-winsock.patch
 	(cd $(soup) && $(configure) && $(make))
@@ -305,13 +347,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-libplist: .done-libxml .done-glib
 	tar -xf $(plisttgz)
-	-mkdir $(plist)/build
-	cd $(plist)/build && $(cmake)
-	cd $(plist)/build && make
-	rm -rf $(stow)/$(plist)
-	cd $(plist)/build && make install DESTDIR=$(stow)/$(plist)
-	mv -fv $(stow)/$(plist)$(prefix)/* $(stow)/$(plist)/
-	cd $(stow) && stow $(plist)
+	cd $(plist) && ./autogen.sh
+	cd $(plist) && ${configure} --without-cython
+	cd $(plist) && make
+	$(call installpkg,$(plist))
 	touch $@
 
 .done-libgpod: .done-sqlite .done-libplist .done-glib
@@ -319,12 +358,14 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gstreamer: .done-glib .done-libxml .done-orc
 	$(call extractpkg,$(gsttgz))
+	cd $(gst) && patch -p1 < ../patches/gstreamer-1-fixes.patch
 	cd $(gst) && $(configure) CFLAGS="$(cflags) -DHAVE_PTHREAD" --disable-examples --disable-tests
 	cd $(gst) && $(make)
 	$(call installpkg,$(gst))
 
 .done-gst-plugins-base: .done-gstreamer .done-ogg .done-vorbis .done-opus
 	$(call extractpkg,$(gstbasetgz))
+	cd $(gstbase) && patch -p1 < ../patches/gst-plugins-base-1-fixes.patch
 	cd $(gstbase) && autoreconf
 	cd $(gstbase) && $(configure) --disable-examples --disable-x --disable-xvideo --disable-xshm
 	cd $(gstbase) && $(make)
@@ -339,7 +380,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-vorbis: .done-ogg
 	$(call extractandbuild,$(vorbistgz),$(vorbis))
 
-.done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-libsoup .done-wavpack
+.done-gst-plugins-good: .done-gstreamer .done-gst-plugins-base .done-flac .done-speex .done-libsoup .done-wavpack .done-lame
 	$(call extractpkg,$(gstgoodtgz))
 	cd $(gstgood) && patch -p1 < ../patches/gst-plugins-good-02-equalizer-writeable-buffers.patch
 
@@ -377,7 +418,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-flac: .done-ogg
 	$(call extractpkg,$(flactgz))
 	cd $(flac) && $(configure) --disable-sse --disable-avx --disable-asm-optimizations
-	cd $(flac) && $(make)
+	cd $(flac) && $(make) LDFLAGS='-fstack-protector'
 	$(call installpkg,$(flac))
 
 .done-speex: .done-ogg
@@ -394,7 +435,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(speex)
 	touch $@
 
-.done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-mad .done-lame .done-cdio
+.done-gst-plugins-ugly: .done-gstreamer .done-gst-plugins-base .done-oil .done-cdio
 	$(call extractpkg,$(gstuglytgz))
 	cd $(gstugly) && \
 		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)" \
@@ -426,34 +467,15 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow -R $(id3tag)
 	touch $@
 
-.done-mad: .done-id3tag
-	$(call extractpkg,$(madtgz))
-	cd $(mad) && patch -p0 < ../patches/libmad-01-force-mem.patch
-	$(call buildpkg,$(mad))
-
-	# libtool is retarded and doesn't link this dll properly
-	cd $(mad) && /bin/bash ./libtool --mode=link $(host)-gcc \
-		-Wall -march=i486 -g -O -fforce-addr -fthread-jumps \
-		-fcse-follow-jumps -fcse-skip-blocks -fexpensive-optimizations \
-		-fregmove -fschedule-insns2 -fstrength-reduce --shared  \
-		-o libmad.dll -rpath /target/lib -version-info 2:1:2 *.lo
-
-	rm -rf $(stow)/$(mad)
-	cd $(mad) && make install DESTDIR=$(stow)/$(mad)
-	mv -fv $(stow)/$(mad)$(prefix)/* $(stow)/$(mad)/
-	-mkdir $(stow)/$(mad)/bin/
-	cp $(mad)/libmad.dll $(stow)/$(mad)/bin/
-	rm -f $(stow)/$(mad)/lib/libmad.*
-	cd $(stow) && stow -R $(mad)
-	touch $@
-
 .done-lame:
 	$(call extractpkg,$(lametgz))
-	cd $(lame) && $(pkgconfig) LDFLAGS="$(ldflags)" CFLAGS="$(cflags) -march=native" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
+	cd $(lame) && patch -p1 < ../patches/lame-1-fixes.patch
+	cd $(lame) && $(pkgconfig) LDFLAGS="$(ldflags)" CFLAGS="$(cflags) -march=native" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix) --disable-frontend --disable-gtktest
 	$(call installpkg,$(lame))
 
 .done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-libmms .done-oil .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
+	cd $(gstbad) && patch -p1 < ../patches/gst-plugins-bad-1-fixes.patch
 	cd $(gstbad) && \
 		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)" \
 		./configure --host=$(host) --build=$(build) --prefix=$(prefix) \
@@ -481,20 +503,12 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-faad:
 	$(call extractpkg,$(faadtgz))
-	cd $(faad) && patch -p0 < ../patches/faad-01-off_t.patch
-	$(call buildpkg,$(faad))
-
-	# libtool is retarded and doesn't link this dll properly
-	cd $(faad)/libfaad && /bin/bash ../libtool --mode=link $(host)-gcc \
-		-iquote ../include -g -O2 --shared -o libfaad.dll -rpath $(prefix)/bin \
-		-version-info 2:0:0 *.lo -lm
-
+	cd $(faad) && patch -p1 < ../patches/faad2-1-fixes.patch
+	cd $(faad) && $(configure)
+	cd $(faad) && $(make)
 	rm -rf $(stow)/$(faad)
 	cd $(faad) && make install DESTDIR=$(stow)/$(faad)
 	mv -fv $(stow)/$(faad)$(prefix)/* $(stow)/$(faad)/
-	-mkdir $(stow)/$(faad)/bin/
-	cp $(faad)/libfaad/libfaad.dll $(stow)/$(faad)/bin/
-	rm -f $(stow)/$(faad)/lib/libfaad.*
 	cd $(stow) && stow -R $(faad)
 	touch $@
 
@@ -508,29 +522,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(mmswin32) && $(make)
 	$(call installpkg,$(mmswin32))
 
-# Not working - requires iconv.h
-.done-libquicktime: .done-dlfcn
-	$(call extractpkg,$(quicktimetgz))
-	cd $(quicktime) && patch -p0 < ../patches/libquicktime-01-configure.patch
-	cd $(quicktime) && autoconf
-	cd $(quicktime) && $(configure) --without-doxygen --without-ffmpeg --without-libiconv-prefix
-	cd $(quicktime) && $(make)
-	$(call installpkg,$(quicktime))
-
 .done-dlfcn:
 	-mkdir $(stow)/$(dlfcn)/
 	tar -xjf $(dlfcntgz) -C $(stow)/$(dlfcn)/
 	cd $(stow) && stow -R $(dlfcn)
-	touch $@
-
-.done-usb:
-	unzip -o -d $(stow) $(usbwin32zip)
-	mv $(stow)/$(usbwin32)/bin/x86/* $(stow)/$(usbwin32)/bin
-	mv $(stow)/$(usbwin32)/lib/gcc/* $(stow)/$(usbwin32)/lib
-	-rm -f $(stow)/$(usbwin32)/lib/pkgconfig/libusb-1.0.pc
-	patch -d $(stow)/$(usbwin32) -p0 < patches/libusb-01-pkgconfig.patch
-	cp $(stow)/$(usbwin32)/include/usb.h $(stow)/$(usbwin32)/include/libusb.h
-	cd $(stow) && stow $(usbwin32)
 	touch $@
 
 .done-taglib: .done-glib
@@ -557,7 +552,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-opensource \
 		-no-compile-examples \
 		-opengl desktop \
-		-openssl-runtime \
 		-no-dbus \
 		-openssl-runtime \
 		-skip qt3d \
@@ -612,6 +606,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractandbuild,$(curltgz),$(curl))
 
 .done-fftw:
+	rm -f $(prefix)/share/info/dir
 	$(call extractpkg,$(fftwtgz))
 	cd $(fftw) && $(configure) \
 		--with-our-malloc16 --with-windows-f77-mangling --enable-shared \
@@ -619,25 +614,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		--enable-portable-binary
 	cd $(fftw) && $(make)
 	$(call installpkg,$(fftw))
-
-.done-libarchive: .done-libxml
-	$(call extractpkg,$(archivetgz))
-	-mkdir $(archive)/bin
-	cd $(archive) && patch -p0 < ../patches/libarchive-01-no-iconv.patch
-	cd $(archive) && patch -p0 < ../patches/libarchive-02-pkgconfig.patch
-	cd $(archive)/bin && $(cmake) \
-		-DENABLE_OPENSSL=OFF \
-		-DENABLE_TAR=OFF \
-		-DENABLE_CPIO=OFF \
-		-DENABLE_XATTR=OFF \
-		-DENABLE_ACL=OFF \
-		-DENABLE_TEST=OFF
-	cd $(archive)/bin && $(make)
-	rm -rf $(stow)/$(archive)
-	cd $(archive)/bin && make install DESTDIR=$(stow)/$(archive)
-	mv -fv $(stow)/$(archive)$(prefix)/* $(stow)/$(archive)/
-	cd $(stow) && stow $(archive)
-	touch $@
 
 .done-protobuf:
 	$(call extractpkg,$(protobuftgz))
@@ -677,13 +653,15 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(stow) && stow $(cdio)
 	touch $@
 
-.done-openssl:
+.done-openssl: .done-zlib
 	$(call extractpkg,$(openssltgz))
 	cd $(openssl) && ./Configure \
+		zlib \
 		--cross-compile-prefix="$(host)-" \
 		--prefix=$(stow)/$(openssl) \
 		--shared \
-		mingw
+		mingw \
+		LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)"
 	cd $(openssl) && make
 	cd $(openssl) && make install
 	cd $(stow) && stow -R $(openssl)
@@ -693,10 +671,14 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call extractandbuild,$(sparsehashtgz),$(sparsehash))
 
 .done-ffi:
+	rm -f $(prefix)/share/info/dir
 	$(call extractandbuild,$(ffitgz),$(ffi))
 
 .done-opus:
-	$(call extractandbuild,$(opustgz),$(opus))
+	$(call extractpkg,$(opustgz))
+	cd $(opus) && $(configure)
+	cd $(opus) && $(make) LDFLAGS='-fstack-protector'
+	$(call installpkg,$(opus))
 
 .done-chromaprint: .done-fftw
 	$(call extractpkg,$(chromaprinttgz))
@@ -720,3 +702,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cd $(psl) && LDFLAGS="$(ldflags) -lws2_32" CFLAGS="$(cflags)" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 	cd $(psl) && $(make)
 	$(call installpkg,$(psl))
+
+.done-unistring: .done-iconv
+	rm -f $(prefix)/share/info/dir
+	$(call extractpkg,$(unistringtgz))
+	cd $(unistring) && $(configure) --enable-threads
+	cd $(unistring) && $(make)
+	$(call installpkg,$(unistring))

@@ -33,6 +33,7 @@ jobs:
             pkg-config
             protobuf-compiler
             python
+            python-dev
             stow
             sudo
             texinfo
