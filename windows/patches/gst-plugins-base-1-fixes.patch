@@ -1,0 +1,358 @@
+diff -ruN gst-plugins-base-1.16.2.orig/common/glib-gen.mak gst-plugins-base-1.16.2/common/glib-gen.mak
+--- gst-plugins-base-1.16.2.orig/common/glib-gen.mak	2019-04-19 11:16:22.000000000 +0200
++++ gst-plugins-base-1.16.2/common/glib-gen.mak	2020-06-04 20:32:42.941854199 +0200
+@@ -1,11 +1,13 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_enum_prefix=gst_color_balance
+ 
+-enum_headers=$(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers=$(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ 
+ # these are all the rules generating the relevant files
+ %-marshal.h: %-marshal.list
+diff -ruN gst-plugins-base-1.16.2.orig/common/gst-glib-gen.mak gst-plugins-base-1.16.2/common/gst-glib-gen.mak
+--- gst-plugins-base-1.16.2.orig/common/gst-glib-gen.mak	2019-04-19 11:16:22.000000000 +0200
++++ gst-plugins-base-1.16.2/common/gst-glib-gen.mak	2020-06-04 20:32:42.945854204 +0200
+@@ -1,14 +1,16 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ #glib_gen_decl_banner=GST_EXPORT
+-#glib_gen_decl_include=\#include <gst/foo/foo-prelude.h>
++#glib_gen_decl_include=$(H)include <gst/foo/foo-prelude.h>
+ 
+-enum_headers=$(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers=$(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ 
+ # these are all the rules generating the relevant files
+ $(glib_gen_basename)-marshal.h: $(glib_gen_basename)-marshal.list
+diff -ruN gst-plugins-base-1.16.2.orig/gst/encoding/Makefile.in gst-plugins-base-1.16.2/gst/encoding/Makefile.in
+--- gst-plugins-base-1.16.2.orig/gst/encoding/Makefile.in	2019-12-03 11:58:14.000000000 +0100
++++ gst-plugins-base-1.16.2/gst/encoding/Makefile.in	2020-06-04 20:32:42.945854204 +0200
+@@ -17,12 +17,14 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ #glib_gen_decl_banner=GST_EXPORT
+-#glib_gen_decl_include=\#include <gst/foo/foo-prelude.h>
++#glib_gen_decl_include=$(H)include <gst/foo/foo-prelude.h>
+ 
+ 
+ VPATH = @srcdir@
+@@ -628,7 +630,7 @@
+ 	gstsmartencoder.h	\
+ 	gststreamcombinerpad.h
+ 
+-enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers = $(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ all: all-am
+ 
+ .SUFFIXES:
+diff -ruN gst-plugins-base-1.16.2.orig/gst-libs/gst/app/Makefile.in gst-plugins-base-1.16.2/gst-libs/gst/app/Makefile.in
+--- gst-plugins-base-1.16.2.orig/gst-libs/gst/app/Makefile.in	2019-12-03 11:58:12.000000000 +0100
++++ gst-plugins-base-1.16.2/gst-libs/gst/app/Makefile.in	2020-06-04 20:32:42.945854204 +0200
+@@ -17,13 +17,15 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ #glib_gen_decl_banner=GST_EXPORT
+-#glib_gen_decl_include=\#include <gst/foo/foo-prelude.h>
+ 
++#glib_gen_decl_include=$(H)include <gst/foo/foo-prelude.h>
+ 
+ 
+ VPATH = @srcdir@
+@@ -608,12 +610,12 @@
+ glib_gen_prefix = __gst_app
+ glib_gen_basename = app
+ glib_gen_decl_banner = GST_APP_API
+-glib_gen_decl_include = \#include <gst/app/app-prelude.h>
++glib_gen_decl_include = $(H)include <gst/app/app-prelude.h>
+ glib_enum_headers = gstappsrc.h
+ built_sources = app-enumtypes.c
+ built_headers = app-enumtypes.h
+ BUILT_SOURCES = $(built_sources) $(built_headers)
+-enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers = $(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ libgstapp_@GST_API_VERSION@_la_SOURCES = gstappsrc.c gstappsink.c
+ nodist_libgstapp_@GST_API_VERSION@_la_SOURCES = $(BUILT_SOURCES)
+ libgstapp_@GST_API_VERSION@_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) \
+diff -ruN gst-plugins-base-1.16.2.orig/gst-libs/gst/audio/Makefile.in gst-plugins-base-1.16.2/gst-libs/gst/audio/Makefile.in
+--- gst-plugins-base-1.16.2.orig/gst-libs/gst/audio/Makefile.in	2019-12-03 11:58:12.000000000 +0100
++++ gst-plugins-base-1.16.2/gst-libs/gst/audio/Makefile.in	2020-06-04 20:32:42.949854204 +0200
+@@ -39,13 +39,15 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ #glib_gen_decl_banner=GST_EXPORT
+-#glib_gen_decl_include=\#include <gst/foo/foo-prelude.h>
+ 
++#glib_gen_decl_include=$(H)include <gst/foo/foo-prelude.h>
+ 
+ 
+ VPATH = @srcdir@
+@@ -776,7 +778,7 @@
+ glib_gen_prefix = gst_audio
+ glib_gen_basename = audio
+ glib_gen_decl_banner = GST_AUDIO_API
+-glib_gen_decl_include = \#include <gst/audio/audio-prelude.h>
++glib_gen_decl_include = $(H)include <gst/audio/audio-prelude.h>
+ built_sources = audio-enumtypes.c
+ built_headers = audio-enumtypes.h
+ lib_LTLIBRARIES = \
+@@ -889,7 +891,7 @@
+ @HAVE_X86_TRUE@	$(GST_LIB_LDFLAGS) \
+ @HAVE_X86_TRUE@	$(GST_ALL_LDFLAGS)
+ 
+-enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers = $(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ 
+ # Introspection
+ @HAVE_INTROSPECTION_TRUE@BUILT_GIRSOURCES = GstAudio-@GST_API_VERSION@.gir
+diff -ruN gst-plugins-base-1.16.2.orig/gst-libs/gst/gl/Makefile.in gst-plugins-base-1.16.2/gst-libs/gst/gl/Makefile.in
+--- gst-plugins-base-1.16.2.orig/gst-libs/gst/gl/Makefile.in	2019-12-03 11:58:12.000000000 +0100
++++ gst-plugins-base-1.16.2/gst-libs/gst/gl/Makefile.in	2020-06-04 20:32:42.949854204 +0200
+@@ -17,12 +17,14 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ #glib_gen_decl_banner=GST_EXPORT
+-#glib_gen_decl_include=\#include <gst/foo/foo-prelude.h>
++#glib_gen_decl_include=${H}include <gst/foo/foo-prelude.h>
+ 
+ 
+ 
+@@ -863,14 +865,14 @@
+ glib_gen_prefix = gst_gl
+ glib_gen_basename = gl
+ glib_gen_decl_banner = GST_GL_API
+-glib_gen_decl_include = \#include <gst/gl/gl-prelude.h>
++glib_gen_decl_include = ${H}include <gst/gl/gl-prelude.h>
+ built_sources = gl-enumtypes.c
+ built_headers = gl-enumtypes.h
+ BUILT_SOURCES = $(built_sources) $(built_headers)
+ CLEANFILES = $(BUILT_SOURCES) $(am__append_27)
+ nodist_libgstgl_@GST_API_VERSION@include_HEADERS = $(built_headers)
+ nodist_libgstgl_@GST_API_VERSION@_la_SOURCES = $(BUILT_SOURCES)
+-enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers = $(foreach h,$(glib_enum_headers),\n${H}include \"$(h)\")
+ @HAVE_INTROSPECTION_TRUE@BUILT_GIRSOURCES = GstGL-@GST_API_VERSION@.gir
+ @HAVE_INTROSPECTION_TRUE@gir_headers = $(patsubst %,$(srcdir)/%, \
+ @HAVE_INTROSPECTION_TRUE@	$(gstgl_gir_headers)) $(patsubst \
+diff -ruN gst-plugins-base-1.16.2.orig/gst-libs/gst/pbutils/Makefile.in gst-plugins-base-1.16.2/gst-libs/gst/pbutils/Makefile.in
+--- gst-plugins-base-1.16.2.orig/gst-libs/gst/pbutils/Makefile.in	2019-12-03 11:58:13.000000000 +0100
++++ gst-plugins-base-1.16.2/gst-libs/gst/pbutils/Makefile.in	2020-06-04 20:32:42.949854204 +0200
+@@ -17,13 +17,15 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ #glib_gen_decl_banner=GST_EXPORT
+-#glib_gen_decl_include=\#include <gst/foo/foo-prelude.h>
+ 
++#glib_gen_decl_include=$(H)include <gst/foo/foo-prelude.h>
+ 
+ 
+ VPATH = @srcdir@
+@@ -654,6 +656,7 @@
+ 	gstdiscoverer.h \
+ 	gstaudiovisualizer.h
+ 
++H := \#
+ 
+ # variables used for enum/marshal generation
+ glib_enum_headers = $(headers_pbutils)
+@@ -661,7 +664,7 @@
+ glib_gen_prefix = pbutils
+ glib_gen_basename = pbutils
+ glib_gen_decl_banner = GST_PBUTILS_API
+-glib_gen_decl_include = \#include <gst/pbutils/pbutils-prelude.h>
++glib_gen_decl_include = $(H)include <gst/pbutils/pbutils-prelude.h>
+ built_headers_configure = \
+ 	gstpluginsbaseversion.h
+ 
+@@ -709,7 +712,7 @@
+ 
+ # DISTCLEANFILES is for files generated by configure
+ DISTCLEANFILES = $(built_headers_configure)
+-enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers = $(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ @HAVE_INTROSPECTION_TRUE@BUILT_GIRSOURCES = GstPbutils-@GST_API_VERSION@.gir
+ @HAVE_INTROSPECTION_TRUE@gir_headers = $(patsubst %,$(srcdir)/%, \
+ @HAVE_INTROSPECTION_TRUE@	$(libgstpbutils_@GST_API_VERSION@include_HEADERS)) \
+diff -ruN gst-plugins-base-1.16.2.orig/gst-libs/gst/rtp/Makefile.in gst-plugins-base-1.16.2/gst-libs/gst/rtp/Makefile.in
+--- gst-plugins-base-1.16.2.orig/gst-libs/gst/rtp/Makefile.in	2019-12-03 11:58:13.000000000 +0100
++++ gst-plugins-base-1.16.2/gst-libs/gst/rtp/Makefile.in	2020-06-04 20:32:42.949854204 +0200
+@@ -17,13 +17,15 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ #glib_gen_decl_banner=GST_EXPORT
+-#glib_gen_decl_include=\#include <gst/foo/foo-prelude.h>
+ 
++#glib_gen_decl_include=$(H)include <gst/foo/foo-prelude.h>
+ 
+ 
+ VPATH = @srcdir@
+@@ -669,8 +671,8 @@
+ glib_enum_headers = $(libgstrtpinclude_HEADERS)
+ glib_gen_basename = gstrtp
+ glib_gen_decl_banner = GST_RTP_API
+-glib_gen_decl_include = \#include <gst/rtp/rtp-prelude.h>
+-enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++glib_gen_decl_include = $(H)include <gst/rtp/rtp-prelude.h>
++enum_headers = $(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ @HAVE_INTROSPECTION_TRUE@BUILT_GIRSOURCES = GstRtp-@GST_API_VERSION@.gir
+ @HAVE_INTROSPECTION_TRUE@gir_headers = $(patsubst %,$(srcdir)/%, \
+ @HAVE_INTROSPECTION_TRUE@	$(libgstrtpinclude_HEADERS)) \
+diff -ruN gst-plugins-base-1.16.2.orig/gst-libs/gst/rtsp/Makefile.in gst-plugins-base-1.16.2/gst-libs/gst/rtsp/Makefile.in
+--- gst-plugins-base-1.16.2.orig/gst-libs/gst/rtsp/Makefile.in	2019-12-03 11:58:13.000000000 +0100
++++ gst-plugins-base-1.16.2/gst-libs/gst/rtsp/Makefile.in	2020-06-04 20:32:42.949854204 +0200
+@@ -17,13 +17,15 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ #glib_gen_decl_banner=GST_EXPORT
+-#glib_gen_decl_include=\#include <gst/foo/foo-prelude.h>
+ 
++#glib_gen_decl_include=$(H)include <gst/foo/foo-prelude.h>
+ 
+ 
+ VPATH = @srcdir@
+@@ -670,8 +672,8 @@
+ glib_enum_headers = $(libgstrtspinclude_HEADERS)
+ glib_gen_basename = gstrtsp
+ glib_gen_decl_banner = GST_RTSP_API
+-glib_gen_decl_include = \#include <gst/rtsp/rtsp-prelude.h>
+-enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++glib_gen_decl_include = $(H)include <gst/rtsp/rtsp-prelude.h>
++enum_headers = $(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ @HAVE_INTROSPECTION_TRUE@BUILT_GIRSOURCES = GstRtsp-@GST_API_VERSION@.gir
+ @HAVE_INTROSPECTION_TRUE@gir_headers = $(patsubst %,$(srcdir)/%, \
+ @HAVE_INTROSPECTION_TRUE@	$(libgstrtspinclude_HEADERS)) \
+diff -ruN gst-plugins-base-1.16.2.orig/gst-libs/gst/tag/Makefile.in gst-plugins-base-1.16.2/gst-libs/gst/tag/Makefile.in
+--- gst-plugins-base-1.16.2.orig/gst-libs/gst/tag/Makefile.in	2019-12-03 11:58:13.000000000 +0100
++++ gst-plugins-base-1.16.2/gst-libs/gst/tag/Makefile.in	2020-06-04 20:32:42.949854204 +0200
+@@ -17,13 +17,15 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ #glib_gen_decl_banner=GST_EXPORT
+-#glib_gen_decl_include=\#include <gst/foo/foo-prelude.h>
+ 
++#glib_gen_decl_include=$(H)include <gst/foo/foo-prelude.h>
+ 
+ 
+ VPATH = @srcdir@
+@@ -670,12 +672,12 @@
+ glib_gen_prefix = gst_tag
+ glib_gen_basename = tag
+ glib_gen_decl_banner = GST_TAG_API
+-glib_gen_decl_include = \#include <gst/tag/tag-prelude.h>
++glib_gen_decl_include = $(H)include <gst/tag/tag-prelude.h>
+ glib_enum_headers = tag.h gsttagdemux.h
+ built_sources = tag-enumtypes.c
+ built_headers = tag-enumtypes.h
+ BUILT_SOURCES = $(built_sources) $(built_headers)
+-enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers = $(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ libgsttaginclude_HEADERS = \
+ 	tag.h tag-prelude.h gsttagdemux.h gsttagmux.h xmpwriter.h
+ 
+diff -ruN gst-plugins-base-1.16.2.orig/gst-libs/gst/video/Makefile.in gst-plugins-base-1.16.2/gst-libs/gst/video/Makefile.in
+--- gst-plugins-base-1.16.2.orig/gst-libs/gst/video/Makefile.in	2019-12-03 11:58:13.000000000 +0100
++++ gst-plugins-base-1.16.2/gst-libs/gst/video/Makefile.in	2020-06-04 20:32:42.949854204 +0200
+@@ -39,13 +39,15 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ #glib_gen_decl_banner=GST_EXPORT
+-#glib_gen_decl_include=\#include <gst/foo/foo-prelude.h>
+ 
++#glib_gen_decl_include=$(H)include <gst/foo/foo-prelude.h>
+ 
+ 
+ VPATH = @srcdir@
+@@ -735,7 +737,7 @@
+ glib_gen_prefix = gst_video
+ glib_gen_basename = video
+ glib_gen_decl_banner = GST_VIDEO_API
+-glib_gen_decl_include = \#include <gst/video/video-prelude.h>
++glib_gen_decl_include = $(H)include <gst/video/video-prelude.h>
+ built_sources = video-enumtypes.c
+ built_headers = video-enumtypes.h
+ lib_LTLIBRARIES = libgstvideo-@GST_API_VERSION@.la
+@@ -820,7 +822,7 @@
+ 
+ libgstvideo_@GST_API_VERSION@_la_LIBADD = $(GST_BASE_LIBS) $(GST_LIBS) $(ORC_LIBS) $(LIBM)
+ libgstvideo_@GST_API_VERSION@_la_LDFLAGS = $(GST_LIB_LDFLAGS) $(GST_ALL_LDFLAGS) $(GST_LT_LDFLAGS)
+-enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers = $(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ @HAVE_INTROSPECTION_TRUE@BUILT_GIRSOURCES = GstVideo-@GST_API_VERSION@.gir
+ @HAVE_INTROSPECTION_TRUE@gir_headers = $(patsubst %,$(srcdir)/%, \
+ @HAVE_INTROSPECTION_TRUE@	$(libgstvideo_@GST_API_VERSION@include_HEADERS)) \
