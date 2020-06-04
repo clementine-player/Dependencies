@@ -45,7 +45,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          path: /src
+          path: deps
+      - name: Fix source path
+        run: mv deps /src
       - name: Create target directory
         run: mkdir -p /target/stow
       - name: Build dependencies
