@@ -85,6 +85,7 @@ clementine_dlls=glew32.dll \
                 Qt5Network.dll \
                 Qt5OpenGL.dll \
                 Qt5Sql.dll \
+                Qt5Svg.dll \
                 Qt5Widgets.dll \
                 Qt5WinExtras.dll \
                 Qt5Xml.dll \
@@ -135,7 +136,7 @@ clementine_gst_plugins=libgstaiff.dll \
                        libgstwavpack.dll \
                        libgstwavparse.dll
 
-clementine_imageformats=qgif.dll qjpeg.dll
+clementine_imageformats=qgif.dll qjpeg.dll qsvg.dll
 dont_strip=-not -name glew32.dll \
            -not -name zlib1.dll \
            -not -name libspotify.dll \
