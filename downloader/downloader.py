@@ -4,8 +4,7 @@ import os
 import sys
 import urllib
 
-#DOWNLOAD_URL = 'https://storage.googleapis.com/clementine-data.appspot.com/Build%20dependencies/'
-DOWNLOAD_URL = 'https://files.jkvinge.net/packages/clementine-dependencies/'
+DOWNLOAD_URL = 'https://storage.googleapis.com/clementine-data.appspot.com/Build%20dependencies/'
 
 FILES = [
     # filename, md5sum
