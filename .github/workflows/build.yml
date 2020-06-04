@@ -1,0 +1,55 @@
+name: build
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    container:
+      image: ubuntu:eoan
+    steps:
+      - name: Accept EULAs
+        env:
+          DEBIAN_FRONTEND: interactive
+        run: echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
+      - name: Install dependencies
+        run: >
+          apt-get update && apt-get install -y -q
+          autoconf
+          bison
+          cmake
+          flex
+          gettext
+          git-core
+          intltool
+          libglib2.0-dev
+          libtool
+          mingw-w64
+          nsis
+          pkg-config
+          protobuf-compiler
+          python
+          stow
+          sudo
+          texinfo
+          unzip
+          wget
+          wine-stable
+          yasm
+      - name: Configure Mingw for POSIX threads
+        run: update-alternatives --set i686-w64-mingw32-gcc /usr/bin/i686-w64-mingw32-gcc-posix
+      - name: Configure Mingw for POSIX threads
+        run: update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: deps
+      - name: Fix source path
+        run: mv deps /src
+      - name: Create target directory
+        run: mkdir -p /target/stow
+      - name: Build dependencies
+        working-directory: /src/windows
+        run: make
