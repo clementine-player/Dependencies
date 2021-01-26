@@ -1,5 +1,5 @@
 # Target compiler
-host=i686-w64-mingw32
+host=x86_64-w64-mingw32
 cc=$(host)-gcc
 cxx=$(host)-g++
 ranlib=$(host)-ranlib
@@ -661,7 +661,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		--cross-compile-prefix="$(host)-" \
 		--prefix=$(stow)/$(openssl) \
 		--shared \
-		mingw \
+		mingw64 \
 		LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)"
 	cd $(openssl) && make
 	cd $(openssl) && make install
