@@ -10,12 +10,11 @@ flac=flac-1.3.3
 gcrypt=libgcrypt-1.8.5
 gettext=gettext-0.20.2
 glew=glew-1.5.5
-glib=glib-2.58.3
+glib=glib-2.59.3
 glibnetworking=glib-networking-2.54.1
 gmp=gmp-6.2.0
 gnutls=gnutls-3.6.13
 gpgerror=libgpg-error-1.38
-gpod=libgpod-0.8.0.3
 gstbad=gst-plugins-bad-1.16.2
 gstbase=gst-plugins-base-1.16.2
 gstgood=gst-plugins-good-1.16.2
@@ -38,7 +37,6 @@ opus=opus-1.3.1
 orc=orc-0.4.29
 p11kit=p11-kit-0.23.2
 pcre=pcre-8.44
-plist=libplist-2.1.0
 protobuf=protobuf-3.6.1
 psl=libpsl-0.21.0
 pthreads=pthreads-win32-2.8.0
@@ -60,10 +58,10 @@ zlib=zlib-1.2.11
 
 allpackages=	$(boost) $(cdio) ${chromaprint} $(curl) $(dlfcn) $(faad) ${ffi} \
 		$(fftw) $(flac) $(gcrypt) $(gettext) $(glew) $(glib) $(glibnetworking) \
-		${gmp} $(gnutls) $(gpgerror) $(gpod) $(gst) $(gstbad) $(gstbase) $(gstgood) \
+		${gmp} $(gnutls) $(gpgerror) $(gst) $(gstbad) $(gstbase) $(gstgood) \
 		$(gstlibav) $(gstugly) $(id3tag) $(lame) $(lastfm) ${libiconv} $(mms) $(mmswin32) \
 		$(mpcdec) $(mtp) ${nettle} $(ogg) $(oil) $(openssl) ${opus} $(orc) ${p11kit} \
-		$(pcre) $(plist) $(protobuf) ${psl} $(pthreads) $(qt) $(soup) ${sparsehash} \
+		$(pcre) $(protobuf) ${psl} $(pthreads) $(qt) $(soup) ${sparsehash} \
 		$(speex) $(spotifywin32) $(sqlite) $(taglib) $(tasn1) $(tls) ${unistring} \
 		$(vorbis) $(wavpack) ${win7sdk} $(xml) ${zlib}
 
@@ -89,7 +87,6 @@ glibtgz=$(downloads)/$(glib).tar.xz
 gmptgz=$(downloads)/$(gmp).tar.xz
 gnutlstgz=$(downloads)/$(gnutls).tar.xz
 gpgerrortgz=$(downloads)/$(gpgerror).tar.bz2
-gpodtgz=$(downloads)/$(gpod).tar.gz
 gstbadtgz=$(downloads)/$(gstbad).tar.xz
 gstbasetgz=$(downloads)/$(gstbase).tar.xz
 gstgoodtgz=$(downloads)/$(gstgood).tar.xz
@@ -112,7 +109,6 @@ opustgz=$(downloads)/$(opus).tar.gz
 orctgz=$(downloads)/$(orc).tar.xz
 p11kittgz=$(downloads)/$(p11kit).tar.gz
 pcretgz=${downloads}/${pcre}.tar.bz2
-plisttgz=$(downloads)/$(plist).tar.gz
 protobuftgz=$(downloads)/protobuf-cpp-3.6.1.tar.gz
 psltgz=$(downloads)/$(psl).tar.gz
 pthreadstgz=$(downloads)/$(pthreads).tar.gz
@@ -137,7 +133,7 @@ all:
 	$(MAKE) clementine-deps
 
 clean:
-	realstow=`python -c "import os.path; print os.path.realpath('$(stow)')"`; \
+	realstow=`python3 -c "import os.path; print os.path.realpath('$(stow)')"`; \
 	for path in $(stow)/*; do \
 		directory=`basename $$path`; \
 		stow -d $$realstow -D $$directory; \
@@ -148,7 +144,7 @@ clean:
 	-rm .done-*
 
 all-downloads:
-	python $(src)/downloader/downloader.py --output "$(downloads)"
+	python3 $(src)/downloader/downloader.py --output "$(downloads)"
 
 boost: .done-boost
 cdio: .done-cdio
@@ -175,12 +171,10 @@ id3tag: .done-id3tag
 lame: .done-lame
 libgnutls: .done-libgnutls
 libgpgerror: .done-libgpgerror
-libgpod: .done-libgpod
 liblastfm: .done-liblastfm
 libmms: .done-libmms
 libmpcdec: .done-libmpcdec
 libmtp: .done-libmtp
-libplist: .done-libplist
 libpsl: .done-libpsl
 libsoup: .done-libsoup
 libtasn1: .done-libtasn1

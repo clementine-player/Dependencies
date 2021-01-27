@@ -1,5 +1,5 @@
 # Target compiler
-host=i686-w64-mingw32
+host=x86_64-w64-mingw32
 cc=$(host)-gcc
 cxx=$(host)-g++
 ranlib=$(host)-ranlib
@@ -22,7 +22,7 @@ include ../makefile.common
 clementine_dlls=glew32.dll \
                 libcdio-19.dll \
                 libchromaprint.dll \
-		libcrypto-1_1.dll \
+                libcrypto-1_1.dll \
                 libfaad-2.dll \
                 libffi-7.dll \
                 libfftw3-3.dll \
@@ -35,7 +35,6 @@ clementine_dlls=glew32.dll \
                 libgnutls-30.dll \
                 libgobject-2.0-0.dll \
                 libgpg-error-0.dll \
-                libgpod.dll \
                 libgstapp-1.0-0.dll \
                 libgstaudio-1.0-0.dll \
                 libgstbase-1.0-0.dll \
@@ -64,7 +63,6 @@ clementine_dlls=glew32.dll \
                 liborc-test-0.4-0.dll \
                 libp11-kit-0.dll \
                 libpcre-1.dll \
-                libplist.dll \
                 libprotobuf-17.dll \
                 libpsl-5.dll \
                 libssl-1_1.dll \
@@ -171,6 +169,13 @@ installpkgcmake=rm -rf $(stow)/$(1) && \
 	cd $(stow) && \
 	stow -R $(1) && \
 	touch $(work)/$@
+installpkgmeson=rm -rf $(stow)/$(1) && \
+	cd $(1) && \
+	DESTDIR=$(stow)/$(1) ninja -C _build install && \
+	mv -fv $(stow)/$(1)$(prefix)/* $(stow)/$(1)/ ; \
+	cd $(stow) && \
+	stow -R $(1) && \
+	touch $(work)/$@
 
 extractandbuild=$(call extractpkg,$(1)) && $(call buildpkg,$(2)) && $(call installpkg,$(2))
 extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(call installpkgcmake,$(2))
@@ -178,7 +183,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 # Top-level targets
 clementine-build-deps: dlfcn boost qt taglib liblastfm \
-                       libgpod glew gstreamer win7sdk chromaprint \
+                       glew gstreamer win7sdk chromaprint \
                        protobuf spotify fftw sparsehash
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-libav
@@ -271,10 +276,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-glib: .done-zlib .done-gettext .done-ffi .done-pcre
 	$(call extractpkg,$(glibtgz))
-	cd $(glib) && ./autogen.sh
-	cd $(glib) && $(configure) CFLAGS="$(cflags) -Wno-format-security -Wno-format-overflow -Wno-format-nonliteral"
-	cd $(glib) && $(make)
-	$(call installpkg,$(glib))
+	cd $(glib) && meson --prefix=$(prefix) --cross-file ../cross-file.txt _build
+	cd $(glib) && ninja -C _build
+	$(call installpkgmeson,$(glib))
 
 .done-gmp:
 	rm -f $(prefix)/share/info/dir
@@ -345,17 +349,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	(cd $(soup) && $(configure) && $(make))
 	$(call installpkg,$(soup))
 	touch $@
-
-.done-libplist: .done-libxml .done-glib
-	tar -xf $(plisttgz)
-	cd $(plist) && ./autogen.sh
-	cd $(plist) && ${configure} --without-cython
-	cd $(plist) && make
-	$(call installpkg,$(plist))
-	touch $@
-
-.done-libgpod: .done-sqlite .done-libplist .done-glib
-	$(call extractandbuildcmake,$(gpodtgz),$(gpod))
 
 .done-gstreamer: .done-glib .done-libxml .done-orc
 	$(call extractpkg,$(gsttgz))
@@ -547,7 +540,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-I/target/include \
 		-release \
 		-xplatform win32-g++ \
-		-device-option CROSS_COMPILE=/usr/bin/i686-w64-mingw32- \
+		-device-option CROSS_COMPILE=/usr/bin/x86_64-w64-mingw32- \
 		-prefix $(stow)/$(qt) \
 		-confirm-license \
 		-opensource \
@@ -661,7 +654,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		--cross-compile-prefix="$(host)-" \
 		--prefix=$(stow)/$(openssl) \
 		--shared \
-		mingw \
+		mingw64 \
 		LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)"
 	cd $(openssl) && make
 	cd $(openssl) && make install
