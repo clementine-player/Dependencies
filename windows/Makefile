@@ -547,7 +547,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-I/target/include \
 		-release \
 		-xplatform win32-g++ \
-		-device-option CROSS_COMPILE=/usr/bin/i686-w64-mingw32- \
+		-device-option CROSS_COMPILE=/usr/bin/x86_64-w64-mingw32- \
 		-prefix $(stow)/$(qt) \
 		-confirm-license \
 		-opensource \
