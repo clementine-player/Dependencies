@@ -37,6 +37,7 @@ jobs:
           nsis
           pkg-config
           protobuf-compiler
+          python
           python3
           python3-setuptools
           stow
