@@ -22,7 +22,7 @@ include ../makefile.common
 clementine_dlls=glew32.dll \
                 libcdio-19.dll \
                 libchromaprint.dll \
-		libcrypto-1_1.dll \
+                libcrypto-1_1.dll \
                 libfaad-2.dll \
                 libffi-7.dll \
                 libfftw3-3.dll \
@@ -169,6 +169,13 @@ installpkgcmake=rm -rf $(stow)/$(1) && \
 	cd $(stow) && \
 	stow -R $(1) && \
 	touch $(work)/$@
+installpkgmeson=rm -rf $(stow)/$(1) && \
+	cd $(1) && \
+	DESTDIR=$(stow)/$(1) ninja -C _build install && \
+	mv -fv $(stow)/$(1)$(prefix)/* $(stow)/$(1)/ ; \
+	cd $(stow) && \
+	stow -R $(1) && \
+	touch $(work)/$@
 
 extractandbuild=$(call extractpkg,$(1)) && $(call buildpkg,$(2)) && $(call installpkg,$(2))
 extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(call installpkgcmake,$(2))
@@ -269,10 +276,9 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-glib: .done-zlib .done-gettext .done-ffi .done-pcre
 	$(call extractpkg,$(glibtgz))
-	cd $(glib) && meson --cross-file ../cross-file.txt _build
+	cd $(glib) && meson --prefix=$(prefix) --cross-file ../cross-file.txt _build
 	cd $(glib) && ninja -C _build
-	cd $(glib) && DESTDIR=$(stow)/$(glib) ninja -C _build install
-	touch $@
+	$(call installpkgmeson,$(glib))
 
 .done-gmp:
 	rm -f $(prefix)/share/info/dir
