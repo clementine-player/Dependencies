@@ -5,8 +5,10 @@ cpu = 'x86_64'
 endian = 'little'
 
 [properties]
-c_args = []
-c_link_args = []
+c_args = '-I/target/include'
+c_link_args = '-L/target/lib'
+cpp_args = '-I/target/include'
+cpp_link_args = '-L/target/lib'
 
 [binaries]
 c = 'x86_64-w64-mingw32-gcc'
