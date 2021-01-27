@@ -271,10 +271,10 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-glib: .done-zlib .done-gettext .done-ffi .done-pcre
 	$(call extractpkg,$(glibtgz))
-	cd $(glib) && ./autogen.sh
-	cd $(glib) && $(configure) CFLAGS="$(cflags) -Wno-format-security -Wno-format-overflow -Wno-format-nonliteral"
-	cd $(glib) && $(make)
-	$(call installpkg,$(glib))
+	cd $(glib) && meson --cross-file ../cross-file.txt _build
+	cd $(glib) && ninja -C _build
+	cd $(glib) && DESTDIR=$(stow)/$(glib) ninja -C _build install
+	touch $@
 
 .done-gmp:
 	rm -f $(prefix)/share/info/dir

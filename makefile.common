@@ -10,7 +10,7 @@ flac=flac-1.3.3
 gcrypt=libgcrypt-1.8.5
 gettext=gettext-0.20.2
 glew=glew-1.5.5
-glib=glib-2.58.3
+glib=glib-2.59.3
 glibnetworking=glib-networking-2.54.1
 gmp=gmp-6.2.0
 gnutls=gnutls-3.6.13
@@ -137,7 +137,7 @@ all:
 	$(MAKE) clementine-deps
 
 clean:
-	realstow=`python -c "import os.path; print os.path.realpath('$(stow)')"`; \
+	realstow=`python3 -c "import os.path; print os.path.realpath('$(stow)')"`; \
 	for path in $(stow)/*; do \
 		directory=`basename $$path`; \
 		stow -d $$realstow -D $$directory; \
@@ -148,7 +148,7 @@ clean:
 	-rm .done-*
 
 all-downloads:
-	python $(src)/downloader/downloader.py --output "$(downloads)"
+	python3 $(src)/downloader/downloader.py --output "$(downloads)"
 
 boost: .done-boost
 cdio: .done-cdio

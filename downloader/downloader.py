@@ -3,6 +3,7 @@ import hashlib
 import os
 import sys
 import urllib
+import urllib.request
 
 DOWNLOAD_URL = 'https://storage.googleapis.com/clementine-data.appspot.com/Build%20dependencies/'
 
@@ -18,7 +19,7 @@ FILES = [
     ('gettext-0.20.2.tar.xz', '0cf5f68338d5d941bbf9ac93b847310f'),
     ('glew-1.5.5.tar.bz2', '25afa3ff4cff7b67add612e148a54240'),
     ('glew-1.5.5-win32.zip', '48c8c982644ba11dfe94aaf756217eec'),
-    ('glib-2.58.3.tar.xz', '8058c7bde846dcffe5fa453eca366d73'),
+    ('glib-2.59.3.tar.xz', '9a06eb1a7143a17050b0b1abef2208e1'),
     ('glib-networking-2.54.1.tar.xz', '99867463f182c2767bce0c74bc9cc981'),
     ('gmp-6.2.0.tar.xz', 'a325e3f09e6d91e62101e59f9bda3ec1'),
     ('gnutls-3.6.13.tar.xz', 'bb1fe696a11543433785b4fc70ca225f'),
@@ -74,7 +75,7 @@ def Md5File(path):
 
   file_hash = hashlib.md5()
   try:
-    with open(path) as fh:
+    with open(path, 'rb') as fh:
       while True:
         chunk = fh.read(4096)
         if len(chunk) == 0:
@@ -103,8 +104,8 @@ def DownloadFiles(flags):
     if actual_md5_checksum != md5_checksum:
       url = DOWNLOAD_URL + name
 
-      print 'Downloading %s...' % name
-      urllib.urlretrieve(url, path)
+      print('Downloading %s...' % name)
+      urllib.request.urlretrieve(url, path)
       actual_md5_checksum = Md5File(path)
 
     # If the checksum still didn't match the download must have failed.
@@ -113,7 +114,7 @@ def DownloadFiles(flags):
           'Download failed - checksums do not match (got %s, expected %s)' %
           (actual_md5_checksum, md5_checksum))
 
-  print 'All files are up-to-date'
+  print('All files are up-to-date')
 
 
 def Main(argv):

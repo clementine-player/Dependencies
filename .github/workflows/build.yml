@@ -23,6 +23,7 @@ jobs:
           apt-get update && apt-get install -y -q
           autoconf
           bison
+          build-essential
           cmake
           flex
           gettext
@@ -30,12 +31,14 @@ jobs:
           intltool
           libglib2.0-dev
           libtool
+          meson
           mingw-w64
+          ninja-build
           nsis
           pkg-config
           protobuf-compiler
-          python
-          python-dev
+          python3
+          python3-setuptools
           stow
           sudo
           texinfo
