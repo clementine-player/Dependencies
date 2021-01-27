@@ -35,7 +35,6 @@ clementine_dlls=glew32.dll \
                 libgnutls-30.dll \
                 libgobject-2.0-0.dll \
                 libgpg-error-0.dll \
-                libgpod.dll \
                 libgstapp-1.0-0.dll \
                 libgstaudio-1.0-0.dll \
                 libgstbase-1.0-0.dll \
@@ -64,7 +63,6 @@ clementine_dlls=glew32.dll \
                 liborc-test-0.4-0.dll \
                 libp11-kit-0.dll \
                 libpcre-1.dll \
-                libplist.dll \
                 libprotobuf-17.dll \
                 libpsl-5.dll \
                 libssl-1_1.dll \
@@ -178,7 +176,7 @@ extractandbuildcmake=$(call extractpkg,$(1)) && $(call buildpkgcmake,$(2)) && $(
 
 # Top-level targets
 clementine-build-deps: dlfcn boost qt taglib liblastfm \
-                       libgpod glew gstreamer win7sdk chromaprint \
+                       glew gstreamer win7sdk chromaprint \
                        protobuf spotify fftw sparsehash
 clementine-gst-plugins: gst-plugins-base gst-plugins-good gst-plugins-bad \
                         gst-plugins-ugly gst-libav
@@ -345,17 +343,6 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	(cd $(soup) && $(configure) && $(make))
 	$(call installpkg,$(soup))
 	touch $@
-
-.done-libplist: .done-libxml .done-glib
-	tar -xf $(plisttgz)
-	cd $(plist) && ./autogen.sh
-	cd $(plist) && ${configure} --without-cython
-	cd $(plist) && make
-	$(call installpkg,$(plist))
-	touch $@
-
-.done-libgpod: .done-sqlite .done-libplist .done-glib
-	$(call extractandbuildcmake,$(gpodtgz),$(gpod))
 
 .done-gstreamer: .done-glib .done-libxml .done-orc
 	$(call extractpkg,$(gsttgz))
