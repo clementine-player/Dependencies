@@ -12,9 +12,13 @@ jobs:
     steps:
       - name: Accept EULAs
         env:
-          DEBIAN_FRONTEND: interactive
+          DEBIAN_FRONTEND: noninteractive
+          DEBCONF_NONINTERACTIVE_SEEN: "true"
         run: echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
       - name: Install dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+          DEBCONF_NONINTERACTIVE_SEEN: "true"
         run: >
           apt-get update && apt-get install -y -q
           autoconf
