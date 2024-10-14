@@ -137,7 +137,7 @@ all:
 	$(MAKE) clementine-deps
 
 clean:
-	realstow=`python -c "import os.path; print os.path.realpath('$(stow)')"`; \
+	realstow=`python3 -c "import os.path; print os.path.realpath('$(stow)')"`; \
 	for path in $(stow)/*; do \
 		directory=`basename $$path`; \
 		stow -d $$realstow -D $$directory; \
@@ -148,7 +148,7 @@ clean:
 	-rm .done-*
 
 all-downloads:
-	python $(src)/downloader/downloader.py --output "$(downloads)"
+	python3 $(src)/downloader/downloader.py --output "$(downloads)"
 
 boost: .done-boost
 cdio: .done-cdio

@@ -2,7 +2,8 @@ import argparse
 import hashlib
 import os
 import sys
-import urllib
+
+from urllib.request import urlretrieve
 
 DOWNLOAD_URL = 'https://storage.googleapis.com/clementine-data.appspot.com/Build%20dependencies/'
 
@@ -74,7 +75,7 @@ def Md5File(path):
 
   file_hash = hashlib.md5()
   try:
-    with open(path) as fh:
+    with open(path, mode='rb') as fh:
       while True:
         chunk = fh.read(4096)
         if len(chunk) == 0:
@@ -103,8 +104,8 @@ def DownloadFiles(flags):
     if actual_md5_checksum != md5_checksum:
       url = DOWNLOAD_URL + name
 
-      print 'Downloading %s...' % name
-      urllib.urlretrieve(url, path)
+      print('Downloading %s...' % name)
+      urlretrieve(url, path)
       actual_md5_checksum = Md5File(path)
 
     # If the checksum still didn't match the download must have failed.
@@ -113,7 +114,7 @@ def DownloadFiles(flags):
           'Download failed - checksums do not match (got %s, expected %s)' %
           (actual_md5_checksum, md5_checksum))
 
-  print 'All files are up-to-date'
+  print('All files are up-to-date')
 
 
 def Main(argv):
