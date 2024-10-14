@@ -271,8 +271,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-glib: .done-zlib .done-gettext .done-ffi .done-pcre
 	$(call extractpkg,$(glibtgz))
-	cd $(glib) && ./autogen.sh
-	cd $(glib) && $(configure) CFLAGS="$(cflags) -Wno-format-security -Wno-format-overflow -Wno-format-nonliteral"
+	cd $(glib) && NOCONFIGURE=1 ./autogen.sh
+	cd $(glib) && $(configure) --disable-libmount CFLAGS="$(cflags) -Wno-format-security -Wno-format-overflow -Wno-format-nonliteral"
 	cd $(glib) && $(make)
 	$(call installpkg,$(glib))
 
