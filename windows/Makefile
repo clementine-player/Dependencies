@@ -145,7 +145,7 @@ dont_strip=-not -name glew32.dll \
            -not -name AccessControl.dll
 
 # Useful macros for building packages
-pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
+pkgconfig=PKG_CONFIG_PATH=$(prefix)/pkgconfig PKG_CONFIG_SYSROOT_DIR=$(prefix) PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
 autoconf=ACLOCAL_PATH=$(prefix)/share/aclocal:/usr/share/aclocal
 ldflags=-L$(prefix)/lib -lpthread
 # -O2 is required to work around link errors in gettext
@@ -271,8 +271,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-glib: .done-zlib .done-gettext .done-ffi .done-pcre
 	$(call extractpkg,$(glibtgz))
-	cd $(glib) && ./autogen.sh
-	cd $(glib) && $(configure) CFLAGS="$(cflags) -Wno-format-security -Wno-format-overflow -Wno-format-nonliteral"
+	cd $(glib) && NOCONFIGURE=1 ./autogen.sh
+	cd $(glib) && $(configure) --disable-libmount CFLAGS="$(cflags) -Wno-format-security -Wno-format-overflow -Wno-format-nonliteral" LDFLAGS="-Wl,-allow-multiple-definition"
 	cd $(glib) && $(make)
 	$(call installpkg,$(glib))
 
