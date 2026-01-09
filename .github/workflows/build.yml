@@ -39,6 +39,7 @@ jobs:
           unzip
           wget
           wine-stable
+          xz-utils
           yasm
       - name: Configure Mingw for POSIX threads
         run: update-alternatives --set i686-w64-mingw32-gcc /usr/bin/i686-w64-mingw32-gcc-posix
