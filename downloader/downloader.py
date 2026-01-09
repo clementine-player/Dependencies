@@ -72,18 +72,11 @@ FILES = [
 def Md5File(path):
   """Returns the MD5 checksum of a file, or None if it doesn't exist."""
 
-  file_hash = hashlib.md5()
   try:
-    with open(path) as fh:
-      while True:
-        chunk = fh.read(4096)
-        if len(chunk) == 0:
-          break
-        file_hash.update(chunk)
+    with open(path, 'rb') as fh:
+      return hashlib.file_digest(fh, "md5").hexdigest()
   except IOError:
     return None
-
-  return file_hash.hexdigest()
 
 
 def DownloadFiles(flags):
