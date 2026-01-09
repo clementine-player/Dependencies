@@ -19,6 +19,7 @@ jobs:
           apt-get update && apt-get install -y -q
           autoconf
           bison
+          bzip2
           cmake
           flex
           gettext
