@@ -543,6 +543,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-qt: .done-openssl .done-sqlite .done-glib
 	$(call extractpkg,$(qttgz))
+	 sed -i '/#include <QtCore\/qglobal.h>/a #include <limits>' $(qt)/qtbase/src/corelib/global/qfloat16.h
+	 sed -i '/#include <QtCore\/qbytearray.h>/a #include <limits>' $(qt)/qtbase/src/corelib/text/qbytearraymatcher.h
 	 cd $(qt) && ./configure \
 		-I/target/include \
 		-release \
