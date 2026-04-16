@@ -359,7 +359,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 
 .done-gstreamer: .done-glib .done-libxml .done-orc
 	$(call extractpkg,$(gsttgz))
-	cd $(gst) && patch -p1 < ../patches/gstreamer-1-fixes.patch
+	cd $(gst) && sed -i 's|^enum_headers = $$(foreach h,$$(glib_enum_headers),\\n\\#include \\"$$(h)\\")$$|enum_headers = $$(foreach h,$$(glib_enum_headers),\\n#include \\"$$(h)\\")|' libs/gst/controller/Makefile.in
 	cd $(gst) && $(configure) CFLAGS="$(cflags) -DHAVE_PTHREAD" --disable-examples --disable-tests
 	cd $(gst) && $(make)
 	$(call installpkg,$(gst))
