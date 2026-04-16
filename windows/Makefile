@@ -343,7 +343,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-libsoup: .done-glib .done-libxml .done-psl .done-libgnutls
 	$(call extractpkg,$(souptgz))
 	cd $(soup) && patch -p0 < ../patches/libsoup-01-winsock.patch
-	(cd $(soup) && $(configure) && $(make))
+	(cd $(soup) && $(configure) CFLAGS="$(cflags) -fcommon" LDFLAGS="$(ldflags) -fcommon" && $(make))
 	$(call installpkg,$(soup))
 	touch $@
 
