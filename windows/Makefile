@@ -203,7 +203,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cp -v $(prefix)/lib/gio/modules/libgiognutls.dll clementine-deps/gio-modules/
 
 	cp -vr /usr/lib/gcc/$(host)/*-posix/libstdc++-6.dll clementine-deps/
-	cp -vr /usr/lib/gcc/$(host)/*-posix/libgcc_s_sjlj-1.dll clementine-deps/
+	cp -vr /usr/lib/gcc/$(host)/*-posix/libgcc_s_dw2-1.dll clementine-deps/
 	cp -vr /usr/$(host)/lib/libwinpthread-1.dll clementine-deps/
 
 	# openSUSE
