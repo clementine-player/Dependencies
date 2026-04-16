@@ -494,7 +494,8 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-gst-libav: .done-gstreamer .done-gst-plugins-base
 	$(call extractpkg,$(gstlibavtgz))
 	cd $(gstlibav) && autoreconf
-	cd $(gstlibav) && $(configure) --with-ffmpeg-extra-configure="--enable-shared --disable-debug"
+	cd $(gstlibav) && $(configure) --with-libav-extra-configure="--disable-debug --disable-asm --disable-inline-asm --disable-x86asm"
+	cd $(gstlibav) && sed -i 's|$$(WINDRES) $$(IFLAGS) --preprocessor "$$(DEPWINDRES) -E -xc-header -DRC_INVOKED $$(CC_DEPFLAGS)" -o $$@ $$<|$$(WINDRES) $$(IFLAGS) -o $$@ $$<|' gst-libs/ext/libav/ffbuild/common.mak
 	cd $(gstlibav) && $(make)
 	rm -rf $(stow)/$(gstlibav)
 	cd $(gstlibav) && make install DESTDIR=$(stow)/$(gstlibav)
