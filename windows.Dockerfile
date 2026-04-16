@@ -1,5 +1,15 @@
 FROM ubuntu:noble
 
+# Use a fast EU mirror before any package operations.
+RUN set -eux; \
+  mirror='http://ftp.fau.de/ubuntu'; \
+  if [ -f /etc/apt/sources.list.d/ubuntu.sources ]; then \
+    sed -i "s|http://archive.ubuntu.com/ubuntu|${mirror}|g; s|http://security.ubuntu.com/ubuntu|${mirror}|g" /etc/apt/sources.list.d/ubuntu.sources; \
+  fi; \
+  if [ -f /etc/apt/sources.list ]; then \
+    sed -i "s|http://archive.ubuntu.com/ubuntu|${mirror}|g; s|http://security.ubuntu.com/ubuntu|${mirror}|g" /etc/apt/sources.list; \
+  fi
+
 RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
 
 RUN apt-get update && apt-get install -y -q \
