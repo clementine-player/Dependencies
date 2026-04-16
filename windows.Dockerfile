@@ -4,6 +4,7 @@ RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula selec
 
 RUN apt-get update && apt-get install -y -q \
   autoconf \
+  autopoint \
   bison \
   build-essential \
   bzip2 \
@@ -11,6 +12,7 @@ RUN apt-get update && apt-get install -y -q \
   flex \
   gettext \
   git-core \
+  gtk-doc-tools \
   intltool \
   libglib2.0-dev \
   libtool \

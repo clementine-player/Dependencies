@@ -311,6 +311,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-libgnutls: .done-gcrypt .done-libtasn1 .done-nettle .done-unistring .done-gmp .done-p11kit
 	$(call extractpkg,$(gnutlstgz))
 	cd $(gnutls) && patch -p1 < ../patches/gnutls-1-fixes.patch
+	cd $(gnutls) && autoreconf -fiv
 	cd $(gnutls) && $(configure) --disable-rpath --disable-nls --disable-guile --disable-doc --disable-tests --disable-silent-rules --enable-local-libopts CFLAGS='$(cflags) -D_WIN32_WINNT=0x0600'
 	cd $(gnutls) && $(make)
 	$(call installpkg,$(gnutls))
