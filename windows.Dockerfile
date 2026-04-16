@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y -q \
   nsis \
   pkg-config \
   protobuf-compiler \
+  python-is-python3 \
   python3 \
   python3-dev \
   python3-setuptools \
