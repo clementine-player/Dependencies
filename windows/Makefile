@@ -478,6 +478,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-gst-plugins-bad: .done-gstreamer .done-gst-plugins-base .done-faad .done-libmms .done-oil .done-libmpcdec
 	$(call extractpkg,$(gstbadtgz))
 	cd $(gstbad) && patch -p1 < ../patches/gst-plugins-bad-1-fixes.patch
+	cd $(gstbad) && autoreconf -fiv
 	cd $(gstbad) && \
 		$(pkgconfig) LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)" \
 		./configure --host=$(host) --build=$(build) --prefix=$(prefix) \
