@@ -5,6 +5,7 @@ RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula selec
 RUN apt-get update && apt-get install -y -q \
   autoconf \
   bison \
+  build-essential \
   bzip2 \
   cmake \
   flex \
@@ -19,6 +20,7 @@ RUN apt-get update && apt-get install -y -q \
   protobuf-compiler \
   python3 \
   python3-dev \
+  python3-setuptools \
   stow \
   sudo \
   texinfo \
