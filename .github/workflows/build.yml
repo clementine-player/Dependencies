@@ -8,7 +8,7 @@ on:
       - master
 
 env:
-  IMAGE_NAME: eu.gcr.io/clementine-data/mingw-w64
+  IMAGE_NAME: eu.gcr.io/clementine-data/mingw-w64-x64
 
 jobs:
   build:
