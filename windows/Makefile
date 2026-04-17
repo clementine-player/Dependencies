@@ -1,11 +1,11 @@
 # Target compiler
-host=x86_64-w64-mingw32
+host=i686-w64-mingw32
 cc=$(host)-gcc
 cxx=$(host)-g++
 ranlib=$(host)-ranlib
 
 # Local compiler
-build=x86_64-linux-gnu
+build=i486-linux-gnu
 
 # How many source files to build in parallel within each package
 jobs=-j8
@@ -22,7 +22,7 @@ include ../makefile.common
 clementine_dlls=glew32.dll \
                 libcdio-19.dll \
                 libchromaprint.dll \
-                libcrypto-1_1-x64.dll \
+		libcrypto-1_1.dll \
                 libfaad-2.dll \
                 libffi-7.dll \
                 libfftw3-3.dll \
@@ -34,7 +34,7 @@ clementine_dlls=glew32.dll \
                 libgmp-10.dll \
                 libgnutls-30.dll \
                 libgobject-2.0-0.dll \
-                libgpg-error6-0.dll \
+                libgpg-error-0.dll \
                 libgpod.dll \
                 libgstapp-1.0-0.dll \
                 libgstaudio-1.0-0.dll \
@@ -67,7 +67,7 @@ clementine_dlls=glew32.dll \
                 libplist.dll \
                 libprotobuf-17.dll \
                 libpsl-5.dll \
-                libssl-1_1-x64.dll \
+                libssl-1_1.dll \
                 libsoup-2.4-1.dll \
                 libspeex-1.dll \
                 libspotify.dll \
@@ -149,7 +149,7 @@ pkgconfig=PKG_CONFIG_LIBDIR=$(prefix)/lib/pkgconfig
 autoconf=ACLOCAL_PATH=$(prefix)/share/aclocal:/usr/share/aclocal
 ldflags=-L$(prefix)/lib -lpthread
 # -O2 is required to work around link errors in gettext
-cflags=-I$(prefix)/include -O2 -D__USE_MINGW_ANSI_STDIO -m64
+cflags=-I$(prefix)/include -O2 -D__USE_MINGW_ANSI_STDIO
 cxxflags=$(cflags)
 configure=$(pkgconfig) LDFLAGS="$(ldflags)" CFLAGS="$(cflags)" CXXFLAGS="$(cxxflags)" ./configure --host=$(host) --build=$(build) --prefix=$(prefix)
 cmake=$(pkgconfig) cmake .. -DCMAKE_TOOLCHAIN_FILE=$(src)/Toolchain-mingw32.cmake -DCMAKE_INSTALL_PREFIX=$(prefix) -DCMAKE_C_FLAGS="$(cflags)" -DCMAKE_CXX_FLAGS="$(cxxflags)"
@@ -203,7 +203,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	cp -v $(prefix)/lib/gio/modules/libgiognutls.dll clementine-deps/gio-modules/
 
 	cp -vr /usr/lib/gcc/$(host)/*-posix/libstdc++-6.dll clementine-deps/
-	cp -vr /usr/lib/gcc/$(host)/*-posix/libgcc_s_seh-1.dll clementine-deps/
+	cp -vr /usr/lib/gcc/$(host)/*-posix/libgcc_s_dw2-1.dll clementine-deps/
 	cp -vr /usr/$(host)/lib/libwinpthread-1.dll clementine-deps/
 
 	# openSUSE
@@ -279,7 +279,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 .done-gmp:
 	rm -f $(prefix)/share/info/dir
 	$(call extractpkg,$(gmptgz))
-	cd $(gmp) && CC_FOR_BUILD=$(build)-gcc $(configure) --enable-shared --disable-static
+	cd $(gmp) && $(configure) --enable-shared --disable-static
 	cd $(gmp) && $(make)
 	$(call installpkg,$(gmp))
 
@@ -448,11 +448,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 	$(call installpkg,$(gstugly))
 
 .done-oil:
-	$(call extractpkg,$(oiltgz))
-	cd $(oil) && patch -p1 < ../patches/liboil-1-fixes.patch
-	cd $(oil) && CONFIG_SITE=../config/liboil.site $(configure)
-	cd $(oil) && $(make)
-	$(call installpkg,$(oil))
+	$(call extractandbuild,$(oiltgz),$(oil))
 
 .done-id3tag:
 	$(call extractpkg,$(id3tagtgz))
@@ -556,7 +552,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		-I/target/include \
 		-release \
 		-xplatform win32-g++ \
-		-device-option CROSS_COMPILE=/usr/bin/x86_64-w64-mingw32- \
+		-device-option CROSS_COMPILE=/usr/bin/i686-w64-mingw32- \
 		-prefix $(stow)/$(qt) \
 		-confirm-license \
 		-opensource \
@@ -670,7 +666,7 @@ clementine-deps: clementine-build-deps clementine-gst-plugins openssl glibnetwor
 		--cross-compile-prefix="$(host)-" \
 		--prefix=$(stow)/$(openssl) \
 		--shared \
-		mingw64 \
+		mingw \
 		LDFLAGS="-L/target/bin $(ldflags)" CFLAGS="$(cflags)"
 	cd $(openssl) && make
 	cd $(openssl) && make install
