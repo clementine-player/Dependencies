@@ -59,7 +59,7 @@ FILES = [
     ('p11-kit-0.23.20.tar.xz', 'c9b3076475c6a57ca62005c43e77cd64'),
     ('p11-kit-0.23.2.tar.gz', '738af2442331fc22f440df9bee9b062a'),
     ('pcre-8.44.tar.bz2', 'cf7326204cc46c755b5b2608033d9d24'),
-    ('protobuf-cpp-3.6.1.tar.gz', '406d5b8636576b1c86730ca5cbd1e576'),
+    ('protobuf-cpp-3.21.12.tar.gz', '6b4fd9cee2fa63834f29c7d433679855'),
     ('qt-everywhere-src-5.15.0.tar.xz', '610a228dba6ef469d14d145b71ab3b88'),
     ('sparsehash-sparsehash-2.0.3.tar.gz', 'd8d5e2538c1c25577b3f066d7a55e99e'),
     ('speex-1.2.0.tar.gz', '8ab7bb2589110dfaf0ed7fa7757dc49c'),
