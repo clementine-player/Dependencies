@@ -5,7 +5,7 @@ on:
       - master
 
 env:
-  IMAGE_NAME: europe-north1-docker.pkg.dev/clementine-data/mingw-w64
+  IMAGE_NAME: eu.gcr.io/clementine-data/mingw-w64
 
 jobs:
   build:
@@ -13,5 +13,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Docker build
-        run: docker build -f windows.Dockerfile -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.IMAGE_NAME }}:latest
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: clementine-data
+          workload_identity_provider: projects/611551928920/locations/global/workloadIdentityPools/github-pool/providers/github
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+
+      # Configure Docker to use gcloud as credential helper
+      - name: Configure Docker for GCR
+        run: |
+          gcloud auth configure-docker eu.gcr.io
+
+      - name: Push Docker image to Artifact Registry
+        run: |
+          docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ env.IMAGE_NAME }}:latest
