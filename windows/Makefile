@@ -65,7 +65,7 @@ clementine_dlls=glew32.dll \
                 libp11-kit-0.dll \
                 libpcre-1.dll \
                 libplist.dll \
-                libprotobuf-17.dll \
+                libprotobuf-32.dll \
                 libpsl-5.dll \
                 libssl-1_1.dll \
                 libsoup-2.4-1.dll \
