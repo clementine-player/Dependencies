@@ -55,5 +55,5 @@ WORKDIR /src/windows
 # Separate this step to cache it before any build failures.
 RUN make all-downloads
 
-# RUN make
+RUN make
 
